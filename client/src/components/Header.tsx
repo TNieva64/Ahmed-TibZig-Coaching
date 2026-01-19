@@ -17,32 +17,26 @@ export default function Header() {
       <div className="container">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/">
-            <a className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="text-2xl font-bold text-gold">AC</div>
-              <span className="hidden sm:inline text-sm font-semibold text-black">
-                Andaloussi<br />Coaching
-              </span>
-            </a>
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <div className="text-2xl font-bold text-gold">AC</div>
+            <span className="hidden sm:inline text-sm font-semibold text-black">
+              Andaloussi<br />Coaching
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
-                <a className="text-black hover:text-gold transition-colors font-medium text-sm">
-                  {link.label}
-                </a>
+              <Link key={link.href} href={link.href} className="text-black hover:text-gold transition-colors font-medium text-sm">
+                {link.label}
               </Link>
             ))}
           </nav>
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <Link href="/reservation">
-              <a className="premium-button">
-                Réserver
-              </a>
+            <Link href="/reservation" className="premium-button inline-block">
+              Réserver
             </Link>
           </div>
 
@@ -65,22 +59,21 @@ export default function Header() {
           <nav className="md:hidden pb-4 border-t border-gray-200">
             <div className="flex flex-col gap-3 pt-4">
               {navLinks.map((link) => (
-                <Link key={link.href} href={link.href}>
-                  <a
-                    className="text-black hover:text-gold transition-colors font-medium py-2"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {link.label}
-                  </a>
-                </Link>
-              ))}
-              <Link href="/reservation">
-                <a
-                  className="premium-button text-center"
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-black hover:text-gold transition-colors font-medium py-2 block"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Réserver
-                </a>
+                  {link.label}
+                </Link>
+              ))}
+              <Link
+                href="/reservation"
+                className="premium-button text-center block"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Réserver
               </Link>
             </div>
           </nav>

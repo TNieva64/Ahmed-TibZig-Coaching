@@ -31,3 +31,6 @@
 ## Phase 5 : Livraison
 - [ ] Checkpoint final
 - [ ] Vérification complète du site
+
+## Bugs à Corriger
+- [x] Erreur : <a> cannot contain a nested <a> dans Header.tsx
