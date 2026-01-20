@@ -1,0 +1,56 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle background -->
+  <circle cx="100" cy="100" r="95" fill="#000000" stroke="#E8E8E8" stroke-width="8"/>
+  
+  <!-- Diamond shape outer border -->
+  <path d="M 100 30 L 170 100 L 100 170 L 30 100 Z" fill="none" stroke="#D4AF37" stroke-width="2"/>
+  <path d="M 100 35 L 165 100 L 100 165 L 35 100 Z" fill="none" stroke="#D4AF37" stroke-width="1" opacity="0.5"/>
+  
+  <!-- Inner diamond -->
+  <path d="M 100 45 L 155 100 L 100 155 L 45 100 Z" fill="none" stroke="#D4AF37" stroke-width="1.5"/>
+  
+  <!-- Text: ANDALOUSSI -->
+  <text x="100" y="95" font-family="Georgia, serif" font-size="14" font-weight="bold" fill="#D4AF37" text-anchor="middle" letter-spacing="1">
+    ANDALOUSSI
+  </text>
+  
+  <!-- Text: COACHING -->
+  <text x="100" y="110" font-family="Georgia, serif" font-size="12" font-weight="bold" fill="#D4AF37" text-anchor="middle" letter-spacing="1">
+    COACHING
+  </text>
+  
+  <!-- Top icon: Paratriathlète (wheelchair athlete) -->
+  <g transform="translate(100, 55)">
+    <!-- Head -->
+    <circle cx="0" cy="-8" r="3" fill="#D4AF37"/>
+    <!-- Body -->
+    <line x1="0" y1="-5" x2="0" y2="2" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Arms -->
+    <line x1="0" y1="-2" x2="-4" y2="-4" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="0" y1="-2" x2="4" y2="-4" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Wheelchair wheel -->
+    <circle cx="0" cy="6" r="4" fill="none" stroke="#D4AF37" stroke-width="1"/>
+    <line x1="-2" y1="6" x2="2" y2="6" stroke="#D4AF37" stroke-width="0.8"/>
+    <line x1="0" y1="4" x2="0" y2="8" stroke="#D4AF37" stroke-width="0.8"/>
+  </g>
+  
+  <!-- Bottom icon: Runner -->
+  <g transform="translate(100, 145)">
+    <!-- Head -->
+    <circle cx="0" cy="-8" r="3" fill="#D4AF37"/>
+    <!-- Body -->
+    <line x1="0" y1="-5" x2="0" y2="2" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Arms in running position -->
+    <line x1="0" y1="-2" x2="-4" y2="-5" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="0" y1="-2" x2="3" y2="1" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Legs in running position -->
+    <line x1="0" y1="2" x2="-3" y2="8" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="0" y1="2" x2="2" y2="7" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Decorative corner dots -->
+  <circle cx="100" cy="40" r="1.5" fill="#D4AF37" opacity="0.6"/>
+  <circle cx="100" cy="160" r="1.5" fill="#D4AF37" opacity="0.6"/>
+  <circle cx="50" cy="100" r="1.5" fill="#D4AF37" opacity="0.6"/>
+  <circle cx="150" cy="100" r="1.5" fill="#D4AF37" opacity="0.6"/>
+</svg>

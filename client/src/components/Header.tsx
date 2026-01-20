@@ -18,7 +18,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="text-2xl font-bold text-gold">AC</div>
+            <img src="/logo.svg" alt="Andaloussi Coaching" className="w-12 h-12" />
             <span className="hidden sm:inline text-sm font-semibold text-black">
               Andaloussi<br />Coaching
             </span>

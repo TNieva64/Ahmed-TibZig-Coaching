@@ -62,7 +62,7 @@ export default function Home() {
               {/* Placeholder for image */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-6xl font-bold text-gold/50 mb-4">AC</div>
+                  <img src="/logo.svg" alt="Andaloussi Coaching" className="w-32 h-32 mx-auto mb-4" />
                   <p className="text-gray-400 text-sm">Photo du profil à ajouter</p>
                 </div>
               </div>

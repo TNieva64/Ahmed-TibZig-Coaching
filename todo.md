@@ -35,3 +35,8 @@
 ## Bugs à Corriger
 - [x] Erreur : <a> cannot contain a nested <a> dans Header.tsx
 - [x] Erreur : <a> cannot contain a nested <a> dans Home.tsx, Parcours.tsx, Coaching.tsx
+
+## Améliorations et Contenu
+- [x] Créer logo SVG haute qualité basé sur le design Instagram
+- [x] Intégrer le logo SVG dans le Header et Footer
+- [ ] Ajouter des images professionnelles du profil

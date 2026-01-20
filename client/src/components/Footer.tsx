@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           {/* Brand Section */}
           <div>
-            <div className="text-3xl font-bold text-gold mb-4">AC</div>
+            <img src="/logo.svg" alt="Andaloussi Coaching" className="w-16 h-16 mb-4" />
             <p className="text-gray-300 text-sm leading-relaxed">
               Andaloussi Coaching - Votre partenaire en transformation physique et performance sportive.
             </p>
