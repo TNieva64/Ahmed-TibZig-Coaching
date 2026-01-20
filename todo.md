@@ -40,3 +40,13 @@
 - [x] Créer logo SVG haute qualité basé sur le design Instagram
 - [x] Intégrer le logo SVG dans le Header et Footer
 - [x] Ajouter des images professionnelles du profil
+
+## Espace Client Personnel
+- [x] Créer modèle de données pour les clients et leurs programmes
+- [x] Créer table "client_programs" pour lier clients aux programmes
+- [x] Créer table "program_resources" pour PDFs et vidéos YouTube
+- [x] Développer page Dashboard client avec authentification
+- [ ] Créer composant pour afficher les PDFs personnalisés
+- [ ] Créer composant pour afficher les vidéos YouTube
+- [ ] Implémenter système de gestion des programmes (admin)
+- [x] Tests de l'espace client

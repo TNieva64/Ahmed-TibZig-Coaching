@@ -25,4 +25,53 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * Programs table - Contains coaching programs (Transformation, Performance, Inclusive)
+ */
+export const programs = mysqlTable("programs", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  category: mysqlEnum("category", ["transformation", "performance", "inclusive"]).notNull(),
+  duration: int("duration"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Program = typeof programs.$inferSelect;
+export type InsertProgram = typeof programs.$inferInsert;
+
+/**
+ * Client Programs - Links users to their assigned programs
+ */
+export const clientPrograms = mysqlTable("clientPrograms", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  programId: int("programId").notNull(),
+  startDate: timestamp("startDate").notNull(),
+  endDate: timestamp("endDate"),
+  status: mysqlEnum("status", ["active", "completed", "paused"]).default("active").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ClientProgram = typeof clientPrograms.$inferSelect;
+export type InsertClientProgram = typeof clientPrograms.$inferInsert;
+
+/**
+ * Program Resources - PDFs and YouTube videos for each program
+ */
+export const programResources = mysqlTable("programResources", {
+  id: int("id").autoincrement().primaryKey(),
+  programId: int("programId").notNull(),
+  type: mysqlEnum("type", ["pdf", "video"]).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  url: text("url").notNull(),
+  order: int("order").default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ProgramResource = typeof programResources.$inferSelect;
+export type InsertProgramResource = typeof programResources.$inferInsert;

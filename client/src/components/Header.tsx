@@ -10,6 +10,7 @@ export default function Header() {
     { label: 'Mon Parcours', href: '/parcours' },
     { label: 'Coaching', href: '/coaching' },
     { label: 'Contact', href: '/contact' },
+    { label: 'Mon Espace', href: '/dashboard' },
   ];
 
   return (

@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, programs, clientPrograms, programResources } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,77 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function getClientPrograms(userId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get client programs: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db
+      .select()
+      .from(clientPrograms)
+      .where(eq(clientPrograms.userId, userId));
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get client programs:", error);
+    return [];
+  }
+}
+
+export async function getProgramById(programId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get program: database not available");
+    return undefined;
+  }
+
+  try {
+    const result = await db
+      .select()
+      .from(programs)
+      .where(eq(programs.id, programId))
+      .limit(1);
+    return result.length > 0 ? result[0] : undefined;
+  } catch (error) {
+    console.error("[Database] Failed to get program:", error);
+    return undefined;
+  }
+}
+
+export async function getProgramResources(programId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get program resources: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db
+      .select()
+      .from(programResources)
+      .where(eq(programResources.programId, programId))
+      .orderBy(programResources.order);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get program resources:", error);
+    return [];
+  }
+}
+
+export async function getAllPrograms() {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get programs: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db.select().from(programs);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get programs:", error);
+    return [];
+  }
+}
