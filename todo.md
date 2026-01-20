@@ -50,3 +50,13 @@
 - [ ] Créer composant pour afficher les vidéos YouTube
 - [ ] Implémenter système de gestion des programmes (admin)
 - [x] Tests de l'espace client
+
+## Prochaines Étapes - Ressources et Administration
+- [x] Créer page de détail des ressources (PDFs et vidéos YouTube)
+- [x] Implémenter lecteur vidéo YouTube intégré
+- [x] Ajouter fonctionnalité de téléchargement des PDFs
+- [x] Créer panneau d'administration pour gérer les programmes
+- [x] Implémenter interface d'assignation de programmes aux clients
+- [x] Créer interface de gestion des ressources (PDFs/vidéos)
+- [x] Implémenter système de notifications par email
+- [x] Tests des nouvelles fonctionnalités

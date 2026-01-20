@@ -10,6 +10,8 @@ import Coaching from "./pages/Coaching";
 import Reservation from "./pages/Reservation";
 import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
+import ProgramDetail from "./pages/ProgramDetail";
+import Admin from "./pages/Admin";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -21,6 +23,8 @@ function Router() {
       <Route path={"/reservation"} component={Reservation} />
       <Route path={"/contact"} component={Contact} />
       <Route path={"/dashboard"} component={Dashboard} />
+      <Route path={"/program/:programId"} component={ProgramDetail} />
+      <Route path={"/admin"} component={Admin} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
