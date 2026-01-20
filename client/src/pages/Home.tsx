@@ -55,17 +55,13 @@ export default function Home() {
             </div>
 
             {/* Right Visual */}
-            <div className="relative h-96 lg:h-full min-h-96">
-              <div className="absolute inset-0 bg-gradient-to-br from-gold/20 to-transparent rounded-2xl" />
+            <div className="relative h-96 lg:h-full min-h-96 rounded-2xl overflow-hidden">
+              <img 
+                src="/ahmed-profile.jpg" 
+                alt="Ahmed Andaloussi - Athéte Paralympien" 
+                className="w-full h-full object-cover"
+              />
               <div className="absolute inset-0 border-2 border-gold/30 rounded-2xl" />
-              
-              {/* Placeholder for image */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <img src="/logo.svg" alt="Andaloussi Coaching" className="w-32 h-32 mx-auto mb-4" />
-                  <p className="text-gray-400 text-sm">Photo du profil à ajouter</p>
-                </div>
-              </div>
             </div>
           </div>
         </div>

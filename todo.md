@@ -39,4 +39,4 @@
 ## Améliorations et Contenu
 - [x] Créer logo SVG haute qualité basé sur le design Instagram
 - [x] Intégrer le logo SVG dans le Header et Footer
-- [ ] Ajouter des images professionnelles du profil
+- [x] Ajouter des images professionnelles du profil
