@@ -36,14 +36,22 @@ export default function Dashboard() {
             <h1 className="text-2xl font-bold text-black">Mon Espace</h1>
             <p className="text-sm text-gray-600">Bienvenue, {user?.name}</p>
           </div>
-          <Button
-            onClick={logout}
-            variant="outline"
-            className="flex items-center gap-2"
-          >
-            <LogOut className="w-4 h-4" />
-            Déconnexion
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => navigate("/progress")}
+              className="bg-gold text-black hover:bg-gold/90"
+            >
+              Mon Suivi
+            </Button>
+            <Button
+              onClick={logout}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <LogOut className="w-4 h-4" />
+              Déconnexion
+            </Button>
+          </div>
         </div>
       </header>
 

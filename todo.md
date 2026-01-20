@@ -60,3 +60,12 @@
 - [x] Créer interface de gestion des ressources (PDFs/vidéos)
 - [x] Implémenter système de notifications par email
 - [x] Tests des nouvelles fonctionnalités
+
+## Suivi de Progression
+- [x] Créer modèle de données pour les mesures de progression (poids, performances, etc.)
+- [x] Créer page de suivi de progression avec graphiques
+- [x] Implémenter interface d'ajout de mesures pour les clients
+- [ ] Ajouter interface d'administration pour enregistrer les mesures des clients
+- [x] Créer graphiques d'évolution (poids, performances, etc.)
+- [ ] Implémenter système de rappel/notifications pour les mesures
+- [x] Tests du suivi de progression

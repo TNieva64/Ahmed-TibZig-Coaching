@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -75,3 +75,38 @@ export const programResources = mysqlTable("programResources", {
 
 export type ProgramResource = typeof programResources.$inferSelect;
 export type InsertProgramResource = typeof programResources.$inferInsert;
+
+/**
+ * Progress Metrics - Tracks client progress (weight, performance, etc.)
+ */
+export const progressMetrics = mysqlTable("progressMetrics", {
+  id: int("id").autoincrement().primaryKey(),
+  clientProgramId: int("clientProgramId").notNull(),
+  metricType: mysqlEnum("metricType", ["weight", "bodyFat", "performance", "energy", "custom"]).notNull(),
+  value: decimal("value", { precision: 10, scale: 2 }).notNull(),
+  unit: varchar("unit", { length: 50 }),
+  notes: text("notes"),
+  recordedAt: timestamp("recordedAt").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ProgressMetric = typeof progressMetrics.$inferSelect;
+export type InsertProgressMetric = typeof progressMetrics.$inferInsert;
+
+/**
+ * Progress Goals - Goals set for each client program
+ */
+export const progressGoals = mysqlTable("progressGoals", {
+  id: int("id").autoincrement().primaryKey(),
+  clientProgramId: int("clientProgramId").notNull(),
+  goalType: mysqlEnum("goalType", ["weight", "bodyFat", "performance", "custom"]).notNull(),
+  targetValue: decimal("targetValue", { precision: 10, scale: 2 }).notNull(),
+  unit: varchar("unit", { length: 50 }),
+  startValue: decimal("startValue", { precision: 10, scale: 2 }),
+  description: text("description"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ProgressGoal = typeof progressGoals.$inferSelect;
+export type InsertProgressGoal = typeof progressGoals.$inferInsert;

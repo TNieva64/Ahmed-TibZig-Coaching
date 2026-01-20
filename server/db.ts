@@ -1,6 +1,6 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, programs, clientPrograms, programResources } from "../drizzle/schema";
+import { InsertUser, users, programs, clientPrograms, programResources, progressMetrics, progressGoals, InsertProgressMetric, InsertProgressGoal } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -161,5 +161,78 @@ export async function getAllPrograms() {
   } catch (error) {
     console.error("[Database] Failed to get programs:", error);
     return [];
+  }
+}
+
+// Progress tracking functions
+
+export async function getProgressMetrics(clientProgramId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get progress metrics: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db
+      .select()
+      .from(progressMetrics)
+      .where(eq(progressMetrics.clientProgramId, clientProgramId))
+      .orderBy(desc(progressMetrics.recordedAt));
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get progress metrics:", error);
+    return [];
+  }
+}
+
+export async function getProgressGoals(clientProgramId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get progress goals: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db
+      .select()
+      .from(progressGoals)
+      .where(eq(progressGoals.clientProgramId, clientProgramId));
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get progress goals:", error);
+    return [];
+  }
+}
+
+export async function addProgressMetric(metric: InsertProgressMetric) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot add progress metric: database not available");
+    return undefined;
+  }
+
+  try {
+    const result = await db.insert(progressMetrics).values(metric);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to add progress metric:", error);
+    return undefined;
+  }
+}
+
+export async function addProgressGoal(goal: InsertProgressGoal) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot add progress goal: database not available");
+    return undefined;
+  }
+
+  try {
+    const result = await db.insert(progressGoals).values(goal);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to add progress goal:", error);
+    return undefined;
   }
 }
