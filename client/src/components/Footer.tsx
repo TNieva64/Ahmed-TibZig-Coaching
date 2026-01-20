@@ -21,31 +21,23 @@ export default function Footer() {
             <h3 className="text-lg font-semibold text-gold mb-4">Navigation</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/">
-                  <a className="text-gray-300 hover:text-gold transition-colors text-sm">
-                    Accueil
-                  </a>
+                <Link href="/" className="text-gray-300 hover:text-gold transition-colors text-sm block">
+                  Accueil
                 </Link>
               </li>
               <li>
-                <Link href="/parcours">
-                  <a className="text-gray-300 hover:text-gold transition-colors text-sm">
-                    Mon Parcours
-                  </a>
+                <Link href="/parcours" className="text-gray-300 hover:text-gold transition-colors text-sm block">
+                  Mon Parcours
                 </Link>
               </li>
               <li>
-                <Link href="/coaching">
-                  <a className="text-gray-300 hover:text-gold transition-colors text-sm">
-                    Coaching
-                  </a>
+                <Link href="/coaching" className="text-gray-300 hover:text-gold transition-colors text-sm block">
+                  Coaching
                 </Link>
               </li>
               <li>
-                <Link href="/contact">
-                  <a className="text-gray-300 hover:text-gold transition-colors text-sm">
-                    Contact
-                  </a>
+                <Link href="/contact" className="text-gray-300 hover:text-gold transition-colors text-sm block">
+                  Contact
                 </Link>
               </li>
             </ul>
