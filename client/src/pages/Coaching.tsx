@@ -156,11 +156,9 @@ export default function Coaching() {
                     ))}
                   </div>
 
-                  <Link href="/reservation">
-                    <a className="premium-button inline-flex items-center justify-center gap-2 group mt-6">
-                      Découvrir les Packs
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </a>
+                  <Link href="/reservation" className="premium-button inline-flex items-center justify-center gap-2 group mt-6">
+                    Découvrir les Packs
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
 
@@ -240,16 +238,15 @@ export default function Coaching() {
                     ))}
                   </ul>
 
-                  <Link href="/reservation">
-                    <a
-                      className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 text-center block ${
-                        pack.popular
-                          ? 'bg-gold text-black hover:bg-white'
-                          : 'bg-black text-white hover:bg-gold hover:text-black'
-                      }`}
-                    >
-                      Choisir ce Pack
-                    </a>
+                  <Link
+                    href="/reservation"
+                    className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 text-center block ${
+                      pack.popular
+                        ? 'bg-gold text-black hover:bg-white'
+                        : 'bg-black text-white hover:bg-gold hover:text-black'
+                    }`}
+                  >
+                    Choisir ce Pack
                   </Link>
                 </div>
               </div>
@@ -302,11 +299,9 @@ export default function Coaching() {
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
             Réservez votre appel découverte gratuit. Pas d'engagement, juste une conversation pour trouver la meilleure solution pour vous.
           </p>
-          <Link href="/reservation">
-            <a className="premium-button inline-flex items-center justify-center gap-2 group">
-              Réserver mon Appel Gratuit
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </a>
+          <Link href="/reservation" className="premium-button inline-flex items-center justify-center gap-2 group">
+            Réserver mon Appel Gratuit
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </section>

@@ -32,16 +32,12 @@ export default function Home() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Link href="/reservation">
-                  <a className="premium-button inline-flex items-center justify-center gap-2 group">
-                    Réserver mon Bilan Gratuit
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </a>
+                <Link href="/reservation" className="premium-button inline-flex items-center justify-center gap-2 group">
+                  Réserver mon Bilan Gratuit
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
-                <Link href="/coaching">
-                  <a className="premium-button-outline inline-flex items-center justify-center gap-2">
-                    Découvrir les Offres
-                  </a>
+                <Link href="/coaching" className="premium-button-outline inline-flex items-center justify-center gap-2">
+                  Découvrir les Offres
                 </Link>
               </div>
 
@@ -89,57 +85,51 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Pillar 1: Transformation */}
-            <Link href="/coaching#transformation">
-              <a className="group">
-                <div className="bg-white rounded-xl p-8 border-2 border-transparent hover:border-gold transition-all duration-300 h-full">
-                  <div className="w-12 h-12 bg-gold/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-gold/30 transition-colors">
-                    <Zap className="w-6 h-6 text-gold" />
-                  </div>
-                  <h3 className="heading-md text-black mb-3">Transformation</h3>
-                  <p className="text-gray-600 mb-4">
-                    Perte de poids, prise de masse, remise en forme. Atteindre votre silhouette idéale avec un suivi personnalisé.
-                  </p>
-                  <div className="text-gold font-semibold text-sm group-hover:translate-x-2 transition-transform inline-flex items-center gap-2">
-                    En savoir plus <ArrowRight className="w-4 h-4" />
-                  </div>
+            <Link href="/coaching#transformation" className="group block">
+              <div className="bg-white rounded-xl p-8 border-2 border-transparent hover:border-gold transition-all duration-300 h-full">
+                <div className="w-12 h-12 bg-gold/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-gold/30 transition-colors">
+                  <Zap className="w-6 h-6 text-gold" />
                 </div>
-              </a>
+                <h3 className="heading-md text-black mb-3">Transformation</h3>
+                <p className="text-gray-600 mb-4">
+                  Perte de poids, prise de masse, remise en forme. Atteindre votre silhouette idéale avec un suivi personnalisé.
+                </p>
+                <div className="text-gold font-semibold text-sm group-hover:translate-x-2 transition-transform inline-flex items-center gap-2">
+                  En savoir plus <ArrowRight className="w-4 h-4" />
+                </div>
+              </div>
             </Link>
 
             {/* Pillar 2: Performance */}
-            <Link href="/coaching#performance">
-              <a className="group">
-                <div className="bg-white rounded-xl p-8 border-2 border-gold shadow-lg">
-                  <div className="w-12 h-12 bg-gold/20 rounded-lg flex items-center justify-center mb-6">
-                    <Award className="w-6 h-6 text-gold" />
-                  </div>
-                  <h3 className="heading-md text-black mb-3">Performance</h3>
-                  <p className="text-gray-600 mb-4">
-                    Triathlon, Marathon, Hyrox. Préparez-vous comme un athlète d'élite pour vos compétitions.
-                  </p>
-                  <div className="text-gold font-semibold text-sm group-hover:translate-x-2 transition-transform inline-flex items-center gap-2">
-                    En savoir plus <ArrowRight className="w-4 h-4" />
-                  </div>
+            <Link href="/coaching#performance" className="group block">
+              <div className="bg-white rounded-xl p-8 border-2 border-gold shadow-lg">
+                <div className="w-12 h-12 bg-gold/20 rounded-lg flex items-center justify-center mb-6">
+                  <Award className="w-6 h-6 text-gold" />
                 </div>
-              </a>
+                <h3 className="heading-md text-black mb-3">Performance</h3>
+                <p className="text-gray-600 mb-4">
+                  Triathlon, Marathon, Hyrox. Préparez-vous comme un athlète d'élite pour vos compétitions.
+                </p>
+                <div className="text-gold font-semibold text-sm group-hover:translate-x-2 transition-transform inline-flex items-center gap-2">
+                  En savoir plus <ArrowRight className="w-4 h-4" />
+                </div>
+              </div>
             </Link>
 
             {/* Pillar 3: Inclusif */}
-            <Link href="/coaching#inclusif">
-              <a className="group">
-                <div className="bg-white rounded-xl p-8 border-2 border-transparent hover:border-gold transition-all duration-300 h-full">
-                  <div className="w-12 h-12 bg-gold/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-gold/30 transition-colors">
-                    <Users className="w-6 h-6 text-gold" />
-                  </div>
-                  <h3 className="heading-md text-black mb-3">Coaching Inclusif</h3>
-                  <p className="text-gray-600 mb-4">
-                    Handi-coaching adapté à votre réalité. Mon expertise de paralympien pour votre progression.
-                  </p>
-                  <div className="text-gold font-semibold text-sm group-hover:translate-x-2 transition-transform inline-flex items-center gap-2">
-                    En savoir plus <ArrowRight className="w-4 h-4" />
-                  </div>
+            <Link href="/coaching#inclusif" className="group block">
+              <div className="bg-white rounded-xl p-8 border-2 border-transparent hover:border-gold transition-all duration-300 h-full">
+                <div className="w-12 h-12 bg-gold/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-gold/30 transition-colors">
+                  <Users className="w-6 h-6 text-gold" />
                 </div>
-              </a>
+                <h3 className="heading-md text-black mb-3">Coaching Inclusif</h3>
+                <p className="text-gray-600 mb-4">
+                  Handi-coaching adapté à votre réalité. Mon expertise de paralympien pour votre progression.
+                </p>
+                <div className="text-gold font-semibold text-sm group-hover:translate-x-2 transition-transform inline-flex items-center gap-2">
+                  En savoir plus <ArrowRight className="w-4 h-4" />
+                </div>
+              </div>
             </Link>
           </div>
         </div>
@@ -154,11 +144,9 @@ export default function Home() {
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
             Réservez votre appel découverte gratuit pour discuter de vos objectifs et trouver le programme idéal.
           </p>
-          <Link href="/reservation">
-            <a className="premium-button inline-flex items-center justify-center gap-2 group">
-              Réserver Maintenant
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </a>
+          <Link href="/reservation" className="premium-button inline-flex items-center justify-center gap-2 group">
+            Réserver Maintenant
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </section>

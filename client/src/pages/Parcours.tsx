@@ -168,11 +168,9 @@ export default function Parcours() {
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Réservez votre appel découverte gratuit pour discuter de vos objectifs.
           </p>
-          <Link href="/reservation">
-            <a className="premium-button inline-flex items-center justify-center gap-2 group">
-              Réserver mon Bilan Gratuit
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </a>
+          <Link href="/reservation" className="premium-button inline-flex items-center justify-center gap-2 group">
+            Réserver mon Bilan Gratuit
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </section>

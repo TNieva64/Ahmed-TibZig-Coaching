@@ -34,3 +34,4 @@
 
 ## Bugs à Corriger
 - [x] Erreur : <a> cannot contain a nested <a> dans Header.tsx
+- [x] Erreur : <a> cannot contain a nested <a> dans Home.tsx, Parcours.tsx, Coaching.tsx
