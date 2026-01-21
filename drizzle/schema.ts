@@ -377,3 +377,64 @@ export const mealLogs = mysqlTable("meal_logs", {
 
 export type MealLog = typeof mealLogs.$inferSelect;
 export type InsertMealLog = typeof mealLogs.$inferInsert;
+
+// Dashboard IA - Insights et analyses intelligentes
+export const aiInsights = mysqlTable("ai_insights", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  insightType: mysqlEnum("insight_type", [
+    "trend_analysis",
+    "prediction",
+    "alert",
+    "recommendation",
+    "milestone"
+  ]).notNull(),
+  category: mysqlEnum("category", [
+    "workout",
+    "nutrition",
+    "recovery",
+    "progress",
+    "health"
+  ]).notNull(),
+  priority: mysqlEnum("priority", ["low", "medium", "high", "critical"]).default("medium").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  message: text("message").notNull(),
+  data: text("data"), // JSON object with insight-specific data
+  isRead: int("is_read").default(0).notNull(), // boolean
+  expiresAt: timestamp("expires_at"), // Optional expiration for time-sensitive insights
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type AiInsight = typeof aiInsights.$inferSelect;
+export type InsertAiInsight = typeof aiInsights.$inferInsert;
+
+// Score de santé global
+export const healthScores = mysqlTable("health_scores", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  overallScore: int("overall_score").notNull(), // 0-100
+  workoutScore: int("workout_score").notNull(), // 0-100
+  nutritionScore: int("nutrition_score").notNull(), // 0-100
+  recoveryScore: int("recovery_score").notNull(), // 0-100
+  consistencyScore: int("consistency_score").notNull(), // 0-100
+  calculatedAt: timestamp("calculated_at").defaultNow().notNull(),
+});
+
+export type HealthScore = typeof healthScores.$inferSelect;
+export type InsertHealthScore = typeof healthScores.$inferInsert;
+
+// Prédictions de progression
+export const progressPredictions = mysqlTable("progress_predictions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  goalId: int("goal_id").references(() => progressGoals.id, { onDelete: "cascade" }),
+  predictedDate: timestamp("predicted_date").notNull(), // Date prédite d'atteinte de l'objectif
+  confidenceLevel: int("confidence_level").notNull(), // 0-100 (pourcentage de confiance)
+  currentTrend: varchar("current_trend", { length: 50 }).notNull(), // improving, stable, declining
+  weeklyChangeRate: decimal("weekly_change_rate", { precision: 10, scale: 2 }), // Taux de changement hebdomadaire
+  recommendedActions: text("recommended_actions"), // JSON array of recommendations
+  calculatedAt: timestamp("calculated_at").defaultNow().notNull(),
+});
+
+export type ProgressPrediction = typeof progressPredictions.$inferSelect;
+export type InsertProgressPrediction = typeof progressPredictions.$inferInsert;

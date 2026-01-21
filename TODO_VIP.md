@@ -58,13 +58,13 @@
 - [ ] Tests de l'onboarding
 
 ### Dashboard IA avec Insights
-- [ ] Implémenter analyse automatique des tendances
-- [ ] Créer système de prédictions (objectif atteint dans X semaines)
-- [ ] Ajouter alertes intelligentes (baisse d'énergie, repos recommandé)
+- [x] Implémenter analyse automatique des tendances
+- [x] Créer système de prédictions (objectif atteint dans X semaines)
+- [x] Ajouter alertes intelligentes (baisse d'énergie, repos recommandé)
 - [ ] Implémenter comparaison avec autres clients (percentile)
-- [ ] Créer score de santé global (0-100)
-- [ ] Ajouter graphiques de tendances
-- [ ] Tests du dashboard IA
+- [x] Créer score de santé global (0-100)
+- [x] Ajouter graphiques de tendances
+- [x] Tests du dashboard IA
 
 ### Système de Gamification
 - [x] Créer table `achievements` pour les badges
