@@ -44,7 +44,7 @@ export default function Dashboard() {
               Mon Suivi
             </Button>
             <Button
-              onClick={() => navigate("/gamification")}
+              onClick={() => navigate("/badges")}
               className="bg-orange-500 text-white hover:bg-orange-600 flex items-center gap-2"
             >
               <Trophy className="w-4 h-4" />

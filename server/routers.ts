@@ -28,6 +28,7 @@ import { nutritionRouter } from "./nutritionRouter";
 import { aiInsightsRouter } from "./aiInsightsRouter";
 import { reportsRouter } from "./reportsRouter";
 import { referralRouter } from "./referralRouter";
+import { badgeRouter } from "./badgeRouter";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -49,6 +50,7 @@ export const appRouter = router({
   aiInsights: aiInsightsRouter,
   reports: reportsRouter,
   referral: referralRouter,
+  badge: badgeRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

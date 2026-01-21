@@ -177,3 +177,10 @@
 - **Intégrations** : 0/11 tâches complétées
 
 **TOTAL : 30/124 tâches complétées (24%)** 
+
+### Badges de Motivation
+- [x] Créer 15 badges prédéfinis avec critères d'obtention (workout, streak, milestone, special)
+- [x] Implémenter système de détection automatique des badges (checkAndAwardBadges)
+- [x] Créer animations de célébration (confetti canvas-confetti, modal)
+- [x] Intégrer affichage des badges dans dashboard (page Badges, grille, stats)
+- [x] Tests du système de badges

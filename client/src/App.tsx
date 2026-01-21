@@ -20,7 +20,8 @@ import Onboarding from "./pages/Onboarding";
 import Nutrition from "./pages/Nutrition";
 import AIInsights from "./pages/AIInsights";
 import Reports from "./pages/Reports";
-import Referral from "./pages/Referral";
+import Referral from "@/pages/Referral";
+import Badges from "@/pages/Badges";
 import NotificationSettings from "./pages/NotificationSettings";
 import Messages from "./pages/Messages";
 import Workouts from "./pages/Workouts";
@@ -45,7 +46,8 @@ function Router() {
       <Route path="/nutrition" component={Nutrition} />
       <Route path="/ai-insights" component={AIInsights} />
       <Route path="/reports" component={Reports} />
-      <Route path="/referral" component={Referral} />
+        <Route path="/referral" component={Referral} />
+        <Route path="/badges" component={Badges} />
       <Route path="/notifications" component={NotificationSettings} />
       <Route path={"/messages"} component={Messages} />
       <Route path={"/workouts"} component={Workouts} />
