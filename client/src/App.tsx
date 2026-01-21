@@ -23,6 +23,7 @@ import Reports from "./pages/Reports";
 import Referral from "@/pages/Referral";
 import Badges from "@/pages/Badges";
 import Recipes from "@/pages/Recipes";
+import EmailAdmin from "@/pages/EmailAdmin";
 import NotificationSettings from "./pages/NotificationSettings";
 import Messages from "./pages/Messages";
 import Workouts from "./pages/Workouts";
@@ -50,6 +51,7 @@ function Router() {
         <Route path="/referral" component={Referral} />
         <Route path="/badges" component={Badges} />
         <Route path="/recipes" component={Recipes} />
+        <Route path="/admin/emails" component={EmailAdmin} />
       <Route path="/notifications" component={NotificationSettings} />
       <Route path={"/messages"} component={Messages} />
       <Route path={"/workouts"} component={Workouts} />

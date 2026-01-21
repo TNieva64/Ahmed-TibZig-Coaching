@@ -192,3 +192,12 @@
 - [x] Créer interface frontend avec filtres et recherche (page Recipes complète)
 - [x] Implémenter générateur de liste de courses (generateShoppingList avec agrégation)
 - [x] Tests du système de recettes
+
+### Emails Automatiques d'Onboarding
+- [x] Créer schéma de base de données pour tracking des emails (emailLogs, emailTemplates, emailUnsubscribes)
+- [x] Implémenter templates d'emails HTML professionnels (J+0 bienvenue, J+3 conseils, J+7 check-in)
+- [x] Créer système d'envoi d'emails avec intégration SMTP (nodemailer)
+- [x] Implémenter scheduler automatique pour séquence d'onboarding (emailScheduler.ts)
+- [x] Créer interface d'administration pour gérer les templates (page EmailAdmin)
+- [x] Ajouter système de désabonnement (unsubscribe avec catégories)
+- [x] Tests du système d'emails

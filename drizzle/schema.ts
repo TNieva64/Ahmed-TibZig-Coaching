@@ -605,3 +605,46 @@ export const mealPlanRecipes = mysqlTable("mealPlanRecipes", {
 
 export type MealPlanRecipe = typeof mealPlanRecipes.$inferSelect;
 export type InsertMealPlanRecipe = typeof mealPlanRecipes.$inferInsert;
+
+// Email System Tables
+export const emailTemplates = mysqlTable("email_templates", {
+  id: int("id").autoincrement().primaryKey(),
+  name: text("name").notNull(), // "welcome", "day3_tips", "day7_checkin"
+  subject: text("subject").notNull(),
+  htmlBody: text("html_body").notNull(),
+  textBody: text("text_body"),
+  category: text("category").notNull(), // "onboarding", "marketing", "transactional"
+  isActive: int("is_active").notNull().default(1),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const emailLogs = mysqlTable("email_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull().references(() => users.id),
+  templateId: int("template_id").references(() => emailTemplates.id),
+  templateName: text("template_name").notNull(), // For tracking even if template is deleted
+  recipientEmail: text("recipient_email").notNull(),
+  subject: text("subject").notNull(),
+  status: text("status").notNull(), // "pending", "sent", "failed", "bounced"
+  sentAt: timestamp("sent_at"),
+  failedReason: text("failed_reason"),
+  openedAt: timestamp("opened_at"),
+  clickedAt: timestamp("clicked_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const emailUnsubscribes = mysqlTable("email_unsubscribes", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull().references(() => users.id),
+  email: text("email").notNull(),
+  category: text("category").notNull(), // "all", "marketing", "onboarding"
+  unsubscribedAt: timestamp("unsubscribed_at").defaultNow().notNull(),
+});
+
+export type InsertEmailTemplate = typeof emailTemplates.$inferInsert;
+export type SelectEmailTemplate = typeof emailTemplates.$inferSelect;
+export type InsertEmailLog = typeof emailLogs.$inferInsert;
+export type SelectEmailLog = typeof emailLogs.$inferSelect;
+export type InsertEmailUnsubscribe = typeof emailUnsubscribes.$inferInsert;
+export type SelectEmailUnsubscribe = typeof emailUnsubscribes.$inferSelect;
