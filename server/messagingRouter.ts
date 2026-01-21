@@ -3,6 +3,7 @@ import { router, protectedProcedure } from "./_core/trpc";
 import { getOrCreateConversation, getUserConversations, getConversationMessages, getTotalUnreadCount, getDb } from "./db";
 import { users } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
+import { storagePut } from "./storage";
 
 export const messagingRouter = router({
   // Get or create conversation with coach
@@ -56,4 +57,41 @@ export const messagingRouter = router({
     const isCoach = ctx.user.role === 'admin';
     return await getTotalUnreadCount(ctx.user.id, isCoach);
   }),
+
+  // Upload media (photo/video) for messaging
+  uploadMedia: protectedProcedure
+    .input(
+      z.object({
+        fileName: z.string(),
+        fileType: z.string(), // MIME type
+        fileData: z.string(), // Base64 encoded file data
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        // Decode base64 file data
+        const buffer = Buffer.from(input.fileData, "base64");
+
+        // Generate unique file key
+        const timestamp = Date.now();
+        const randomSuffix = Math.random().toString(36).substring(2, 8);
+        const extension = input.fileName.split(".").pop() || "bin";
+        const fileKey = `messages/${ctx.user.id}/${timestamp}-${randomSuffix}.${extension}`;
+
+        // Upload to S3
+        const { url } = await storagePut(fileKey, buffer, input.fileType);
+
+        return {
+          success: true,
+          fileUrl: url,
+          fileKey,
+        };
+      } catch (error) {
+        console.error("Error uploading media:", error);
+        return {
+          success: false,
+          error: "Failed to upload media",
+        };
+      }
+    }),
 });

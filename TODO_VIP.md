@@ -7,11 +7,11 @@
 - [x] Créer table `conversations` pour grouper les messages
 - [x] Implémenter Socket.IO pour communication temps réel
 - [x] Créer interface de chat (liste conversations + fenêtre de discussion)
-- [ ] Ajouter support d'envoi de photos/vidéos
+- [x] Ajouter support d'envoi de photos/vidéos (upload S3, preview, affichage)
 - [x] Implémenter notifications en temps réel
 - [x] Créer badge "Messages non lus"
 - [x] Ajouter historique des conversations
-- [ ] Tests de la messagerie
+- [x] Tests de la messagerie
 
 ### Plans d'Entraînement Adaptatifs
 - [x] Créer table `workout_sessions` pour les séances planifiées
