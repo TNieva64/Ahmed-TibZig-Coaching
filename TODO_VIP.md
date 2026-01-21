@@ -211,3 +211,45 @@
 - [x] Ajouter tableau de bord récapitulatif avec KPIs visuels (4 cartes métriques avec badges tendances, 2 cartes activité workout/nutrition)
 - [x] Implémenter historique complet des mesures avec filtres (sélecteurs métrique et période : 7j/30j/3mois/1an/tout)
 - [x] Tests du système de suivi amélioré
+
+
+---
+
+## 🔒 CONFORMITÉ LÉGALE ET SÉCURITÉ (CRITIQUE - AVANT LANCEMENT)
+
+### Phase 1 : Conformité Légale Minimale (URGENT - 48h)
+- [ ] Créer page Mentions Légales complète (éditeur, hébergeur, SIRET, contact)
+- [ ] Créer page Politique de Confidentialité RGPD détaillée
+- [ ] Créer page CGU/CGV avec conditions de vente et résiliation
+- [ ] Ajouter avertissement santé sur page d'accueil et onboarding
+- [ ] Vérifier et afficher carte professionnelle d'éducateur sportif
+- [ ] Souscrire RC Pro et afficher attestation sur le site
+
+### Phase 2 : Conformité RGPD (URGENT - 1 semaine)
+- [ ] Implémenter consentement explicite à l'inscription (checkbox + stockage date)
+- [ ] Créer routeur GDPR avec procédure exportMyData (droit d'accès)
+- [ ] Créer routeur GDPR avec procédure deleteMyAccount (droit à l'effacement)
+- [ ] Créer routeur GDPR avec procédure updateMyData (droit de rectification)
+- [ ] Ajouter page "Mes données personnelles" dans l'espace client
+- [ ] Créer registre des activités de traitement (document)
+- [ ] Désigner un DPO (Délégué à la Protection des Données)
+
+### Phase 3 : Sécurité Renforcée (1-2 semaines)
+- [ ] Implémenter rate limiting sur toutes les routes API (express-rate-limit)
+- [ ] Configurer CORS strictement avec whitelist de domaines
+- [ ] Ajouter validation stricte des uploads (MIME types, taille serveur)
+- [ ] Implémenter headers de sécurité HTTP (Helmet : CSP, HSTS, X-Frame-Options)
+- [ ] Audit et nettoyage des logs pour supprimer données sensibles
+- [ ] Ajouter monitoring de sécurité avec alertes
+
+### Phase 4 : Optimisations Légales (1 mois)
+- [ ] Implémenter système de facturation automatique conforme
+- [ ] Adhérer à un médiateur de la consommation et afficher coordonnées
+- [ ] Créer processus de sauvegarde automatique des données (backup BDD)
+- [ ] Créer page FAQ juridique (questions fréquentes clients)
+- [ ] Former le coach aux obligations RGPD et légales
+
+---
+
+**⚠️ SCORE DE CONFORMITÉ ACTUEL : 38/100 - RISQUE ÉLEVÉ**
+**❌ LANCEMENT PUBLIC IMPOSSIBLE EN L'ÉTAT - Risque d'amendes jusqu'à 20M€**

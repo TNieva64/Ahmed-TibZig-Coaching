@@ -24,6 +24,9 @@ import Referral from "@/pages/Referral";
 import Badges from "@/pages/Badges";
 import Recipes from "@/pages/Recipes";
 import EmailAdmin from "@/pages/EmailAdmin";
+import MentionsLegales from "@/pages/MentionsLegales";
+import PolitiqueConfidentialite from "@/pages/PolitiqueConfidentialite";
+import ConditionsGenerales from "@/pages/ConditionsGenerales";
 import NotificationSettings from "./pages/NotificationSettings";
 import Messages from "./pages/Messages";
 import Workouts from "./pages/Workouts";
@@ -51,7 +54,10 @@ function Router() {
         <Route path="/referral" component={Referral} />
         <Route path="/badges" component={Badges} />
         <Route path="/recipes" component={Recipes} />
-        <Route path="/admin/emails" component={EmailAdmin} />
+        <Route path="/email-admin" component={EmailAdmin} />
+        <Route path="/mentions-legales" component={MentionsLegales} />
+        <Route path="/politique-confidentialite" component={PolitiqueConfidentialite} />
+        <Route path="/conditions-generales" component={ConditionsGenerales} />
       <Route path="/notifications" component={NotificationSettings} />
       <Route path={"/messages"} component={Messages} />
       <Route path={"/workouts"} component={Workouts} />
