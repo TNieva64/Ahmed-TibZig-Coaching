@@ -11,6 +11,7 @@ export default function Header() {
     { label: 'Coaching', href: '/coaching' },
     { label: 'Contact', href: '/contact' },
     { label: 'Entraînement', href: '/workouts' },
+    { label: 'Exercices', href: '/exercises' },
     { label: 'Messages', href: '/messages' },
     { label: 'Mon Espace', href: '/dashboard' },
   ];

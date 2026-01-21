@@ -27,7 +27,7 @@
 ### Analyse Vidéo de Forme
 - [x] Créer table `form_videos` pour stocker les vidéos
 - [x] Implémenter routeur tRPC pour analyse vidéo
-- [ ] Créer interface d'upload pour clients
+- [x] Créer interface d'upload pour clients
 - [ ] Implémenter lecteur vidéo avec annotations (Fabric.js ou Konva)
 - [ ] Ajouter outils d'annotation (flèches, cercles, texte)
 - [ ] Créer système de comparaison avant/après
@@ -41,7 +41,7 @@
 - [x] Créer table `exercises` pour les exercices
 - [x] Créer table `user_favorite_exercises` pour favoris
 - [x] Implémenter routeur tRPC pour exercices
-- [ ] Créer page de bibliothèque avec filtres
+- [x] Créer page de bibliothèque avec filtres
 - [x] Ajouter système de favoris (backend)
 - [ ] Implémenter playlists personnalisées
 - [x] Ajouter section exercices adaptés handicap (backend)
@@ -173,10 +173,10 @@
 
 ## 📊 ÉTAT D'AVANCEMENT GLOBAL
 
-- **P0 (Critique)** : 18/27 tâches complétées
-- **P1 (Important)** : 10/40 tâches complétées
+- **P0 (Critique)** : 19/27 tâches complétées
+- **P1 (Important)** : 11/40 tâches complétées
 - **P2 (Premium)** : 0/28 tâches complétées
 - **P3 (Avancé)** : 0/18 tâches complétées
 - **Intégrations** : 0/11 tâches complétées
 
-**TOTAL : 28/124 tâches complétées (23%)**
+**TOTAL : 30/124 tâches complétées (24%)** 
