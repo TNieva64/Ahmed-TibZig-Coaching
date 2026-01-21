@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import ProgramDetail from "./pages/ProgramDetail";
 import Admin from "./pages/Admin";
 import Progress from "./pages/Progress";
+import Messages from "./pages/Messages";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -27,6 +28,7 @@ function Router() {
       <Route path={"/program/:programId"} component={ProgramDetail} />
       <Route path={"/admin"} component={Admin} />
       <Route path={"/progress"} component={Progress} />
+      <Route path={"/messages"} component={Messages} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

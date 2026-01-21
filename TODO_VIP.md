@@ -6,11 +6,11 @@
 - [x] Créer table `messages` dans la base de données
 - [x] Créer table `conversations` pour grouper les messages
 - [x] Implémenter Socket.IO pour communication temps réel
-- [ ] Créer interface de chat (liste conversations + fenêtre de discussion)
+- [x] Créer interface de chat (liste conversations + fenêtre de discussion)
 - [ ] Ajouter support d'envoi de photos/vidéos
-- [ ] Implémenter notifications en temps réel
-- [ ] Créer badge "Messages non lus"
-- [ ] Ajouter historique des conversations
+- [x] Implémenter notifications en temps réel
+- [x] Créer badge "Messages non lus"
+- [x] Ajouter historique des conversations
 - [ ] Tests de la messagerie
 
 ### Plans d'Entraînement Adaptatifs
