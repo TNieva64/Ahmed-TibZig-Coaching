@@ -2,7 +2,7 @@ import { z } from "zod";
 import { router, protectedProcedure } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "./db";
-import { workoutSessions, workoutCompletions, workoutReminders, InsertWorkoutSession, InsertWorkoutCompletion } from "../drizzle/schema";
+import { workoutSessions, workoutCompletions, workoutReminders, InsertWorkoutSession, InsertWorkoutCompletion, InsertWorkoutReminder } from "../drizzle/schema";
 import { eq, and, gte, lte, desc } from "drizzle-orm";
 
 // Admin-only procedure
@@ -99,6 +99,22 @@ export const workoutRouter = router({
 
       const result = await db.insert(workoutSessions).values(newSession);
       const insertId = (result as any).insertId;
+
+      // Create reminder 2 hours before the session
+      const reminderTime = new Date(input.scheduledDate);
+      reminderTime.setHours(reminderTime.getHours() - 2);
+
+      // Only create reminder if it's in the future
+      if (reminderTime > new Date()) {
+        const newReminder: InsertWorkoutReminder = {
+          userId: input.userId,
+          sessionId: Number(insertId),
+          reminderTime,
+          isSent: 0,
+        };
+        await db.insert(workoutReminders).values(newReminder);
+      }
+
       return { id: Number(insertId), success: true };
     }),
 
@@ -243,5 +259,100 @@ export const workoutRouter = router({
         .limit(input.limit || 50);
 
       return completions;
+    }),
+
+  // Create workout reminder (automatically called when creating/updating session)
+  createReminder: protectedProcedure
+    .input(z.object({
+      userId: z.number(),
+      sessionId: z.number(),
+      reminderTime: z.date(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+
+      const newReminder: InsertWorkoutReminder = {
+        userId: input.userId,
+        sessionId: input.sessionId,
+        reminderTime: input.reminderTime,
+        isSent: 0,
+      };
+
+      const result = await db.insert(workoutReminders).values(newReminder);
+      return { success: true, id: (result as any).insertId };
+    }),
+
+  // Get user's upcoming reminders
+  getUserReminders: protectedProcedure
+    .input(z.object({
+      userId: z.number().optional(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+
+      const userId = input.userId || ctx.user.id;
+
+      // Only allow users to see their own reminders, unless admin
+      if (userId !== ctx.user.id && ctx.user.role !== 'admin') {
+        throw new TRPCError({ code: 'FORBIDDEN' });
+      }
+
+      const reminders = await db
+        .select()
+        .from(workoutReminders)
+        .where(
+          and(
+            eq(workoutReminders.userId, userId),
+            eq(workoutReminders.isSent, 0),
+            gte(workoutReminders.reminderTime, new Date())
+          )
+        )
+        .orderBy(workoutReminders.reminderTime);
+
+      return reminders;
+    }),
+
+  // Mark reminder as sent (called by notification system)
+  markReminderSent: protectedProcedure
+    .input(z.object({ reminderId: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+
+      await db
+        .update(workoutReminders)
+        .set({ isSent: 1 })
+        .where(eq(workoutReminders.id, input.reminderId));
+
+      return { success: true };
+    }),
+
+  // Delete reminder
+  deleteReminder: protectedProcedure
+    .input(z.object({ reminderId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+
+      // Get reminder to check ownership
+      const reminder = await db
+        .select()
+        .from(workoutReminders)
+        .where(eq(workoutReminders.id, input.reminderId))
+        .limit(1);
+
+      if (reminder.length === 0) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Reminder not found' });
+      }
+
+      // Check access
+      if (reminder[0].userId !== ctx.user.id && ctx.user.role !== 'admin') {
+        throw new TRPCError({ code: 'FORBIDDEN' });
+      }
+
+      await db.delete(workoutReminders).where(eq(workoutReminders.id, input.reminderId));
+      return { success: true };
     }),
 });

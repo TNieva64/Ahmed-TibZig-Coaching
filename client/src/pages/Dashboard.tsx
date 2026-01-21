@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Loader2, LogOut, FileText, Play, Trophy, Brain, BarChart3, Share2 } from "lucide-react";
+import { Loader2, LogOut, FileText, Play, Trophy, Brain, BarChart3, Share2, Bell } from "lucide-react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useEffect } from "react";
@@ -70,6 +70,13 @@ export default function Dashboard() {
             >
               <Share2 className="w-4 h-4" />
               Parrainage
+            </Button>
+            <Button
+              onClick={() => navigate("/notifications")}
+              className="bg-yellow-600 text-white hover:bg-yellow-700 flex items-center gap-2"
+            >
+              <Bell className="w-4 h-4" />
+              Notifications
             </Button>
             <Button
               onClick={logout}
