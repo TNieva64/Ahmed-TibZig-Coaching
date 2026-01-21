@@ -305,3 +305,75 @@ export const userFavoriteExercises = mysqlTable("userFavoriteExercises", {
 
 export type UserFavoriteExercise = typeof userFavoriteExercises.$inferSelect;
 export type InsertUserFavoriteExercise = typeof userFavoriteExercises.$inferInsert;
+
+// Onboarding VIP
+export const onboardingResponses = mysqlTable("onboarding_responses", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  // Objectifs
+  primaryGoal: varchar("primary_goal", { length: 100 }), // weight_loss, muscle_gain, performance, health
+  specificGoals: text("specific_goals"), // JSON array
+  targetWeight: int("target_weight"),
+  targetDate: timestamp("target_date"),
+  // Historique sportif
+  currentActivityLevel: varchar("current_activity_level", { length: 50 }), // sedentary, light, moderate, active, very_active
+  sportsHistory: text("sports_history"),
+  previousInjuries: text("previous_injuries"),
+  // Contraintes
+  healthConditions: text("health_conditions"),
+  medications: text("medications"),
+  dietaryRestrictions: text("dietary_restrictions"),
+  availableEquipment: text("available_equipment"), // JSON array
+  weeklyAvailability: int("weekly_availability"), // hours per week
+  preferredWorkoutTime: varchar("preferred_workout_time", { length: 50 }), // morning, afternoon, evening
+  // Motivation
+  motivationLevel: int("motivation_level"), // 1-10
+  motivationFactors: text("motivation_factors"), // JSON array
+  obstacles: text("obstacles"),
+  // Complétion
+  completedAt: timestamp("completed_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+});
+
+export type OnboardingResponse = typeof onboardingResponses.$inferSelect;
+export type InsertOnboardingResponse = typeof onboardingResponses.$inferInsert;
+
+// Plans nutritionnels
+export const nutritionPlans = mysqlTable("nutrition_plans", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  // Macros
+  dailyCalories: int("daily_calories").notNull(),
+  proteinGrams: int("protein_grams").notNull(),
+  carbsGrams: int("carbs_grams").notNull(),
+  fatGrams: int("fat_grams").notNull(),
+  // Métadonnées
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date"),
+  isActive: int("is_active").default(1).notNull(), // boolean
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+});
+
+export type NutritionPlan = typeof nutritionPlans.$inferSelect;
+export type InsertNutritionPlan = typeof nutritionPlans.$inferInsert;
+
+export const mealLogs = mysqlTable("meal_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  nutritionPlanId: int("nutrition_plan_id").references(() => nutritionPlans.id, { onDelete: "set null" }),
+  date: timestamp("date").notNull(),
+  mealType: varchar("meal_type", { length: 50 }).notNull(), // breakfast, lunch, dinner, snack
+  foodItems: text("food_items").notNull(), // JSON array
+  calories: int("calories").notNull(),
+  proteinGrams: int("protein_grams").notNull(),
+  carbsGrams: int("carbs_grams").notNull(),
+  fatGrams: int("fat_grams").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type MealLog = typeof mealLogs.$inferSelect;
+export type InsertMealLog = typeof mealLogs.$inferInsert;

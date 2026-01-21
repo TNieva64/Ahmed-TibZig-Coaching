@@ -95,3 +95,8 @@
 - [x] Créer interface de gestion des ressources (upload PDF, ajout vidéo YouTube)
 - [x] Créer interface d'enregistrement des mesures pour les clients
 - [x] Tests de toutes les fonctionnalités admin
+
+## Nouvelles Fonctionnalités VIP Demandées
+- [ ] Créer onboarding VIP avec questionnaire détaillé (objectifs, historique, contraintes)
+- [ ] Implémenter dashboard IA avec insights intelligents et prédictions
+- [ ] Ajouter plans nutritionnels avec calculateur de macros et suivi alimentaire
