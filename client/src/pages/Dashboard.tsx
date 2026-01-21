@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Loader2, LogOut, FileText, Play, Trophy, Brain, BarChart3 } from "lucide-react";
+import { Loader2, LogOut, FileText, Play, Trophy, Brain, BarChart3, Share2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useEffect } from "react";
@@ -63,6 +63,13 @@ export default function Dashboard() {
             >
               <BarChart3 className="w-4 h-4" />
               Rapports
+            </Button>
+            <Button
+              onClick={() => navigate("/referral")}
+              className="bg-green-600 text-white hover:bg-green-700 flex items-center gap-2"
+            >
+              <Share2 className="w-4 h-4" />
+              Parrainage
             </Button>
             <Button
               onClick={logout}

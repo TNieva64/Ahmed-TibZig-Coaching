@@ -472,3 +472,23 @@ export const monthlyReports = mysqlTable("monthly_reports", {
 
 export type MonthlyReport = typeof monthlyReports.$inferSelect;
 export type InsertMonthlyReport = typeof monthlyReports.$inferInsert;
+
+// Programme de parrainage
+export const referrals = mysqlTable("referrals", {
+  id: int("id").autoincrement().primaryKey(),
+  referrerId: int("referrer_id").notNull().references(() => users.id, { onDelete: "cascade" }), // Celui qui parraine
+  referredId: int("referred_id").references(() => users.id, { onDelete: "set null" }), // Celui qui est parrainé (null si pas encore inscrit)
+  referralCode: varchar("referral_code", { length: 20 }).notNull().unique(), // Code unique du parrain
+  referredEmail: varchar("referred_email", { length: 255 }), // Email du filleul (avant inscription)
+  status: varchar("status", { length: 20 }).notNull().default("pending"), // pending, completed, rewarded
+  rewardType: varchar("reward_type", { length: 50 }), // free_month, discount, etc.
+  rewardValue: int("reward_value"), // Valeur de la récompense (ex: 30 jours)
+  rewardGranted: int("reward_granted").default(0).notNull(), // boolean
+  clickCount: int("click_count").default(0).notNull(), // Nombre de clics sur le lien
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"), // Date d'inscription du filleul
+  rewardedAt: timestamp("rewarded_at"), // Date d'attribution de la récompense
+});
+
+export type Referral = typeof referrals.$inferSelect;
+export type InsertReferral = typeof referrals.$inferInsert;

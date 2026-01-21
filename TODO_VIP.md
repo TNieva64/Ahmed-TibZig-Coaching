@@ -102,23 +102,17 @@
 - [ ] Tests des plans nutritionnels
 
 ### Communauté Privée
-- [ ] Créer table `forum_posts` pour les posts
-- [ ] Créer table `forum_comments` pour les commentaires
-- [ ] Créer table `challenges` pour les défis mensuels
-- [ ] Implémenter forum privé avec catégories
-- [ ] Créer groupes par objectif
-- [ ] Ajouter système de défis avec classement
-- [ ] Implémenter sessions Q&A live (intégration vidéo)
-- [ ] Tests de la communauté
+- [x] ANNULÉ - Sera géré via WhatsApp/Telegram externe
 
 ### Programme de Parrainage
-- [ ] Créer table `referrals` pour tracker les parrainages
-- [ ] Générer lien de parrainage unique par client
-- [ ] Créer tableau de bord des parrainages
-- [ ] Implémenter système de récompenses (1 mois offert)
-- [ ] Ajouter badge "Ambassadeur"
-- [ ] Créer page de parrainage
-- [ ] Tests du parrainage
+- [x] Créer table `referrals` pour tracker les parrainages
+- [x] Générer lien de parrainage unique par client
+- [x] Créer tableau de bord des parrainages avec statistiques
+- [x] Implémenter système de récompenses (1 mois offert)
+- [x] Ajouter badge "Ambassadeur" (auto après 3 parrainages)
+- [x] Créer page de parrainage avec partage WhatsApp/Email
+- [x] Ajouter classement des ambassadeurs (leaderboard)
+- [x] Tests du parrainage
 
 ### Mode "Coach de Poche" (PWA)
 - [ ] Configurer service worker pour PWA
