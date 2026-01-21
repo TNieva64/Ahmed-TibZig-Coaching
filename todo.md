@@ -97,6 +97,9 @@
 - [x] Tests de toutes les fonctionnalités admin
 
 ## Nouvelles Fonctionnalités VIP Demandées
-- [ ] Créer onboarding VIP avec questionnaire détaillé (objectifs, historique, contraintes)
+- [ ] Créer page onboarding VIP avec formulaire multi-étapes
+- [ ] Créer calculateur de macros et interface de suivi alimentaire
 - [ ] Implémenter dashboard IA avec insights intelligents et prédictions
-- [ ] Ajouter plans nutritionnels avec calculateur de macros et suivi alimentaire
+- [ ] Créer toutes les interfaces frontend restantes du TODO_VIP.md
+- [ ] Intégrer Stripe (plus tard)
+- [ ] Intégrer Calendly (plus tard)

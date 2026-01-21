@@ -48,9 +48,9 @@
 - [x] Tests de la bibliothèque
 
 ### Onboarding VIP Personnalisé
-- [ ] Créer table `onboarding_responses` pour questionnaire
-- [ ] Créer questionnaire détaillé (objectifs, historique, contraintes)
-- [ ] Implémenter workflow d'onboarding (étapes 1-5)
+- [x] Créer table `onboarding_responses` pour questionnaire
+- [x] Créer questionnaire détaillé (objectifs, historique, contraintes)
+- [x] Implémenter workflow d'onboarding (étapes 1-5)
 - [ ] Créer email de bienvenue automatique
 - [ ] Ajouter génération vidéo de bienvenue personnalisée (template)
 - [ ] Créer checklist d'onboarding dans dashboard client
@@ -88,13 +88,13 @@
 ## 💎 PRIORITÉ 2 (P2) - FONCTIONNALITÉS PREMIUM
 
 ### Plans Nutritionnels Interactifs
-- [ ] Créer table `nutrition_plans` pour les plans
+- [x] Créer table `nutrition_plans` pour les plans
 - [ ] Créer table `recipes` pour les recettes
-- [ ] Créer table `meal_logs` pour suivi des repas
-- [ ] Implémenter calculateur de macros personnalisé
+- [x] Créer table `meal_logs` pour suivi des repas
+- [x] Implémenter calculateur de macros personnalisé
 - [ ] Créer base de données de recettes filtrables
 - [ ] Ajouter générateur de liste de courses
-- [ ] Implémenter suivi des repas avec photos
+- [x] Implémenter suivi des repas avec interface complète
 - [ ] Ajouter ajustement automatique des macros
 - [ ] Tests des plans nutritionnels
 

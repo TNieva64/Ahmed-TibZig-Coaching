@@ -16,6 +16,8 @@ import Progress from "./pages/Progress";
 import Gamification from "./pages/Gamification";
 import ExerciseLibrary from "./pages/ExerciseLibrary";
 import FormAnalysis from "./pages/FormAnalysis";
+import Onboarding from "./pages/Onboarding";
+import Nutrition from "./pages/Nutrition";
 import Messages from "./pages/Messages";
 import Workouts from "./pages/Workouts";
 
@@ -34,7 +36,9 @@ function Router() {
       <Route path={"/progress"} component={Progress} />
       <Route path={"/gamification"} component={Gamification} />
       <Route path={"/exercises"} component={ExerciseLibrary} />
-      <Route path={"/form-analysis"} component={FormAnalysis} />
+       <Route path="/form-analysis" component={FormAnalysis} />
+      <Route path="/onboarding" component={Onboarding} />
+      <Route path="/nutrition" component={Nutrition} />
       <Route path={"/messages"} component={Messages} />
       <Route path={"/workouts"} component={Workouts} />
       <Route path={"/404"} component={NotFound} />
