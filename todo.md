@@ -69,3 +69,29 @@
 - [x] Créer graphiques d'évolution (poids, performances, etc.)
 - [ ] Implémenter système de rappel/notifications pour les mesures
 - [x] Tests du suivi de progression
+
+## Interface d'Administration Fonctionnelle
+- [x] Créer les procédures tRPC pour la gestion des programmes (CRUD)
+- [x] Créer les procédures tRPC pour la gestion des clients
+- [x] Créer les procédures tRPC pour l'assignation de programmes aux clients
+- [x] Créer les procédures tRPC pour la gestion des ressources (PDFs/vidéos)
+- [x] Créer les procédures tRPC pour l'enregistrement des mesures de progression
+- [x] Refaire la page Admin avec toutes les fonctionnalités connectées
+- [x] Créer interface de gestion des programmes (ajout, modification, suppression)
+- [x] Créer interface de gestion des clients (liste, détails, assignation)
+- [x] Créer interface de gestion des ressources (upload PDF, ajout vidéo YouTube)
+- [x] Créer interface d'enregistrement des mesures pour les clients
+- [x] Tests de toutes les fonctionnalités admin
+
+## Interface d'Administration Fonctionnelle
+- [x] Créer les procédures tRPC pour la gestion des programmes (CRUD)
+- [x] Créer les procédures tRPC pour la gestion des clients
+- [x] Créer les procédures tRPC pour l'assignation de programmes aux clients
+- [x] Créer les procédures tRPC pour la gestion des ressources (PDFs/vidéos)
+- [x] Créer les procédures tRPC pour l'enregistrement des mesures de progression
+- [x] Refaire la page Admin avec toutes les fonctionnalités connectées
+- [x] Créer interface de gestion des programmes (ajout, modification, suppression)
+- [x] Créer interface de gestion des clients (liste, détails, assignation)
+- [x] Créer interface de gestion des ressources (upload PDF, ajout vidéo YouTube)
+- [x] Créer interface d'enregistrement des mesures pour les clients
+- [x] Tests de toutes les fonctionnalités admin
