@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { useState } from "react";
-import { Calendar, Clock, Dumbbell, CheckCircle2, Circle, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, Clock, Dumbbell, CheckCircle2, Circle, Loader2, ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -56,6 +56,11 @@ export default function Workouts() {
 
   const { data: stats } = trpc.workout.getCompletionStats.useQuery(
     {},
+    { enabled: isAuthenticated }
+  );
+
+  const { data: reschedules } = trpc.workout.getRescheduleHistory.useQuery(
+    { userId: user?.id, limit: 5 },
     { enabled: isAuthenticated }
   );
 
@@ -165,6 +170,40 @@ export default function Workouts() {
     <div className="min-h-screen bg-black pt-20">
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-serif font-bold text-gold mb-8">Plans d'Entraînement</h1>
+
+        {/* Reschedule Notifications */}
+        {reschedules && reschedules.length > 0 && (
+          <Card className="bg-gradient-to-r from-orange-500/10 to-yellow-500/10 border-orange-500/30 p-4 mb-6">
+            <div className="flex items-start gap-3">
+              <RefreshCw className="h-6 w-6 text-orange-500 mt-1" />
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-white mb-2">Séances reprogrammées</h3>
+                <p className="text-gray-300 text-sm mb-3">
+                  Certaines séances manquées ont été automatiquement reprogrammées pour vous aider à rester sur la bonne voie.
+                </p>
+                <div className="space-y-2">
+                  {reschedules.slice(0, 3).map((reschedule) => (
+                    <div key={reschedule.id} className="bg-zinc-900/50 rounded-lg p-3 text-sm">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-white font-medium">
+                            Séance #{reschedule.originalSessionId}
+                          </p>
+                          <p className="text-gray-400 text-xs">
+                            {new Date(reschedule.originalDate).toLocaleDateString('fr-FR')} → {new Date(reschedule.proposedDate).toLocaleDateString('fr-FR')}
+                          </p>
+                        </div>
+                        <Badge className={reschedule.status === 'auto_accepted' ? 'bg-green-500/20 text-green-500' : 'bg-yellow-500/20 text-yellow-500'}>
+                          {reschedule.status === 'auto_accepted' ? 'Acceptée' : reschedule.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Card>
+        )}
 
         {/* Stats Cards */}
         {stats && (

@@ -71,6 +71,13 @@
       "when": 1769019579268,
       "tag": "0009_robust_korvac",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1769024243996,
+      "tag": "0010_cool_boom_boom",
+      "breakpoints": true
     }
   ]
 }

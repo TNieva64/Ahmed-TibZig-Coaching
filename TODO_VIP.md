@@ -21,7 +21,7 @@
 - [x] Créer système de notifications de rappel (2h avant, script cron, page préférences)
 - [x] Implémenter checkbox "Séance terminée" avec note de difficulté
 - [x] Créer dashboard coach pour voir séances complétées en temps réel
-- [ ] Ajouter ajustement automatique si séance manquée
+- [x] Ajouter ajustement automatique si séance manquée (script cron, reprogrammation +7j, notifications)
 - [x] Tests des plans adaptatifs
 
 ### Analyse Vidéo de Forme

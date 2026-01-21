@@ -2,7 +2,7 @@ import { z } from "zod";
 import { router, protectedProcedure } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "./db";
-import { workoutSessions, workoutCompletions, workoutReminders, InsertWorkoutSession, InsertWorkoutCompletion, InsertWorkoutReminder } from "../drizzle/schema";
+import { workoutSessions, workoutCompletions, workoutReminders, missedSessionReschedules, InsertWorkoutSession, InsertWorkoutCompletion, InsertWorkoutReminder } from "../drizzle/schema";
 import { eq, and, gte, lte, desc } from "drizzle-orm";
 
 // Admin-only procedure
@@ -353,6 +353,100 @@ export const workoutRouter = router({
       }
 
       await db.delete(workoutReminders).where(eq(workoutReminders.id, input.reminderId));
+      return { success: true };
+    }),
+
+  // Get reschedule history for a user
+  getRescheduleHistory: protectedProcedure
+    .input(z.object({
+      userId: z.number().optional(),
+      limit: z.number().optional(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+
+      const userId = input.userId || ctx.user.id;
+
+      // Only allow users to see their own history, unless admin
+      if (userId !== ctx.user.id && ctx.user.role !== 'admin') {
+        throw new TRPCError({ code: 'FORBIDDEN' });
+      }
+
+      const reschedules = await db
+        .select()
+        .from(missedSessionReschedules)
+        .where(eq(missedSessionReschedules.userId, userId))
+        .orderBy(desc(missedSessionReschedules.createdAt))
+        .limit(input.limit || 20);
+
+      return reschedules;
+    }),
+
+  // Accept a reschedule proposal
+  acceptReschedule: protectedProcedure
+    .input(z.object({ rescheduleId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+
+      // Get reschedule to check ownership
+      const reschedule = await db
+        .select()
+        .from(missedSessionReschedules)
+        .where(eq(missedSessionReschedules.id, input.rescheduleId))
+        .limit(1);
+
+      if (reschedule.length === 0) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Reschedule not found' });
+      }
+
+      // Check access
+      if (reschedule[0].userId !== ctx.user.id && ctx.user.role !== 'admin') {
+        throw new TRPCError({ code: 'FORBIDDEN' });
+      }
+
+      await db
+        .update(missedSessionReschedules)
+        .set({ status: 'accepted', respondedAt: new Date() })
+        .where(eq(missedSessionReschedules.id, input.rescheduleId));
+
+      return { success: true };
+    }),
+
+  // Reject a reschedule proposal
+  rejectReschedule: protectedProcedure
+    .input(z.object({ rescheduleId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+
+      // Get reschedule to check ownership
+      const reschedule = await db
+        .select()
+        .from(missedSessionReschedules)
+        .where(eq(missedSessionReschedules.id, input.rescheduleId))
+        .limit(1);
+
+      if (reschedule.length === 0) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Reschedule not found' });
+      }
+
+      // Check access
+      if (reschedule[0].userId !== ctx.user.id && ctx.user.role !== 'admin') {
+        throw new TRPCError({ code: 'FORBIDDEN' });
+      }
+
+      await db
+        .update(missedSessionReschedules)
+        .set({ status: 'rejected', respondedAt: new Date() })
+        .where(eq(missedSessionReschedules.id, input.rescheduleId));
+
+      // Delete the proposed new session if rejected
+      if (reschedule[0].newSessionId) {
+        await db.delete(workoutSessions).where(eq(workoutSessions.id, reschedule[0].newSessionId));
+      }
+
       return { success: true };
     }),
 });

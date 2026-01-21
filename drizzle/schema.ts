@@ -492,3 +492,22 @@ export const referrals = mysqlTable("referrals", {
 
 export type Referral = typeof referrals.$inferSelect;
 export type InsertReferral = typeof referrals.$inferInsert;
+
+/**
+ * Missed Session Reschedules - Track automatic rescheduling of missed sessions
+ */
+export const missedSessionReschedules = mysqlTable("missedSessionReschedules", {
+  id: int("id").autoincrement().primaryKey(),
+  originalSessionId: int("originalSessionId").notNull(),
+  newSessionId: int("newSessionId"),
+  userId: int("userId").notNull(),
+  originalDate: timestamp("originalDate").notNull(),
+  proposedDate: timestamp("proposedDate").notNull(),
+  status: mysqlEnum("status", ["pending", "accepted", "rejected", "auto_accepted"]).default("pending").notNull(),
+  notificationSent: int("notificationSent").default(0).notNull(), // 0 = false, 1 = true
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  respondedAt: timestamp("respondedAt"),
+});
+
+export type MissedSessionReschedule = typeof missedSessionReschedules.$inferSelect;
+export type InsertMissedSessionReschedule = typeof missedSessionReschedules.$inferInsert;
