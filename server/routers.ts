@@ -20,6 +20,9 @@ import { eq } from "drizzle-orm";
 import { users, programs, clientPrograms, programResources, InsertProgram, InsertClientProgram, InsertProgramResource } from "../drizzle/schema";
 import { messagingRouter } from "./messagingRouter";
 import { workoutRouter } from "./workoutRouter";
+import { formVideoRouter } from "./formVideoRouter";
+import { gamificationRouter } from "./gamificationRouter";
+import { exerciseRouter } from "./exerciseRouter";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -33,6 +36,9 @@ export const appRouter = router({
   system: systemRouter,
   messaging: messagingRouter,
   workout: workoutRouter,
+  formVideo: formVideoRouter,
+  gamification: gamificationRouter,
+  exercise: exerciseRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

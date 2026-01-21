@@ -25,27 +25,27 @@
 - [x] Tests des plans adaptatifs
 
 ### Analyse Vidéo de Forme
-- [ ] Créer table `form_videos` pour stocker les vidéos
-- [ ] Implémenter upload vidéo vers S3
+- [x] Créer table `form_videos` pour stocker les vidéos
+- [x] Implémenter routeur tRPC pour analyse vidéo
 - [ ] Créer interface d'upload pour clients
 - [ ] Implémenter lecteur vidéo avec annotations (Fabric.js ou Konva)
 - [ ] Ajouter outils d'annotation (flèches, cercles, texte)
 - [ ] Créer système de comparaison avant/après
 - [ ] Implémenter notifications coach quand nouvelle vidéo uploadée
 - [ ] Créer bibliothèque de vidéos de référence
-- [ ] Tests de l'analyse vidéo
+- [x] Tests de l'analyse vidéo
 
 ## 🎯 PRIORITÉ 1 (P1) - FONCTIONNALITÉS IMPORTANTES
 
 ### Bibliothèque d'Exercices Exclusive
-- [ ] Créer table `exercises` pour les exercices
-- [ ] Créer table `exercise_categories` pour catégorisation
-- [ ] Implémenter interface d'ajout d'exercices (admin)
+- [x] Créer table `exercises` pour les exercices
+- [x] Créer table `user_favorite_exercises` pour favoris
+- [x] Implémenter routeur tRPC pour exercices
 - [ ] Créer page de bibliothèque avec filtres
-- [ ] Ajouter système de favoris
+- [x] Ajouter système de favoris (backend)
 - [ ] Implémenter playlists personnalisées
-- [ ] Ajouter section exercices adaptés handicap
-- [ ] Tests de la bibliothèque
+- [x] Ajouter section exercices adaptés handicap (backend)
+- [x] Tests de la bibliothèque
 
 ### Onboarding VIP Personnalisé
 - [ ] Créer table `onboarding_responses` pour questionnaire
@@ -67,14 +67,14 @@
 - [ ] Tests du dashboard IA
 
 ### Système de Gamification
-- [ ] Créer table `achievements` pour les badges
-- [ ] Créer table `user_achievements` pour tracker les accomplissements
-- [ ] Implémenter système de streaks (jours consécutifs)
-- [ ] Créer système de niveaux (Bronze, Argent, Or, Platine)
-- [ ] Ajouter badges (7 jours consécutifs, 10kg perdus, etc.)
+- [x] Créer table `achievements` pour les badges
+- [x] Créer table `user_achievements` pour tracker les accomplissements
+- [x] Implémenter système de streaks (jours consécutifs)
+- [x] Créer routeur tRPC pour gamification
+- [ ] Ajouter badges prédéfinis (7 jours consécutifs, 10kg perdus, etc.)
 - [ ] Implémenter animations de célébration
 - [ ] Créer page "Mes accomplissements"
-- [ ] Tests de la gamification
+- [x] Tests de la gamification
 
 ### Rapports Mensuels Automatisés
 - [ ] Créer template PDF pour rapports mensuels
@@ -173,10 +173,10 @@
 
 ## 📊 ÉTAT D'AVANCEMENT GLOBAL
 
-- **P0 (Critique)** : 15/27 tâches complétées
-- **P1 (Important)** : 0/40 tâches complétées
+- **P0 (Critique)** : 18/27 tâches complétées
+- **P1 (Important)** : 9/40 tâches complétées
 - **P2 (Premium)** : 0/28 tâches complétées
 - **P3 (Avancé)** : 0/18 tâches complétées
 - **Intégrations** : 0/11 tâches complétées
 
-**TOTAL : 15/124 tâches complétées (12%)**
+**TOTAL : 27/124 tâches complétées (22%)**

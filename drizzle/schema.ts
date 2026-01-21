@@ -201,3 +201,107 @@ export const workoutReminders = mysqlTable("workoutReminders", {
 
 export type WorkoutReminder = typeof workoutReminders.$inferSelect;
 export type InsertWorkoutReminder = typeof workoutReminders.$inferInsert;
+
+/**
+ * Form Videos - Videos uploaded by clients for form analysis
+ */
+export const formVideos = mysqlTable("formVideos", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  videoUrl: varchar("videoUrl", { length: 500 }).notNull(),
+  thumbnailUrl: varchar("thumbnailUrl", { length: 500 }),
+  exerciseType: varchar("exerciseType", { length: 100 }),
+  status: mysqlEnum("status", ["pending", "reviewed", "archived"]).default("pending").notNull(),
+  coachFeedback: text("coachFeedback"),
+  annotations: text("annotations"), // JSON string of annotations
+  uploadedAt: timestamp("uploadedAt").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewedAt"),
+});
+
+export type FormVideo = typeof formVideos.$inferSelect;
+export type InsertFormVideo = typeof formVideos.$inferInsert;
+
+/**
+ * Achievements - Badges and achievements for gamification
+ */
+export const achievements = mysqlTable("achievements", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  icon: varchar("icon", { length: 255 }),
+  category: mysqlEnum("category", ["workout", "nutrition", "streak", "milestone", "special"]).notNull(),
+  requirement: text("requirement"), // JSON string describing requirement
+  points: int("points").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Achievement = typeof achievements.$inferSelect;
+export type InsertAchievement = typeof achievements.$inferInsert;
+
+/**
+ * User Achievements - Track which achievements users have earned
+ */
+export const userAchievements = mysqlTable("userAchievements", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  achievementId: int("achievementId").notNull(),
+  earnedAt: timestamp("earnedAt").defaultNow().notNull(),
+});
+
+export type UserAchievement = typeof userAchievements.$inferSelect;
+export type InsertUserAchievement = typeof userAchievements.$inferInsert;
+
+/**
+ * User Streaks - Track consecutive days of activity
+ */
+export const userStreaks = mysqlTable("userStreaks", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  currentStreak: int("currentStreak").default(0).notNull(),
+  longestStreak: int("longestStreak").default(0).notNull(),
+  lastActivityDate: timestamp("lastActivityDate"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserStreak = typeof userStreaks.$inferSelect;
+export type InsertUserStreak = typeof userStreaks.$inferInsert;
+
+/**
+ * Exercises - Library of exercises with videos
+ */
+export const exercises = mysqlTable("exercises", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  category: mysqlEnum("category", ["cardio", "strength", "flexibility", "hiit", "endurance", "recovery"]).notNull(),
+  difficulty: mysqlEnum("difficulty", ["beginner", "intermediate", "advanced", "expert"]).notNull(),
+  videoUrl: varchar("videoUrl", { length: 500 }),
+  thumbnailUrl: varchar("thumbnailUrl", { length: 500 }),
+  duration: int("duration"), // in seconds
+  equipment: text("equipment"), // JSON array of equipment needed
+  muscleGroups: text("muscleGroups"), // JSON array of muscle groups
+  instructions: text("instructions"),
+  tips: text("tips"),
+  isAdaptedForDisability: int("isAdaptedForDisability").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Exercise = typeof exercises.$inferSelect;
+export type InsertExercise = typeof exercises.$inferInsert;
+
+/**
+ * User Favorite Exercises - Track user's favorite exercises
+ */
+export const userFavoriteExercises = mysqlTable("userFavoriteExercises", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  exerciseId: int("exerciseId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type UserFavoriteExercise = typeof userFavoriteExercises.$inferSelect;
+export type InsertUserFavoriteExercise = typeof userFavoriteExercises.$inferInsert;
