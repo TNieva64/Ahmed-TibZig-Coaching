@@ -1,0 +1,59 @@
+import { z } from "zod";
+import { router, protectedProcedure } from "./_core/trpc";
+import { getOrCreateConversation, getUserConversations, getConversationMessages, getTotalUnreadCount, getDb } from "./db";
+import { users } from "../drizzle/schema";
+import { eq } from "drizzle-orm";
+
+export const messagingRouter = router({
+  // Get or create conversation with coach
+  getOrCreateConversation: protectedProcedure
+    .input(z.object({ coachId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const isCoach = ctx.user.role === 'admin';
+      const clientId = isCoach ? input.coachId : ctx.user.id; // If coach, the "coachId" is actually clientId
+      const coachId = isCoach ? ctx.user.id : input.coachId;
+      
+      return await getOrCreateConversation(clientId, coachId);
+    }),
+
+  // Get all conversations for current user
+  getConversations: protectedProcedure.query(async ({ ctx }) => {
+    const isCoach = ctx.user.role === 'admin';
+    const conversations = await getUserConversations(ctx.user.id, isCoach);
+    
+    // Enrich with user details
+    const db = await getDb();
+    if (!db) return [];
+
+    const enriched = await Promise.all(
+      conversations.map(async (conv) => {
+        const otherUserId = isCoach ? conv.clientId : conv.coachId;
+        const otherUser = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, otherUserId))
+          .limit(1);
+
+        return {
+          ...conv,
+          otherUser: otherUser.length > 0 ? otherUser[0] : null,
+        };
+      })
+    );
+
+    return enriched;
+  }),
+
+  // Get messages for a conversation
+  getMessages: protectedProcedure
+    .input(z.object({ conversationId: z.number(), limit: z.number().optional() }))
+    .query(async ({ input }) => {
+      return await getConversationMessages(input.conversationId, input.limit);
+    }),
+
+  // Get total unread count
+  getUnreadCount: protectedProcedure.query(async ({ ctx }) => {
+    const isCoach = ctx.user.role === 'admin';
+    return await getTotalUnreadCount(ctx.user.id, isCoach);
+  }),
+});

@@ -1,6 +1,6 @@
 import { eq, and, desc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, programs, clientPrograms, programResources, progressMetrics, progressGoals, InsertProgressMetric, InsertProgressGoal } from "../drizzle/schema";
+import { InsertUser, users, programs, clientPrograms, programResources, progressMetrics, progressGoals, InsertProgressMetric, InsertProgressGoal, conversations, messages } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -234,5 +234,107 @@ export async function addProgressGoal(goal: InsertProgressGoal) {
   } catch (error) {
     console.error("[Database] Failed to add progress goal:", error);
     return undefined;
+  }
+}
+
+// Messaging functions
+export async function getOrCreateConversation(clientId: number, coachId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    // Check if conversation exists
+    const existing = await db
+      .select()
+      .from(conversations)
+      .where(
+        and(
+          eq(conversations.clientId, clientId),
+          eq(conversations.coachId, coachId)
+        )
+      )
+      .limit(1);
+
+    if (existing.length > 0) {
+      return existing[0];
+    }
+
+    // Create new conversation
+    const result = await db.insert(conversations).values({
+      clientId,
+      coachId,
+      lastMessageAt: new Date(),
+      unreadCountClient: 0,
+      unreadCountCoach: 0,
+    });
+
+    const newConv = await db
+      .select()
+      .from(conversations)
+      .where(eq(conversations.id, result[0].insertId))
+      .limit(1);
+
+    return newConv.length > 0 ? newConv[0] : null;
+  } catch (error) {
+    console.error("[Database] Failed to get or create conversation:", error);
+    return null;
+  }
+}
+
+export async function getUserConversations(userId: number, isCoach: boolean) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const result = await db
+      .select()
+      .from(conversations)
+      .where(isCoach ? eq(conversations.coachId, userId) : eq(conversations.clientId, userId))
+      .orderBy(desc(conversations.lastMessageAt));
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get conversations:", error);
+    return [];
+  }
+}
+
+export async function getConversationMessages(conversationId: number, limit: number = 50) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const result = await db
+      .select()
+      .from(messages)
+      .where(eq(messages.conversationId, conversationId))
+      .orderBy(desc(messages.createdAt))
+      .limit(limit);
+
+    return result.reverse(); // Return in chronological order
+  } catch (error) {
+    console.error("[Database] Failed to get messages:", error);
+    return [];
+  }
+}
+
+export async function getTotalUnreadCount(userId: number, isCoach: boolean) {
+  const db = await getDb();
+  if (!db) return 0;
+
+  try {
+    const convs = await db
+      .select()
+      .from(conversations)
+      .where(isCoach ? eq(conversations.coachId, userId) : eq(conversations.clientId, userId));
+
+    const total = convs.reduce((sum, conv) => {
+      return sum + (isCoach ? conv.unreadCountCoach : conv.unreadCountClient);
+    }, 0);
+
+    return total;
+  } catch (error) {
+    console.error("[Database] Failed to get unread count:", error);
+    return 0;
   }
 }

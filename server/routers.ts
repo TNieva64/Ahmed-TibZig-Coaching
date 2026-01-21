@@ -18,6 +18,7 @@ import { notifyProgramAssigned, notifyResourceAdded } from "./notifications";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { users, programs, clientPrograms, programResources, InsertProgram, InsertClientProgram, InsertProgramResource } from "../drizzle/schema";
+import { messagingRouter } from "./messagingRouter";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -29,6 +30,7 @@ const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
 
 export const appRouter = router({
   system: systemRouter,
+  messaging: messagingRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

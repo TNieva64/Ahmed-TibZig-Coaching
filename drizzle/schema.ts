@@ -110,3 +110,37 @@ export const progressGoals = mysqlTable("progressGoals", {
 
 export type ProgressGoal = typeof progressGoals.$inferSelect;
 export type InsertProgressGoal = typeof progressGoals.$inferInsert;
+
+/**
+ * Conversations - Groups messages between coach and client
+ */
+export const conversations = mysqlTable("conversations", {
+  id: int("id").autoincrement().primaryKey(),
+  clientId: int("clientId").notNull(),
+  coachId: int("coachId").notNull(),
+  lastMessageAt: timestamp("lastMessageAt").defaultNow().notNull(),
+  unreadCountClient: int("unreadCountClient").default(0).notNull(),
+  unreadCountCoach: int("unreadCountCoach").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Conversation = typeof conversations.$inferSelect;
+export type InsertConversation = typeof conversations.$inferInsert;
+
+/**
+ * Messages - Individual messages in conversations
+ */
+export const messages = mysqlTable("messages", {
+  id: int("id").autoincrement().primaryKey(),
+  conversationId: int("conversationId").notNull(),
+  senderId: int("senderId").notNull(),
+  content: text("content").notNull(),
+  type: mysqlEnum("type", ["text", "image", "video", "file"]).default("text").notNull(),
+  fileUrl: text("fileUrl"),
+  isRead: int("isRead").default(0).notNull(), // 0 = false, 1 = true
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Message = typeof messages.$inferSelect;
+export type InsertMessage = typeof messages.$inferInsert;
