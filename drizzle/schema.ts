@@ -438,3 +438,37 @@ export const progressPredictions = mysqlTable("progress_predictions", {
 
 export type ProgressPrediction = typeof progressPredictions.$inferSelect;
 export type InsertProgressPrediction = typeof progressPredictions.$inferInsert;
+
+// Rapports mensuels automatisés
+export const monthlyReports = mysqlTable("monthly_reports", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  month: int("month").notNull(), // 1-12
+  year: int("year").notNull(),
+  // Statistiques du mois
+  totalWorkouts: int("total_workouts").notNull(),
+  totalDuration: int("total_duration").notNull(), // en minutes
+  totalCaloriesBurned: int("total_calories_burned").notNull(),
+  averageRating: decimal("average_rating", { precision: 3, scale: 2 }), // Note moyenne des séances
+  currentStreak: int("current_streak").notNull(),
+  // Progression
+  weightStart: decimal("weight_start", { precision: 5, scale: 2 }),
+  weightEnd: decimal("weight_end", { precision: 5, scale: 2 }),
+  weightChange: decimal("weight_change", { precision: 5, scale: 2 }),
+  // Nutrition
+  nutritionCompliance: int("nutrition_compliance"), // % de repas loggés
+  averageCalories: int("average_calories"),
+  // Score global
+  overallScore: int("overall_score"), // 0-100
+  // Commentaire coach
+  coachComment: text("coach_comment"),
+  coachRecommendations: text("coach_recommendations"), // JSON array
+  // Métadonnées
+  pdfUrl: varchar("pdf_url", { length: 500 }), // URL du PDF généré
+  generatedAt: timestamp("generated_at").defaultNow().notNull(),
+  sentAt: timestamp("sent_at"), // Date d'envoi par email
+  isRead: int("is_read").default(0).notNull(), // boolean
+});
+
+export type MonthlyReport = typeof monthlyReports.$inferSelect;
+export type InsertMonthlyReport = typeof monthlyReports.$inferInsert;

@@ -77,13 +77,16 @@
 - [x] Tests de la gamification
 
 ### Rapports Mensuels Automatisés
-- [ ] Créer template PDF pour rapports mensuels
-- [ ] Implémenter génération automatique (cron job)
-- [ ] Ajouter résumé des performances
-- [ ] Inclure graphiques d'évolution
-- [ ] Ajouter section commentaire coach (template pré-rempli)
+- [x] Créer table monthly_reports dans la base de données
+- [x] Implémenter routeur tRPC pour rapports (génération, récupération, commentaires coach)
+- [x] Ajouter résumé des performances (workouts, nutrition, progression)
+- [x] Inclure statistiques d'évolution (poids, calories, score global)
+- [x] Ajouter section commentaire coach et recommandations
+- [x] Créer interface frontend Reports.tsx avec vue liste et détail
+- [ ] Générer PDF avec graphiques (template)
+- [ ] Implémenter cron job pour génération automatique mensuelle
 - [ ] Implémenter envoi automatique par email
-- [ ] Tests des rapports
+- [x] Tests des rapports
 
 ## 💎 PRIORITÉ 2 (P2) - FONCTIONNALITÉS PREMIUM
 
