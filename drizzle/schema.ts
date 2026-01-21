@@ -144,3 +144,60 @@ export const messages = mysqlTable("messages", {
 
 export type Message = typeof messages.$inferSelect;
 export type InsertMessage = typeof messages.$inferInsert;
+
+/**
+ * Workout Sessions - Planned workout sessions for clients
+ */
+export const workoutSessions = mysqlTable("workoutSessions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  programId: int("programId"),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  type: mysqlEnum("type", ["cardio", "strength", "flexibility", "hiit", "endurance", "recovery"]).notNull(),
+  scheduledDate: timestamp("scheduledDate").notNull(),
+  duration: int("duration"), // in minutes
+  difficulty: mysqlEnum("difficulty", ["easy", "medium", "hard", "extreme"]).default("medium"),
+  instructions: text("instructions"),
+  videoUrl: varchar("videoUrl", { length: 500 }),
+  isCompleted: int("isCompleted").default(0).notNull(), // 0 = false, 1 = true
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type WorkoutSession = typeof workoutSessions.$inferSelect;
+export type InsertWorkoutSession = typeof workoutSessions.$inferInsert;
+
+/**
+ * Workout Completions - Track when users complete workout sessions
+ */
+export const workoutCompletions = mysqlTable("workoutCompletions", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull(),
+  userId: int("userId").notNull(),
+  completedAt: timestamp("completedAt").defaultNow().notNull(),
+  duration: int("duration"), // actual duration in minutes
+  notes: text("notes"),
+  rating: int("rating"), // 1-5 stars
+  caloriesBurned: int("caloriesBurned"),
+  heartRateAvg: int("heartRateAvg"),
+  heartRateMax: int("heartRateMax"),
+});
+
+export type WorkoutCompletion = typeof workoutCompletions.$inferSelect;
+export type InsertWorkoutCompletion = typeof workoutCompletions.$inferInsert;
+
+/**
+ * Workout Reminders - Notification settings for workout reminders
+ */
+export const workoutReminders = mysqlTable("workoutReminders", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  sessionId: int("sessionId").notNull(),
+  reminderTime: timestamp("reminderTime").notNull(),
+  isSent: int("isSent").default(0).notNull(), // 0 = false, 1 = true
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type WorkoutReminder = typeof workoutReminders.$inferSelect;
+export type InsertWorkoutReminder = typeof workoutReminders.$inferInsert;

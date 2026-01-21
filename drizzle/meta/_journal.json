@@ -29,6 +29,13 @@
       "when": 1769015710852,
       "tag": "0003_minor_firestar",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1769016413214,
+      "tag": "0004_red_sentry",
+      "breakpoints": true
     }
   ]
 }

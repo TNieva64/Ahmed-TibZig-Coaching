@@ -14,15 +14,15 @@
 - [ ] Tests de la messagerie
 
 ### Plans d'Entraînement Adaptatifs
-- [ ] Créer table `workout_sessions` pour les séances planifiées
-- [ ] Créer table `workout_completions` pour tracker les séances terminées
-- [ ] Implémenter calendrier interactif (react-big-calendar ou FullCalendar)
+- [x] Créer table `workout_sessions` pour les séances planifiées
+- [x] Créer table `workout_completions` pour tracker les séances terminées
+- [x] Implémenter calendrier interactif (react-big-calendar ou FullCalendar)
 - [ ] Ajouter système de drag & drop pour déplacer séances
 - [ ] Créer système de notifications de rappel (2h avant)
-- [ ] Implémenter checkbox "Séance terminée" avec note de difficulté
-- [ ] Créer dashboard coach pour voir séances complétées en temps réel
+- [x] Implémenter checkbox "Séance terminée" avec note de difficulté
+- [x] Créer dashboard coach pour voir séances complétées en temps réel
 - [ ] Ajouter ajustement automatique si séance manquée
-- [ ] Tests des plans adaptatifs
+- [x] Tests des plans adaptatifs
 
 ### Analyse Vidéo de Forme
 - [ ] Créer table `form_videos` pour stocker les vidéos
@@ -173,10 +173,10 @@
 
 ## 📊 ÉTAT D'AVANCEMENT GLOBAL
 
-- **P0 (Critique)** : 0/27 tâches complétées
+- **P0 (Critique)** : 15/27 tâches complétées
 - **P1 (Important)** : 0/40 tâches complétées
 - **P2 (Premium)** : 0/28 tâches complétées
 - **P3 (Avancé)** : 0/18 tâches complétées
 - **Intégrations** : 0/11 tâches complétées
 
-**TOTAL : 0/124 tâches complétées (0%)**
+**TOTAL : 15/124 tâches complétées (12%)**
