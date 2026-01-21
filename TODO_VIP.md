@@ -201,3 +201,13 @@
 - [x] Créer interface d'administration pour gérer les templates (page EmailAdmin)
 - [x] Ajouter système de désabonnement (unsubscribe avec catégories)
 - [x] Tests du système d'emails
+
+### Amélioration Système de Suivi des Progrès
+- [x] Améliorer le backend avec procédures analytics avancées (8 procédures tRPC : addMetric, getMetrics, getMetricStats, getDashboardStats, comparePeriods, getGoals, addGoal)
+- [x] Créer graphiques interactifs multi-métriques avec Recharts (poids, graisse, performance, énergie, AreaChart avec gradient)
+- [x] Ajouter fonctionnalités export PNG des graphiques (bouton export)
+- [x] Implémenter statistiques détaillées (moyennes, min/max, tendances up/down/stable, changements absolus et pourcentages)
+- [x] Créer comparaisons temporelles (procédure comparePeriods avec 2 périodes personnalisées)
+- [x] Ajouter tableau de bord récapitulatif avec KPIs visuels (4 cartes métriques avec badges tendances, 2 cartes activité workout/nutrition)
+- [x] Implémenter historique complet des mesures avec filtres (sélecteurs métrique et période : 7j/30j/3mois/1an/tout)
+- [x] Tests du système de suivi amélioré

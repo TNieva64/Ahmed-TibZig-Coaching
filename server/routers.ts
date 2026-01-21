@@ -31,6 +31,7 @@ import { referralRouter } from "./referralRouter";
 import { badgeRouter } from "./badgeRouter";
 import { recipeRouter } from "./recipeRouter";
 import { emailRouter } from "./emailRouter";
+import { progressRouter } from "./progressRouter";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -55,6 +56,7 @@ export const appRouter = router({
   badge: badgeRouter,
   recipe: recipeRouter,
   email: emailRouter,
+  progress: progressRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
@@ -86,31 +88,6 @@ export const appRouter = router({
     getPrograms: protectedProcedure.query(async ({ ctx }) => {
       return await getClientPrograms(ctx.user.id);
     }),
-  }),
-
-  progress: router({
-    getMetrics: protectedProcedure
-      .input(z.object({ clientProgramId: z.number() }))
-      .query(async ({ input }) => {
-        return await getProgressMetrics(input.clientProgramId);
-      }),
-    getGoals: protectedProcedure
-      .input(z.object({ clientProgramId: z.number() }))
-      .query(async ({ input }) => {
-        return await getProgressGoals(input.clientProgramId);
-      }),
-    addMetric: protectedProcedure
-      .input(z.object({
-        clientProgramId: z.number(),
-        metricType: z.enum(["weight", "bodyFat", "performance", "energy", "custom"]),
-        value: z.string(),
-        unit: z.string().optional(),
-        notes: z.string().optional(),
-        recordedAt: z.date(),
-      }))
-      .mutation(async ({ input }) => {
-        return await addProgressMetric(input);
-      }),
   }),
 
   admin: router({
