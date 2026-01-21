@@ -73,7 +73,7 @@
 - [x] Créer routeur tRPC pour gamification
 - [ ] Ajouter badges prédéfinis (7 jours consécutifs, 10kg perdus, etc.)
 - [ ] Implémenter animations de célébration
-- [ ] Créer page "Mes accomplissements"
+- [x] Créer page "Mes accomplissements"
 - [x] Tests de la gamification
 
 ### Rapports Mensuels Automatisés
@@ -174,9 +174,9 @@
 ## 📊 ÉTAT D'AVANCEMENT GLOBAL
 
 - **P0 (Critique)** : 18/27 tâches complétées
-- **P1 (Important)** : 9/40 tâches complétées
+- **P1 (Important)** : 10/40 tâches complétées
 - **P2 (Premium)** : 0/28 tâches complétées
 - **P3 (Avancé)** : 0/18 tâches complétées
 - **Intégrations** : 0/11 tâches complétées
 
-**TOTAL : 27/124 tâches complétées (22%)**
+**TOTAL : 28/124 tâches complétées (23%)**

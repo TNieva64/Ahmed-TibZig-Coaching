@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import ProgramDetail from "./pages/ProgramDetail";
 import Admin from "./pages/Admin";
 import Progress from "./pages/Progress";
+import Gamification from "./pages/Gamification";
 import Messages from "./pages/Messages";
 import Workouts from "./pages/Workouts";
 
@@ -29,6 +30,7 @@ function Router() {
       <Route path={"/program/:programId"} component={ProgramDetail} />
       <Route path={"/admin"} component={Admin} />
       <Route path={"/progress"} component={Progress} />
+      <Route path={"/gamification"} component={Gamification} />
       <Route path={"/messages"} component={Messages} />
       <Route path={"/workouts"} component={Workouts} />
       <Route path={"/404"} component={NotFound} />

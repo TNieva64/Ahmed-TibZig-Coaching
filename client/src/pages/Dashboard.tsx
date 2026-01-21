@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Loader2, LogOut, FileText, Play } from "lucide-react";
+import { Loader2, LogOut, FileText, Play, Trophy } from "lucide-react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useEffect } from "react";
@@ -42,6 +42,13 @@ export default function Dashboard() {
               className="bg-gold text-black hover:bg-gold/90"
             >
               Mon Suivi
+            </Button>
+            <Button
+              onClick={() => navigate("/gamification")}
+              className="bg-orange-500 text-white hover:bg-orange-600 flex items-center gap-2"
+            >
+              <Trophy className="w-4 h-4" />
+              Badges
             </Button>
             <Button
               onClick={logout}
