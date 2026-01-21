@@ -511,3 +511,97 @@ export const missedSessionReschedules = mysqlTable("missedSessionReschedules", {
 
 export type MissedSessionReschedule = typeof missedSessionReschedules.$inferSelect;
 export type InsertMissedSessionReschedule = typeof missedSessionReschedules.$inferInsert;
+
+/**
+ * Recipes - Nutritional recipes database
+ */
+export const recipes = mysqlTable("recipes", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  imageUrl: varchar("imageUrl", { length: 500 }),
+  category: mysqlEnum("category", ["breakfast", "lunch", "dinner", "snack", "dessert"]).notNull(),
+  difficulty: mysqlEnum("difficulty", ["easy", "medium", "hard"]).default("medium").notNull(),
+  prepTime: int("prepTime").notNull(), // in minutes
+  cookTime: int("cookTime").notNull(), // in minutes
+  servings: int("servings").default(1).notNull(),
+  
+  // Macros per serving
+  calories: int("calories").notNull(),
+  protein: int("protein").notNull(), // in grams
+  carbs: int("carbs").notNull(), // in grams
+  fat: int("fat").notNull(), // in grams
+  fiber: int("fiber"), // in grams
+  
+  // Dietary tags
+  isVegetarian: int("isVegetarian").default(0).notNull(), // 0 = false, 1 = true
+  isVegan: int("isVegan").default(0).notNull(),
+  isGlutenFree: int("isGlutenFree").default(0).notNull(),
+  isDairyFree: int("isDairyFree").default(0).notNull(),
+  isKeto: int("isKeto").default(0).notNull(),
+  isLowCarb: int("isLowCarb").default(0).notNull(),
+  isHighProtein: int("isHighProtein").default(0).notNull(),
+  
+  // Goal alignment
+  goal: mysqlEnum("goal", ["weight_loss", "muscle_gain", "maintenance", "endurance"]).notNull(),
+  
+  // Recipe content
+  ingredients: text("ingredients").notNull(), // JSON array of {name, quantity, unit}
+  instructions: text("instructions").notNull(), // JSON array of steps
+  tips: text("tips"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Recipe = typeof recipes.$inferSelect;
+export type InsertRecipe = typeof recipes.$inferInsert;
+
+/**
+ * User Favorite Recipes - Track user's favorite recipes
+ */
+export const userFavoriteRecipes = mysqlTable("userFavoriteRecipes", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  recipeId: int("recipeId").notNull(),
+  addedAt: timestamp("addedAt").defaultNow().notNull(),
+});
+
+export type UserFavoriteRecipe = typeof userFavoriteRecipes.$inferSelect;
+export type InsertUserFavoriteRecipe = typeof userFavoriteRecipes.$inferInsert;
+
+/**
+ * Meal Plans - Weekly meal plans for users
+ */
+export const mealPlans = mysqlTable("mealPlans", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  startDate: timestamp("startDate").notNull(),
+  endDate: timestamp("endDate").notNull(),
+  goal: mysqlEnum("goal", ["weight_loss", "muscle_gain", "maintenance", "endurance"]).notNull(),
+  targetCalories: int("targetCalories").notNull(),
+  targetProtein: int("targetProtein").notNull(),
+  targetCarbs: int("targetCarbs").notNull(),
+  targetFat: int("targetFat").notNull(),
+  isActive: int("isActive").default(1).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type MealPlan = typeof mealPlans.$inferSelect;
+export type InsertMealPlan = typeof mealPlans.$inferInsert;
+
+/**
+ * Meal Plan Recipes - Recipes assigned to meal plans
+ */
+export const mealPlanRecipes = mysqlTable("mealPlanRecipes", {
+  id: int("id").autoincrement().primaryKey(),
+  mealPlanId: int("mealPlanId").notNull(),
+  recipeId: int("recipeId").notNull(),
+  dayOfWeek: int("dayOfWeek").notNull(), // 0 = Sunday, 6 = Saturday
+  mealType: mysqlEnum("mealType", ["breakfast", "lunch", "dinner", "snack"]).notNull(),
+  servings: int("servings").default(1).notNull(),
+});
+
+export type MealPlanRecipe = typeof mealPlanRecipes.$inferSelect;
+export type InsertMealPlanRecipe = typeof mealPlanRecipes.$inferInsert;

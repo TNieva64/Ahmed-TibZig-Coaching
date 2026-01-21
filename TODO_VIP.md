@@ -184,3 +184,11 @@
 - [x] Créer animations de célébration (confetti canvas-confetti, modal)
 - [x] Intégrer affichage des badges dans dashboard (page Badges, grille, stats)
 - [x] Tests du système de badges
+
+### Base de Données de Recettes Nutritionnelles
+- [x] Créer schéma de base de données pour les recettes (recipes, userFavoriteRecipes, mealPlans, mealPlanRecipes)
+- [x] Implémenter routeur tRPC avec filtres (objectif, régime, temps, difficulté, catégorie, recherche)
+- [x] Créer 30 recettes variées avec macros calculées (petit-déj, déj, dîner, snacks, desserts)
+- [x] Créer interface frontend avec filtres et recherche (page Recipes complète)
+- [x] Implémenter générateur de liste de courses (generateShoppingList avec agrégation)
+- [x] Tests du système de recettes
