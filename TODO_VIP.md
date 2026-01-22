@@ -267,3 +267,13 @@
 - [x] Créer page VideoAnalysis complète
 - [x] Tests du lecteur vidéo
 - [ ] Implémenter comparaison avant/après (split screen) - OPTIONNEL
+
+### Comparaison Vidéo Côte à Côte (P0 - CRITIQUE)
+- [x] Ajouter champ `videoComparisonUrl` dans table video_analyses
+- [x] Mettre à jour routeur tRPC pour supporter l'upload de vidéo de comparaison
+- [x] Créer composant VideoComparison avec 2 lecteurs synchronisés
+- [x] Implémenter synchronisation de lecture (play/pause/seek simultanés)
+- [x] Ajouter contrôles de vitesse synchronisés (0.5x, 1x, 1.5x, 2x)
+- [x] Ajouter mode split-screen ajustable (40/60, 50/50, 60/40)
+- [x] Intégrer dans la page VideoAnalysis avec détection automatique
+- [x] Tests de synchronisation

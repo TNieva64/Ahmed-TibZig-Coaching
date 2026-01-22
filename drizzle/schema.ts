@@ -678,6 +678,7 @@ export const videoAnalyses = mysqlTable("video_analyses", {
   clientId: int("client_id").notNull().references(() => users.id),
   coachId: int("coach_id").notNull().references(() => users.id),
   videoUrl: text("video_url").notNull(),
+  videoComparisonUrl: text("video_comparison_url"), // URL de la vidéo de comparaison (optionnel)
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   status: mysqlEnum("status", ["pending", "in_progress", "completed"]).default("pending"),

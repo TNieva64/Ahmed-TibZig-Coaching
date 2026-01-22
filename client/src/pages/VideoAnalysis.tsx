@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Badge } from "@/components/ui/badge";
 import { Plus, Video, Eye, Trash2 } from "lucide-react";
 import VideoPlayer from "@/components/VideoPlayer";
+import VideoComparison from "@/components/VideoComparison";
 
 export default function VideoAnalysis() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -16,6 +17,7 @@ export default function VideoAnalysis() {
   const [newAnalysis, setNewAnalysis] = useState({
     clientId: 1, // TODO: Remplacer par sélection client réelle
     videoUrl: "",
+    videoComparisonUrl: "",
     title: "",
     description: "",
   });
@@ -37,7 +39,7 @@ export default function VideoAnalysis() {
       toast({ title: "✅ Analyse vidéo créée avec succès !" });
       refetch();
       setIsCreateDialogOpen(false);
-      setNewAnalysis({ clientId: 1, videoUrl: "", title: "", description: "" });
+      setNewAnalysis({ clientId: 1, videoUrl: "", videoComparisonUrl: "", title: "", description: "" });
     },
     onError: (error) => {
       toast({ title: "❌ Erreur", description: error.message, variant: "destructive" });
@@ -71,7 +73,10 @@ export default function VideoAnalysis() {
       toast({ title: "⚠️ URL et titre requis", variant: "destructive" });
       return;
     }
-    createMutation.mutate(newAnalysis);
+    createMutation.mutate({
+      ...newAnalysis,
+      videoComparisonUrl: newAnalysis.videoComparisonUrl || undefined,
+    });
   };
 
   const handleDeleteAnalysis = (id: number) => {
@@ -127,6 +132,21 @@ export default function VideoAnalysis() {
                   onChange={(e) => setNewAnalysis({ ...newAnalysis, videoUrl: e.target.value })}
                   className="border-gold/20"
                 />
+              </div>
+
+              <div>
+                <Label htmlFor="videoComparisonUrl">URL de comparaison (optionnel)</Label>
+                <Input
+                  id="videoComparisonUrl"
+                  type="url"
+                  placeholder="https://example.com/video-reference.mp4"
+                  value={newAnalysis.videoComparisonUrl}
+                  onChange={(e) => setNewAnalysis({ ...newAnalysis, videoComparisonUrl: e.target.value })}
+                  className="border-gold/20"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Ajoutez une vidéo de référence pour comparaison côte à côte
+                </p>
               </div>
 
               <div>
@@ -246,26 +266,35 @@ export default function VideoAnalysis() {
             </DialogHeader>
 
             <div className="space-y-6">
-              <VideoPlayer
-                videoUrl={analysisDetails.videoUrl}
-                annotations={(analysisDetails.annotations || []) as any}
-                markers={analysisDetails.markers || []}
-                onAddAnnotation={(annotation) => {
-                  addAnnotationMutation.mutate({
-                    videoAnalysisId: selectedAnalysisId,
-                    ...annotation,
-                  });
-                }}
-                onAddMarker={(marker) => {
-                  addMarkerMutation.mutate({
-                    videoAnalysisId: selectedAnalysisId,
-                    timestamp: marker.timestamp,
-                    title: marker.title,
-                    description: marker.description || undefined,
-                    color: marker.color || "#FFD700",
-                  });
-                }}
-              />
+              {analysisDetails.videoComparisonUrl ? (
+                <VideoComparison
+                  videoUrl1={analysisDetails.videoUrl}
+                  videoUrl2={analysisDetails.videoComparisonUrl}
+                  title1="Vidéo client"
+                  title2="Vidéo de référence"
+                />
+              ) : (
+                <VideoPlayer
+                  videoUrl={analysisDetails.videoUrl}
+                  annotations={(analysisDetails.annotations || []) as any}
+                  markers={analysisDetails.markers || []}
+                  onAddAnnotation={(annotation) => {
+                    addAnnotationMutation.mutate({
+                      videoAnalysisId: selectedAnalysisId,
+                      ...annotation,
+                    });
+                  }}
+                  onAddMarker={(marker) => {
+                    addMarkerMutation.mutate({
+                      videoAnalysisId: selectedAnalysisId,
+                      timestamp: marker.timestamp,
+                      title: marker.title,
+                      description: marker.description || undefined,
+                      color: marker.color || undefined,
+                    });
+                  }}
+                />
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card className="border-gold/20 bg-card/50">

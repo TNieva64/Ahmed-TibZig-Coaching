@@ -106,6 +106,13 @@
       "when": 1769086841761,
       "tag": "0014_brave_ken_ellis",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "5",
+      "when": 1769087245211,
+      "tag": "0015_lyrical_giant_man",
+      "breakpoints": true
     }
   ]
 }

@@ -11,6 +11,7 @@ export const videoAnnotationRouter = router({
       z.object({
         clientId: z.number(),
         videoUrl: z.string().url(),
+        videoComparisonUrl: z.string().url().optional(),
         title: z.string().min(1).max(255),
         description: z.string().optional(),
       })
@@ -23,6 +24,7 @@ export const videoAnnotationRouter = router({
         clientId: input.clientId,
         coachId: ctx.user.id,
         videoUrl: input.videoUrl,
+        videoComparisonUrl: input.videoComparisonUrl,
         title: input.title,
         description: input.description,
         status: "pending",

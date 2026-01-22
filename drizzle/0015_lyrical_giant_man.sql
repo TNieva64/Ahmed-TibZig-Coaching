@@ -1,0 +1,1 @@
+ALTER TABLE `video_analyses` ADD `video_comparison_url` text;
