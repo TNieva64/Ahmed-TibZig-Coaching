@@ -201,6 +201,108 @@ export async function sendDay7CheckinEmail(
 }
 
 /**
+ * Send notification to admin (Ahmed) when a new user signs up
+ */
+export async function sendNewUserNotification(userEmail: string, userName: string, userId: number): Promise<boolean> {
+  const adminEmail = process.env.OWNER_EMAIL || "ahmed@andaloussicoaching.com";
+  
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #000 0%, #1a1a1a 100%); color: #D4AF37; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+        .info-box { background: white; border-left: 4px solid #D4AF37; padding: 15px; margin: 20px 0; }
+        .info-label { font-weight: bold; color: #D4AF37; margin-bottom: 5px; }
+        .info-value { color: #333; font-size: 16px; }
+        .cta-button { display: inline-block; background: #D4AF37; color: #000; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; }
+        .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1 style="margin: 0; font-size: 28px;">🎉 Nouvelle Inscription</h1>
+          <p style="margin: 10px 0 0 0; opacity: 0.9;">Un nouveau client vient de rejoindre votre plateforme</p>
+        </div>
+        <div class="content">
+          <p style="font-size: 16px; margin-bottom: 20px;">Bonjour Ahmed,</p>
+          <p>Un nouveau client vient de s'inscrire sur votre plateforme de coaching. Voici ses informations :</p>
+          
+          <div class="info-box">
+            <div class="info-label">👤 Nom</div>
+            <div class="info-value">${userName}</div>
+          </div>
+          
+          <div class="info-box">
+            <div class="info-label">📧 Email</div>
+            <div class="info-value">${userEmail}</div>
+          </div>
+          
+          <div class="info-box">
+            <div class="info-label">🆔 ID Utilisateur</div>
+            <div class="info-value">#${userId}</div>
+          </div>
+          
+          <div class="info-box">
+            <div class="info-label">📅 Date d'inscription</div>
+            <div class="info-value">${new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+          </div>
+          
+          <p style="margin-top: 30px;">N'oubliez pas de :</p>
+          <ul style="color: #666;">
+            <li>Consulter son questionnaire d'onboarding</li>
+            <li>Lui envoyer un message de bienvenue personnalisé</li>
+            <li>Créer son premier programme d'entraînement</li>
+          </ul>
+          
+          <div style="text-align: center;">
+            <a href="https://andaloussicoaching.com/admin" class="cta-button">Accéder au Dashboard Admin</a>
+          </div>
+        </div>
+        <div class="footer">
+          <p>Cet email a été envoyé automatiquement par votre plateforme Andaloussi Coaching</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  // Send email without logging to database (admin notification)
+  const transport = getTransporter();
+  
+  try {
+    const info = await transport.sendMail({
+      from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
+      to: adminEmail,
+      subject: `🎉 Nouvelle inscription : ${userName}`,
+      html: htmlContent,
+    });
+
+    console.log(`[Email Service] New user notification sent to ${adminEmail}:`, info.messageId);
+    
+    // If using streamTransport (dev mode), log the email content
+    if (!SMTP_USER || !SMTP_PASS) {
+      console.log("\n=== EMAIL CONTENT (DEV MODE) ===");
+      console.log(`To: ${adminEmail}`);
+      console.log(`Subject: 🎉 Nouvelle inscription : ${userName}`);
+      console.log(`User: ${userName} (${userEmail})`);
+      console.log(`User ID: ${userId}`);
+      console.log("==================================\n");
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("[Email Service] Failed to send new user notification:", error);
+    return false;
+  }
+}
+
+/**
  * Initialize email templates in database
  */
 export async function initializeEmailTemplates(): Promise<void> {

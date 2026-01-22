@@ -297,9 +297,10 @@
 - [ ] Intégrer lecteur vidéo avec message personnalisé d'Ahmed
 
 ### Notification Admin Nouvel Inscrit
-- [ ] Créer procédure tRPC pour notifier admin lors d'une inscription
-- [ ] Intégrer dans le flux d'inscription OAuth
-- [ ] Ajouter email automatique à Ahmed avec infos du nouveau client
+- [x] Créer template email pour notification admin
+- [x] Créer fonction sendNewUserNotification dans emailService
+- [x] Intégrer dans le flux d'inscription OAuth (server/_core/oauth.ts)
+- [x] Tester l'envoi automatique
 
 ### Comparaison avec Autres Clients (Percentile)
 - [ ] Créer procédure tRPC pour calculer le percentile utilisateur

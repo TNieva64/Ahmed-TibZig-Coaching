@@ -3,6 +3,7 @@ import type { Express, Request, Response } from "express";
 import * as db from "../db";
 import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
+import { sendNewUserNotification } from "../emailService";
 
 function getQueryParam(req: Request, key: string): string | undefined {
   const value = req.query[key];
@@ -28,13 +29,28 @@ export function registerOAuthRoutes(app: Express) {
         return;
       }
 
-      await db.upsertUser({
+      const result = await db.upsertUser({
         openId: userInfo.openId,
         name: userInfo.name || null,
         email: userInfo.email ?? null,
         loginMethod: userInfo.loginMethod ?? userInfo.platform ?? null,
         lastSignedIn: new Date(),
       });
+
+      // Send notification to admin if this is a new user
+      if (result.isNewUser && userInfo.email && userInfo.name) {
+        try {
+          await sendNewUserNotification(
+            userInfo.email,
+            userInfo.name,
+            result.userId
+          );
+          console.log(`[OAuth] New user notification sent for ${userInfo.name}`);
+        } catch (emailError) {
+          console.error("[OAuth] Failed to send new user notification:", emailError);
+          // Don't block the OAuth flow if email fails
+        }
+      }
 
       const sessionToken = await sdk.createSessionToken(userInfo.openId, {
         name: userInfo.name || "",

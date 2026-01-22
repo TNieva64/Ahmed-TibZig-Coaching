@@ -18,7 +18,7 @@ export async function getDb() {
   return _db;
 }
 
-export async function upsertUser(user: InsertUser): Promise<void> {
+export async function upsertUser(user: InsertUser): Promise<{ isNewUser: boolean; userId: number }> {
   if (!user.openId) {
     throw new Error("User openId is required for upsert");
   }
@@ -26,8 +26,12 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   const db = await getDb();
   if (!db) {
     console.warn("[Database] Cannot upsert user: database not available");
-    return;
+    throw new Error("Database not available");
   }
+
+  // Check if user already exists
+  const existingUser = await db.select().from(users).where(eq(users.openId, user.openId)).limit(1);
+  const isNewUser = existingUser.length === 0;
 
   try {
     const values: InsertUser = {
@@ -71,6 +75,17 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     await db.insert(users).values(values).onDuplicateKeyUpdate({
       set: updateSet,
     });
+
+    // Get the user ID after insert/update
+    const finalUser = await db.select().from(users).where(eq(users.openId, user.openId)).limit(1);
+    if (finalUser.length === 0) {
+      throw new Error("Failed to retrieve user after upsert");
+    }
+
+    return {
+      isNewUser,
+      userId: finalUser[0].id,
+    };
   } catch (error) {
     console.error("[Database] Failed to upsert user:", error);
     throw error;
