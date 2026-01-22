@@ -253,3 +253,17 @@
 
 **⚠️ SCORE DE CONFORMITÉ ACTUEL : 38/100 - RISQUE ÉLEVÉ**
 **❌ LANCEMENT PUBLIC IMPOSSIBLE EN L'ÉTAT - Risque d'amendes jusqu'à 20M€**
+
+### Lecteur Vidéo avec Annotations (P0 - CRITIQUE)
+- [x] Créer table `video_annotations` pour stocker les annotations
+- [x] Créer table `video_markers` pour les marqueurs temporels
+- [x] Créer table `video_analyses` pour les analyses vidéo
+- [x] Implémenter routeur tRPC pour annotations vidéo (9 procédures)
+- [x] Créer composant lecteur vidéo avec contrôles avancés
+- [x] Implémenter outils de dessin (flèches, cercles, rectangles, lignes, texte)
+- [x] Ajouter système de marqueurs temporels
+- [x] Ajouter sauvegarde et chargement des annotations
+- [x] Intégrer au Dashboard
+- [x] Créer page VideoAnalysis complète
+- [x] Tests du lecteur vidéo
+- [ ] Implémenter comparaison avant/après (split screen) - OPTIONNEL

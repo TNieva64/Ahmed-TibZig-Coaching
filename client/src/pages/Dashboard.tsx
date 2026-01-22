@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Loader2, LogOut, FileText, Play, Trophy, Brain, BarChart3, Share2, Bell, ChefHat, ListChecks } from "lucide-react";
+import { Loader2, LogOut, FileText, Play, Trophy, Brain, BarChart3, Share2, Bell, ChefHat, ListChecks, Video } from "lucide-react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useEffect } from "react";
@@ -91,6 +91,13 @@ export default function Dashboard() {
             >
               <ListChecks className="w-4 h-4" />
               Playlists
+            </Button>
+            <Button
+              onClick={() => navigate("/video-analysis")}
+              className="bg-red-600 text-white hover:bg-red-700 flex items-center gap-2"
+            >
+              <Video className="w-4 h-4" />
+              Analyse Vidéo
             </Button>
             <Button
               onClick={logout}

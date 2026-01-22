@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, json } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -669,5 +669,40 @@ export const playlistExercises = mysqlTable("playlist_exercises", {
   reps: int("reps"),
   duration: int("duration"), // en secondes
   notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Tables pour le lecteur vidéo avec annotations
+export const videoAnalyses = mysqlTable("video_analyses", {
+  id: int("id").primaryKey().autoincrement(),
+  clientId: int("client_id").notNull().references(() => users.id),
+  coachId: int("coach_id").notNull().references(() => users.id),
+  videoUrl: text("video_url").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  status: mysqlEnum("status", ["pending", "in_progress", "completed"]).default("pending"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const videoAnnotations = mysqlTable("video_annotations", {
+  id: int("id").primaryKey().autoincrement(),
+  videoAnalysisId: int("video_analysis_id").notNull().references(() => videoAnalyses.id, { onDelete: "cascade" }),
+  coachId: int("coach_id").notNull().references(() => users.id),
+  timestamp: int("timestamp").notNull(), // Position dans la vidéo en secondes
+  type: mysqlEnum("type", ["arrow", "circle", "rectangle", "text", "line"]).notNull(),
+  data: json("data").notNull(), // Coordonnées et propriétés de l'annotation (x, y, width, height, text, color, etc.)
+  notes: text("notes"), // Notes textuelles associées
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const videoMarkers = mysqlTable("video_markers", {
+  id: int("id").primaryKey().autoincrement(),
+  videoAnalysisId: int("video_analysis_id").notNull().references(() => videoAnalyses.id, { onDelete: "cascade" }),
+  coachId: int("coach_id").notNull().references(() => users.id),
+  timestamp: int("timestamp").notNull(), // Position dans la vidéo en secondes
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  color: varchar("color", { length: 7 }).default("#FFD700"), // Couleur du marqueur (hex)
   createdAt: timestamp("created_at").defaultNow(),
 });
