@@ -707,3 +707,15 @@ export const videoMarkers = mysqlTable("video_markers", {
   color: varchar("color", { length: 7 }).default("#FFD700"), // Couleur du marqueur (hex)
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+// Onboarding Progress
+export const onboardingProgress = mysqlTable('onboarding_progress', {
+  id: int('id').primaryKey().autoincrement(),
+  userId: int('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  step: varchar('step', { length: 50 }).notNull(), // 'account_created', 'questionnaire_completed', 'measurements_added', 'goals_set', 'video_watched', 'first_session_booked', 'profile_complete'
+  completedAt: timestamp('completed_at').defaultNow(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export type OnboardingProgress = typeof onboardingProgress.$inferSelect;
+export type InsertOnboardingProgress = typeof onboardingProgress.$inferInsert;

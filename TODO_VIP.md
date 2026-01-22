@@ -277,3 +277,38 @@
 - [x] Ajouter mode split-screen ajustable (40/60, 50/50, 60/40)
 - [x] Intégrer dans la page VideoAnalysis avec détection automatique
 - [x] Tests de synchronisation
+
+
+## 🎯 Tâches P1 Urgentes en cours
+
+### Checklist d'Onboarding
+- [x] Créer table `onboarding_progress` pour tracker les étapes complétées
+- [x] Définir les 7 étapes d'onboarding (compte, questionnaire, mensurations, objectifs, vidéo, première séance, profil complet)
+- [x] Créer routeur tRPC onboarding avec procédures (getProgress, completeStep, resetProgress)
+- [x] Créer composant OnboardingChecklist pour le dashboard
+- [x] Ajouter barre de progression dorée avec pourcentage
+- [x] Implémenter badge "Profil Complet" à 100%
+- [x] Intégrer dans Dashboard.tsx
+
+### Vidéo de Bienvenue Personnalisée
+- [ ] Ajouter champ videoWelcomeUrl dans table users
+- [ ] Créer procédure tRPC pour uploader vidéo de bienvenue
+- [ ] Créer modal de bienvenue au premier login
+- [ ] Intégrer lecteur vidéo avec message personnalisé d'Ahmed
+
+### Notification Admin Nouvel Inscrit
+- [ ] Créer procédure tRPC pour notifier admin lors d'une inscription
+- [ ] Intégrer dans le flux d'inscription OAuth
+- [ ] Ajouter email automatique à Ahmed avec infos du nouveau client
+
+### Comparaison avec Autres Clients (Percentile)
+- [ ] Créer procédure tRPC pour calculer le percentile utilisateur
+- [ ] Comparer sur 4 métriques (séances complétées, progression poids, régularité, performance)
+- [ ] Créer composant de visualisation percentile (graphique radar)
+- [ ] Intégrer dans page Progress
+
+### Génération PDF Rapports Mensuels
+- [ ] Installer bibliothèque PDF (jsPDF ou PDFKit)
+- [ ] Créer template PDF professionnel avec logo et branding
+- [ ] Ajouter procédure tRPC generatePDF
+- [ ] Intégrer bouton "Télécharger PDF" dans page Reports

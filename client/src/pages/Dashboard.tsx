@@ -1,10 +1,11 @@
-import { useAuth } from "@/_core/hooks/useAuth";
+import { useAuth } from "../_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Loader2, LogOut, FileText, Play, Trophy, Brain, BarChart3, Share2, Bell, ChefHat, ListChecks, Video } from "lucide-react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useEffect } from "react";
+import OnboardingChecklist from "@/components/OnboardingChecklist";
 
 export default function Dashboard() {
   const { user, loading, isAuthenticated, logout } = useAuth();
@@ -114,6 +115,11 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="container py-12">
         <div className="max-w-4xl mx-auto">
+          {/* Onboarding Checklist */}
+          <div className="mb-8">
+            <OnboardingChecklist />
+          </div>
+
           {/* Profile Card */}
           <Card className="p-6 mb-8 border-gold/30">
             <h2 className="text-xl font-semibold text-black mb-4">Profil</h2>
