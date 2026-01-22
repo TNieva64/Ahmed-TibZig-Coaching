@@ -30,6 +30,7 @@ import { reportsRouter } from "./reportsRouter";
 import { referralRouter } from "./referralRouter";
 import { badgeRouter } from "./badgeRouter";
 import { recipeRouter } from "./recipeRouter";
+import { playlistRouter } from "./playlistRouter";
 import { emailRouter } from "./emailRouter";
 import { progressRouter } from "./progressRouter";
 
@@ -55,6 +56,7 @@ export const appRouter = router({
   referral: referralRouter,
   badge: badgeRouter,
   recipe: recipeRouter,
+  playlist: playlistRouter,
   email: emailRouter,
   progress: progressRouter,
   auth: router({

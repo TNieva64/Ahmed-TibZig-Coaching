@@ -27,6 +27,7 @@ import EmailAdmin from "@/pages/EmailAdmin";
 import MentionsLegales from "@/pages/MentionsLegales";
 import PolitiqueConfidentialite from "@/pages/PolitiqueConfidentialite";
 import ConditionsGenerales from "@/pages/ConditionsGenerales";
+import Playlists from "@/pages/Playlists";
 import NotificationSettings from "./pages/NotificationSettings";
 import Messages from "./pages/Messages";
 import Workouts from "./pages/Workouts";
@@ -58,6 +59,7 @@ function Router() {
         <Route path="/mentions-legales" component={MentionsLegales} />
         <Route path="/politique-confidentialite" component={PolitiqueConfidentialite} />
         <Route path="/conditions-generales" component={ConditionsGenerales} />
+        <Route path="/playlists" component={Playlists} />
       <Route path="/notifications" component={NotificationSettings} />
       <Route path={"/messages"} component={Messages} />
       <Route path={"/workouts"} component={Workouts} />

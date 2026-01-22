@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Loader2, LogOut, FileText, Play, Trophy, Brain, BarChart3, Share2, Bell, ChefHat } from "lucide-react";
+import { Loader2, LogOut, FileText, Play, Trophy, Brain, BarChart3, Share2, Bell, ChefHat, ListChecks } from "lucide-react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useEffect } from "react";
@@ -84,6 +84,13 @@ export default function Dashboard() {
             >
               <ChefHat className="w-4 h-4" />
               Recettes
+            </Button>
+            <Button
+              onClick={() => navigate("/playlists")}
+              className="bg-indigo-600 text-white hover:bg-indigo-700 flex items-center gap-2"
+            >
+              <ListChecks className="w-4 h-4" />
+              Playlists
             </Button>
             <Button
               onClick={logout}

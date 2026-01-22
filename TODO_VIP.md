@@ -43,7 +43,7 @@
 - [x] Implémenter routeur tRPC pour exercices
 - [x] Créer page de bibliothèque avec filtres
 - [x] Ajouter système de favoris (backend)
-- [ ] Implémenter playlists personnalisées
+- [x] Implémenter playlists personnalisées
 - [x] Ajouter section exercices adaptés handicap (backend)
 - [x] Tests de la bibliothèque
 

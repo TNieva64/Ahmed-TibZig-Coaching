@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -648,3 +648,26 @@ export type InsertEmailLog = typeof emailLogs.$inferInsert;
 export type SelectEmailLog = typeof emailLogs.$inferSelect;
 export type InsertEmailUnsubscribe = typeof emailUnsubscribes.$inferInsert;
 export type SelectEmailUnsubscribe = typeof emailUnsubscribes.$inferSelect;
+
+// Playlists d'exercices personnalisées
+export const exercisePlaylists = mysqlTable("exercise_playlists", {
+  id: int("id").primaryKey().autoincrement(),
+  userId: int("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  isPublic: boolean("is_public").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+
+export const playlistExercises = mysqlTable("playlist_exercises", {
+  id: int("id").primaryKey().autoincrement(),
+  playlistId: int("playlist_id").notNull().references(() => exercisePlaylists.id, { onDelete: "cascade" }),
+  exerciseId: int("exercise_id").notNull().references(() => exercises.id, { onDelete: "cascade" }),
+  orderIndex: int("order_index").notNull().default(0),
+  sets: int("sets"),
+  reps: int("reps"),
+  duration: int("duration"), // en secondes
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
