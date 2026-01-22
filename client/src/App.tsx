@@ -33,6 +33,7 @@ import NotificationSettings from "./pages/NotificationSettings";
 import Messages from "./pages/Messages";
 import Workouts from "./pages/Workouts";
 import MacroAdjustments from "./pages/admin/MacroAdjustments";
+import CookieConsent from "./components/CookieConsent";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -88,6 +89,7 @@ function App() {
       >
         <TooltipProvider>
           <Toaster />
+          <CookieConsent />
           <Router />
         </TooltipProvider>
       </ThemeProvider>

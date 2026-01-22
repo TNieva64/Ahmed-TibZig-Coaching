@@ -4,6 +4,7 @@ import { getDb } from '../db';
 import { macroAdjustmentProposals, users } from '../../drizzle/schema';
 import { eq, desc } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
+import { sendMacroAdjustmentEmail } from '../emailService';
 
 export const macroAdjustmentRouter = router({
   /**
@@ -108,8 +109,28 @@ export const macroAdjustmentRouter = router({
         })
         .where(eq(macroAdjustmentProposals.id, input.proposalId));
 
-      // TODO: Envoyer email au client avec les nouvelles macros
-      // TODO: Créer une notification dans le dashboard client
+      // Envoyer email au client avec les nouvelles macros
+      try {
+        const user = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, prop.userId))
+          .limit(1);
+
+        if (user.length > 0 && user[0].email) {
+          await sendMacroAdjustmentEmail(
+            user[0].email,
+            user[0].name || 'Client',
+            finalValues.calories,
+            finalValues.protein,
+            finalValues.carbs,
+            finalValues.fat
+          );
+        }
+      } catch (emailError) {
+        console.error('[MacroAdjustment] Failed to send email:', emailError);
+        // Ne pas bloquer la validation si l'email échoue
+      }
 
       return { success: true };
     }),

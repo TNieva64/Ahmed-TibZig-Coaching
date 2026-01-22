@@ -783,3 +783,32 @@ export const macroAdjustments = mysqlTable('macro_adjustments', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   appliedAt: timestamp('applied_at'),
 });
+
+// ============================================
+// RGPD - Consentements Utilisateur
+// ============================================
+
+export const userConsents = mysqlTable('user_consents', {
+  id: int('id').primaryKey().autoincrement(),
+  userId: int('user_id').references(() => users.id, { onDelete: 'cascade' }),
+  
+  // Types de consentements
+  cookiesAnalytics: int('cookies_analytics').notNull().default(0), // 0 = refusé, 1 = accepté
+  cookiesFunctional: int('cookies_functional').notNull().default(1), // Toujours accepté (nécessaires)
+  cookiesMarketing: int('cookies_marketing').notNull().default(0),
+  
+  // Consentement communication
+  emailMarketing: int('email_marketing').notNull().default(0),
+  smsMarketing: int('sms_marketing').notNull().default(0),
+  
+  // Métadonnées
+  consentDate: timestamp('consent_date').notNull().defaultNow(),
+  ipAddress: varchar('ip_address', { length: 45 }), // IPv4 ou IPv6
+  userAgent: text('user_agent'),
+  
+  // Historique
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
+});
+
+export type UserConsent = typeof userConsents.$inferSelect;
+export type InsertUserConsent = typeof userConsents.$inferInsert;

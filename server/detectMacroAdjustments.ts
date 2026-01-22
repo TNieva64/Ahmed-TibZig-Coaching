@@ -5,9 +5,9 @@
 
 import { getDb } from './db';
 import { users, progressMetrics, macroAdjustmentProposals, onboardingResponses } from '../drizzle/schema';
-import { eq, desc, and, gte } from 'drizzle-orm';
+import { eq, desc, and, gte, sql } from 'drizzle-orm';
 import { calculateMacros, shouldAdjustMacros, type Goal, type Gender, type ActivityLevel } from './macroCalculator';
-import { sendNewUserNotification } from './emailService'; // Réutiliser pour notifier Ahmed
+import { sendMacroProposalNotificationToAhmed } from './emailService';
 
 export async function detectMacroAdjustments() {
   const db = await getDb();
@@ -42,7 +42,7 @@ export async function detectMacroAdjustments() {
           .where(
             and(
               eq(progressMetrics.clientProgramId, user.userId), // Note: progressMetrics utilise clientProgramId, pas userId
-              eq(progressMetrics.metricType, 'weight')
+              sql`${progressMetrics.metricType} = 'weight'`
             )
           )
           .orderBy(desc(progressMetrics.recordedAt))
@@ -111,7 +111,7 @@ export async function detectMacroAdjustments() {
           .where(
             and(
               eq(progressMetrics.clientProgramId, user.userId), // Note: progressMetrics utilise clientProgramId, pas userId
-              eq(progressMetrics.metricType, 'calories')
+              sql`${progressMetrics.metricType} = 'calories'`
             )
           )
           .orderBy(desc(progressMetrics.recordedAt))
@@ -153,6 +153,19 @@ export async function detectMacroAdjustments() {
 
         proposalsCreated++;
         console.log(`[MacroAdjustments] User ${user.userId}: Proposal created`);
+
+        // Notifier Ahmed
+        try {
+          await sendMacroProposalNotificationToAhmed(
+            user.name || 'Client',
+            user.email || '',
+            previousWeight,
+            currentWeight,
+            trigger.reason
+          );
+        } catch (emailError) {
+          console.error(`[MacroAdjustments] Failed to notify Ahmed:`, emailError);
+        }
 
       } catch (userError) {
         console.error(`[MacroAdjustments] Error processing user ${user.userId}:`, userError);

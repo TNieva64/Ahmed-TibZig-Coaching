@@ -127,6 +127,13 @@
       "when": 1769089853804,
       "tag": "0017_minor_master_chief",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "5",
+      "when": 1769090974035,
+      "tag": "0018_cheerful_pestilence",
+      "breakpoints": true
     }
   ]
 }
