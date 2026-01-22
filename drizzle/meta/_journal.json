@@ -120,6 +120,13 @@
       "when": 1769088511067,
       "tag": "0016_aberrant_talisman",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "5",
+      "when": 1769089853804,
+      "tag": "0017_minor_master_chief",
+      "breakpoints": true
     }
   ]
 }

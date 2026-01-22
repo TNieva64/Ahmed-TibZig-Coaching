@@ -313,3 +313,19 @@
 - [ ] Créer template PDF professionnel avec logo et branding
 - [ ] Ajouter procédure tRPC generatePDF
 - [ ] Intégrer bouton "Télécharger PDF" dans page Reports
+
+
+### Ajustement Automatique des Macros avec Validation Coach (P2 - COMPLÉTÉ)
+- [x] Définir les règles de recalcul (seuils de changement de poids, fréquence)
+- [x] Créer table `macro_adjustment_proposals` pour propositions en attente
+- [x] Créer table `macro_adjustments` pour historique des ajustements validés
+- [x] Créer fonction calculateMacros avec formules BMR/TDEE (macroCalculator.ts)
+- [x] Créer script cron pour détecter changements significatifs (detectMacroAdjustments.ts)
+- [x] Créer procédure tRPC pour lister propositions en attente (listPending)
+- [x] Créer procédure tRPC pour valider/modifier proposition (validate)
+- [x] Créer procédure tRPC pour rejeter proposition (reject)
+- [x] Créer interface admin "Ajustements en attente" (/admin/macro-adjustments)
+- [ ] Ajouter notification email Ahmed quand nouvelle proposition (TODO)
+- [ ] Ajouter notification client après validation coach
+- [ ] Créer interface pour voir historique des ajustements
+- [ ] Tester avec différents profils (perte poids, prise muscle, maintenance)

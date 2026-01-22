@@ -34,6 +34,7 @@ import { playlistRouter } from "./playlistRouter";
 import { videoAnnotationRouter } from "./videoAnnotationRouter";
 import { emailRouter } from "./emailRouter";
 import { progressRouter } from "./progressRouter";
+import { macroAdjustmentRouter } from "./routers/macroAdjustmentRouter";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -61,6 +62,7 @@ export const appRouter = router({
   videoAnnotation: videoAnnotationRouter,
   email: emailRouter,
   progress: progressRouter,
+  macroAdjustment: macroAdjustmentRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

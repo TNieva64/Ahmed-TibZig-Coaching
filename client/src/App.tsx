@@ -32,6 +32,7 @@ import VideoAnalysis from "./pages/VideoAnalysis";
 import NotificationSettings from "./pages/NotificationSettings";
 import Messages from "./pages/Messages";
 import Workouts from "./pages/Workouts";
+import MacroAdjustments from "./pages/admin/MacroAdjustments";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -64,7 +65,8 @@ function Router() {
           <Route path="/video-analysis" component={VideoAnalysis} />
       <Route path="/notifications" component={NotificationSettings} />
       <Route path={"/messages"} component={Messages} />
-      <Route path={"/workouts"} component={Workouts} />
+      <Route path={'/workouts'} component={Workouts} />
+      <Route path={'/admin/macro-adjustments'} component={MacroAdjustments} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

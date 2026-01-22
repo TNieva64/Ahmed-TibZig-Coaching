@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, json } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, json, serial } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -719,3 +719,67 @@ export const onboardingProgress = mysqlTable('onboarding_progress', {
 
 export type OnboardingProgress = typeof onboardingProgress.$inferSelect;
 export type InsertOnboardingProgress = typeof onboardingProgress.$inferInsert;
+
+// ============================================
+// Macro Adjustment System
+// ============================================
+
+export const macroAdjustmentProposals = mysqlTable('macro_adjustment_proposals', {
+  id: int('id').primaryKey().autoincrement(),
+  userId: int('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  
+  // Current values
+  currentWeight: decimal('current_weight', { precision: 5, scale: 2 }),
+  currentCalories: int('current_calories'),
+  currentProtein: int('current_protein'),
+  currentCarbs: int('current_carbs'),
+  currentFat: int('current_fat'),
+  
+  // Proposed new values
+  proposedWeight: decimal('proposed_weight', { precision: 5, scale: 2 }),
+  proposedCalories: int('proposed_calories').notNull(),
+  proposedProtein: int('proposed_protein').notNull(),
+  proposedCarbs: int('proposed_carbs').notNull(),
+  proposedFat: int('proposed_fat').notNull(),
+  
+  // Reasoning
+  reason: text('reason').notNull(), // "Plateau détecté", "Perte trop rapide", etc.
+  weightChange: decimal('weight_change', { precision: 5, scale: 2 }), // +/- kg
+  weeksElapsed: int('weeks_elapsed'),
+  
+  // Status
+  status: mysqlEnum('status', ['pending', 'approved', 'rejected', 'modified']).notNull().default('pending'),
+  coachNotes: text('coach_notes'), // Notes d'Ahmed lors de la validation
+  
+  // Timestamps
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  reviewedAt: timestamp('reviewed_at'),
+  reviewedBy: int('reviewed_by').references(() => users.id), // Admin qui a validé
+});
+
+export const macroAdjustments = mysqlTable('macro_adjustments', {
+  id: int('id').primaryKey().autoincrement(),
+  userId: int('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  proposalId: int('proposal_id').references(() => macroAdjustmentProposals.id),
+  
+  // Previous values
+  previousCalories: int('previous_calories'),
+  previousProtein: int('previous_protein'),
+  previousCarbs: int('previous_carbs'),
+  previousFat: int('previous_fat'),
+  
+  // New values
+  newCalories: int('new_calories').notNull(),
+  newProtein: int('new_protein').notNull(),
+  newCarbs: int('new_carbs').notNull(),
+  newFat: int('new_fat').notNull(),
+  
+  // Context
+  reason: text('reason').notNull(),
+  coachNotes: text('coach_notes'),
+  isAutomatic: boolean('is_automatic').notNull().default(false), // true si validé auto, false si manuel
+  
+  // Timestamps
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  appliedAt: timestamp('applied_at'),
+});
