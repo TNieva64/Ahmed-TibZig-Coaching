@@ -17,7 +17,7 @@
 - [x] Créer table `workout_sessions` pour les séances planifiées
 - [x] Créer table `workout_completions` pour tracker les séances terminées
 - [x] Implémenter calendrier interactif (react-big-calendar ou FullCalendar)
-- [ ] Ajouter système de drag & drop pour déplacer séances
+- [x] Ajouter système de drag & drop pour déplacer séances (@dnd-kit, updateSessionDate tRPC, DraggableSession, DroppableDay, DragOverlay)
 - [x] Créer système de notifications de rappel (2h avant, script cron, page préférences)
 - [x] Implémenter checkbox "Séance terminée" avec note de difficulté
 - [x] Créer dashboard coach pour voir séances complétées en temps réel

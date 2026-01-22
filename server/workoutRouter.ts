@@ -14,6 +14,32 @@ const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
 });
 
 export const workoutRouter = router({
+  // Update session date (for drag & drop)
+  updateSessionDate: protectedProcedure
+    .input(z.object({
+      sessionId: z.number(),
+      newDate: z.date(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+
+      // Check if session belongs to user or user is admin
+      const session = await db.select().from(workoutSessions).where(eq(workoutSessions.id, input.sessionId)).limit(1);
+      if (!session || session.length === 0) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Session not found' });
+      }
+      
+      if (session[0].userId !== ctx.user.id && ctx.user.role !== 'admin') {
+        throw new TRPCError({ code: 'FORBIDDEN' });
+      }
+
+      await db.update(workoutSessions)
+        .set({ scheduledDate: input.newDate })
+        .where(eq(workoutSessions.id, input.sessionId));
+
+      return { success: true };
+    }),
   // Get workout sessions for a user (optionally filtered by date range)
   getUserSessions: protectedProcedure
     .input(z.object({

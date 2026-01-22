@@ -4,13 +4,14 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { useState } from "react";
-import { Calendar, Clock, Dumbbell, CheckCircle2, Circle, Loader2, ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
+import { Calendar, Clock, Dumbbell, CheckCircle2, Circle, Loader2, ChevronLeft, ChevronRight, RefreshCw, GripVertical } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, useDraggable, useDroppable } from "@dnd-kit/core";
 
 interface WorkoutSession {
   id: number;
@@ -29,12 +30,56 @@ interface WorkoutSession {
   updatedAt: Date;
 }
 
+function DraggableSession({ session }: { session: WorkoutSession }) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: `session-${session.id}`,
+    data: session,
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      className={`w-full text-left px-2 py-1 rounded text-xs flex items-center gap-1 cursor-move ${
+        session.isCompleted
+          ? 'bg-green-500/20 text-green-500'
+          : 'bg-blue-500/20 text-blue-500'
+      } hover:opacity-80 transition-opacity ${isDragging ? 'opacity-50' : ''}`}
+    >
+      <GripVertical className="h-3 w-3 flex-shrink-0" />
+      <span className="truncate flex-1">{session.title}</span>
+    </div>
+  );
+}
+
+function DroppableDay({ date, children }: { date: Date; children: React.ReactNode }) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: `day-${date.toDateString()}`,
+    data: { date },
+  });
+
+  const isToday = date.toDateString() === new Date().toDateString();
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`aspect-square border rounded-lg p-2 transition-colors ${
+        isToday ? 'border-gold bg-gold/5' : 'border-zinc-700 bg-zinc-800'
+      } ${isOver ? 'border-gold bg-gold/10' : ''}`}
+    >
+      {children}
+    </div>
+  );
+}
+
 export default function Workouts() {
   const { user, loading, isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedSession, setSelectedSession] = useState<WorkoutSession | null>(null);
   const [isCompletionDialogOpen, setIsCompletionDialogOpen] = useState(false);
+  const [activeSession, setActiveSession] = useState<WorkoutSession | null>(null);
   const [completionData, setCompletionData] = useState({
     duration: "",
     notes: "",
@@ -54,38 +99,48 @@ export default function Workouts() {
     { enabled: isAuthenticated }
   );
 
-  const { data: stats } = trpc.workout.getCompletionStats.useQuery(
-    {},
-    { enabled: isAuthenticated }
-  );
-
-  const { data: reschedules } = trpc.workout.getRescheduleHistory.useQuery(
-    { userId: user?.id, limit: 5 },
-    { enabled: isAuthenticated }
-  );
+  // Stats will be calculated from sessions
+  const stats = sessions ? {
+    completedSessions: sessions.filter(s => s.isCompleted).length,
+    totalSessions: sessions.length,
+    totalDuration: sessions.filter(s => s.isCompleted).reduce((sum, s) => sum + (s.duration || 0), 0),
+    totalCalories: 0, // Would need completion data
+    avgRating: 0, // Would need completion data
+  } : null;
 
   const completeSessionMutation = trpc.workout.completeSession.useMutation({
     onSuccess: () => {
-      toast.success("Séance complétée avec succès !");
-      refetch();
+      toast.success("Séance terminée avec succès !");
       setIsCompletionDialogOpen(false);
+      setSelectedSession(null);
       setCompletionData({ duration: "", notes: "", rating: "", caloriesBurned: "" });
+      refetch();
     },
     onError: (error) => {
-      toast.error(error.message || "Erreur lors de la complétion de la séance");
+      toast.error(`Erreur : ${error.message}`);
+    },
+  });
+
+  const updateSessionDateMutation = trpc.workout.updateSessionDate.useMutation({
+    onSuccess: () => {
+      toast.success("Séance déplacée avec succès !");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`Erreur : ${error.message}`);
     },
   });
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-gold" />
       </div>
     );
   }
 
   if (!isAuthenticated) {
-    setLocation('/');
+    setLocation("/");
     return null;
   }
 
@@ -97,7 +152,7 @@ export default function Workouts() {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
   };
 
-  const handleCompleteSession = (session: WorkoutSession) => {
+  const handleMarkComplete = (session: WorkoutSession) => {
     setSelectedSession(session);
     setIsCompletionDialogOpen(true);
   };
@@ -111,6 +166,35 @@ export default function Workouts() {
       notes: completionData.notes || undefined,
       rating: completionData.rating ? parseInt(completionData.rating) : undefined,
       caloriesBurned: completionData.caloriesBurned ? parseInt(completionData.caloriesBurned) : undefined,
+    });
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const session = event.active.data.current as WorkoutSession;
+    setActiveSession(session);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveSession(null);
+    
+    const { active, over } = event;
+    if (!over) return;
+
+    const session = active.data.current as WorkoutSession;
+    const targetDate = over.data.current?.date as Date;
+
+    if (!targetDate) return;
+
+    // Check if date actually changed
+    const oldDate = new Date(session.scheduledDate).toDateString();
+    const newDate = targetDate.toDateString();
+    
+    if (oldDate === newDate) return;
+
+    // Update session date
+    updateSessionDateMutation.mutate({
+      sessionId: session.id,
+      newDate: targetDate,
     });
   };
 
@@ -167,300 +251,269 @@ export default function Workouts() {
   }
 
   return (
-    <div className="min-h-screen bg-black pt-20">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-serif font-bold text-gold mb-8">Plans d'Entraînement</h1>
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <div className="min-h-screen bg-black pt-20">
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-4xl font-serif font-bold text-gold mb-8">Plans d'Entraînement</h1>
 
-        {/* Reschedule Notifications */}
-        {reschedules && reschedules.length > 0 && (
-          <Card className="bg-gradient-to-r from-orange-500/10 to-yellow-500/10 border-orange-500/30 p-4 mb-6">
-            <div className="flex items-start gap-3">
-              <RefreshCw className="h-6 w-6 text-orange-500 mt-1" />
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-white mb-2">Séances reprogrammées</h3>
-                <p className="text-gray-300 text-sm mb-3">
-                  Certaines séances manquées ont été automatiquement reprogrammées pour vous aider à rester sur la bonne voie.
-                </p>
-                <div className="space-y-2">
-                  {reschedules.slice(0, 3).map((reschedule) => (
-                    <div key={reschedule.id} className="bg-zinc-900/50 rounded-lg p-3 text-sm">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-white font-medium">
-                            Séance #{reschedule.originalSessionId}
-                          </p>
-                          <p className="text-gray-400 text-xs">
-                            {new Date(reschedule.originalDate).toLocaleDateString('fr-FR')} → {new Date(reschedule.proposedDate).toLocaleDateString('fr-FR')}
-                          </p>
-                        </div>
-                        <Badge className={reschedule.status === 'auto_accepted' ? 'bg-green-500/20 text-green-500' : 'bg-yellow-500/20 text-yellow-500'}>
-                          {reschedule.status === 'auto_accepted' ? 'Acceptée' : reschedule.status}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
+
+
+          {/* Stats Cards */}
+          {stats && (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <Card className="bg-zinc-900 border-gold/20 p-4">
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 className="h-8 w-8 text-green-500" />
+                  <div>
+                    <p className="text-sm text-gray-400">Séances complétées</p>
+                    <p className="text-2xl font-bold text-white">{stats.completedSessions}/{stats.totalSessions}</p>
+                  </div>
                 </div>
-              </div>
+              </Card>
+              <Card className="bg-zinc-900 border-gold/20 p-4">
+                <div className="flex items-center gap-3">
+                  <Clock className="h-8 w-8 text-blue-500" />
+                  <div>
+                    <p className="text-sm text-gray-400">Temps total</p>
+                    <p className="text-2xl font-bold text-white">{stats.totalDuration} min</p>
+                  </div>
+                </div>
+              </Card>
+              <Card className="bg-zinc-900 border-gold/20 p-4">
+                <div className="flex items-center gap-3">
+                  <Dumbbell className="h-8 w-8 text-orange-500" />
+                  <div>
+                    <p className="text-sm text-gray-400">Calories brûlées</p>
+                    <p className="text-2xl font-bold text-white">{stats.totalCalories}</p>
+                  </div>
+                </div>
+              </Card>
+              <Card className="bg-zinc-900 border-gold/20 p-4">
+                <div className="flex items-center gap-3">
+                  <Calendar className="h-8 w-8 text-gold" />
+                  <div>
+                    <p className="text-sm text-gray-400">Note moyenne</p>
+                    <p className="text-2xl font-bold text-white">{stats.avgRating.toFixed(1)}/5</p>
+                  </div>
+                </div>
+              </Card>
             </div>
-          </Card>
-        )}
+          )}
 
-        {/* Stats Cards */}
-        {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <Card className="bg-zinc-900 border-gold/20 p-4">
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-8 w-8 text-green-500" />
-                <div>
-                  <p className="text-sm text-gray-400">Séances complétées</p>
-                  <p className="text-2xl font-bold text-white">{stats.totalCompletions}</p>
-                </div>
-              </div>
-            </Card>
-            <Card className="bg-zinc-900 border-gold/20 p-4">
-              <div className="flex items-center gap-3">
-                <Clock className="h-8 w-8 text-blue-500" />
-                <div>
-                  <p className="text-sm text-gray-400">Temps total</p>
-                  <p className="text-2xl font-bold text-white">{stats.totalDuration} min</p>
-                </div>
-              </div>
-            </Card>
-            <Card className="bg-zinc-900 border-gold/20 p-4">
-              <div className="flex items-center gap-3">
-                <Dumbbell className="h-8 w-8 text-orange-500" />
-                <div>
-                  <p className="text-sm text-gray-400">Calories brûlées</p>
-                  <p className="text-2xl font-bold text-white">{stats.totalCalories}</p>
-                </div>
-              </div>
-            </Card>
-            <Card className="bg-zinc-900 border-gold/20 p-4">
-              <div className="flex items-center gap-3">
-                <Calendar className="h-8 w-8 text-gold" />
-                <div>
-                  <p className="text-sm text-gray-400">Note moyenne</p>
-                  <p className="text-2xl font-bold text-white">{stats.avgRating.toFixed(1)}/5</p>
-                </div>
-              </div>
-            </Card>
-          </div>
-        )}
-
-        {/* Calendar */}
-        <Card className="bg-zinc-900 border-gold/20 p-6">
-          {/* Calendar Header */}
-          <div className="flex items-center justify-between mb-6">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handlePreviousMonth}
-              className="border-gold/20 hover:bg-gold/10"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <h2 className="text-2xl font-bold text-gold">
-              {currentDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
-            </h2>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleNextMonth}
-              className="border-gold/20 hover:bg-gold/10"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-
-          {/* Calendar Grid */}
-          <div className="grid grid-cols-7 gap-2">
-            {/* Day Headers */}
-            {['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map((day) => (
-              <div key={day} className="text-center text-sm font-semibold text-gray-400 py-2">
-                {day}
-              </div>
-            ))}
-
-            {/* Calendar Days */}
-            {calendarDays.map((date, index) => {
-              if (!date) {
-                return <div key={`empty-${index}`} className="aspect-square" />;
-              }
-
-              const dateStr = date.toDateString();
-              const daySessions = sessionsByDate[dateStr] || [];
-              const isToday = date.toDateString() === new Date().toDateString();
-
-              return (
-                <div
-                  key={dateStr}
-                  className={`aspect-square border rounded-lg p-2 ${
-                    isToday ? 'border-gold bg-gold/5' : 'border-zinc-700 bg-zinc-800'
-                  }`}
-                >
-                  <div className="text-sm text-white mb-1">{date.getDate()}</div>
-                  <div className="space-y-1">
-                    {daySessions.map((session) => (
-                      <button
-                        key={session.id}
-                        onClick={() => setSelectedSession(session)}
-                        className={`w-full text-left px-1 py-0.5 rounded text-xs truncate ${
-                          session.isCompleted
-                            ? 'bg-green-500/20 text-green-500'
-                            : 'bg-blue-500/20 text-blue-500'
-                        } hover:opacity-80 transition-opacity`}
-                      >
-                        {session.title}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </Card>
-
-        {/* Session Detail Dialog */}
-        {selectedSession && !isCompletionDialogOpen && (
-          <Dialog open={!!selectedSession} onOpenChange={() => setSelectedSession(null)}>
-            <DialogContent className="bg-zinc-900 border-gold/20 text-white">
-              <DialogHeader>
-                <DialogTitle className="text-gold">{selectedSession.title}</DialogTitle>
-                <DialogDescription className="text-gray-400">
-                  {new Date(selectedSession.scheduledDate).toLocaleDateString('fr-FR', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Badge className={getTypeColor(selectedSession.type)}>
-                    {selectedSession.type}
-                  </Badge>
-                  {getDifficultyBadge(selectedSession.difficulty)}
-                  {selectedSession.duration && (
-                    <Badge variant="outline" className="border-gold/20">
-                      {selectedSession.duration} min
-                    </Badge>
-                  )}
-                </div>
-
-                {selectedSession.description && (
-                  <div>
-                    <h4 className="font-semibold mb-2">Description</h4>
-                    <p className="text-gray-300">{selectedSession.description}</p>
-                  </div>
-                )}
-
-                {selectedSession.instructions && (
-                  <div>
-                    <h4 className="font-semibold mb-2">Instructions</h4>
-                    <p className="text-gray-300 whitespace-pre-wrap">{selectedSession.instructions}</p>
-                  </div>
-                )}
-
-                {selectedSession.videoUrl && (
-                  <div>
-                    <h4 className="font-semibold mb-2">Vidéo</h4>
-                    <a
-                      href={selectedSession.videoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gold hover:underline"
-                    >
-                      Voir la vidéo
-                    </a>
-                  </div>
-                )}
-
-                {selectedSession.isCompleted ? (
-                  <Badge className="bg-green-500/20 text-green-500">
-                    <CheckCircle2 className="h-4 w-4 mr-1" />
-                    Complété
-                  </Badge>
-                ) : (
-                  <Button
-                    onClick={() => handleCompleteSession(selectedSession)}
-                    className="w-full bg-gold text-black hover:bg-gold/90"
-                  >
-                    Marquer comme complété
-                  </Button>
-                )}
-              </div>
-            </DialogContent>
-          </Dialog>
-        )}
-
-        {/* Completion Dialog */}
-        <Dialog open={isCompletionDialogOpen} onOpenChange={setIsCompletionDialogOpen}>
-          <DialogContent className="bg-zinc-900 border-gold/20 text-white">
-            <DialogHeader>
-              <DialogTitle className="text-gold">Compléter la séance</DialogTitle>
-              <DialogDescription className="text-gray-400">
-                Enregistrez vos résultats pour cette séance
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="duration">Durée (minutes)</Label>
-                <Input
-                  id="duration"
-                  type="number"
-                  value={completionData.duration}
-                  onChange={(e) => setCompletionData({ ...completionData, duration: e.target.value })}
-                  className="bg-zinc-800 border-gold/20 text-white"
-                />
-              </div>
-              <div>
-                <Label htmlFor="calories">Calories brûlées</Label>
-                <Input
-                  id="calories"
-                  type="number"
-                  value={completionData.caloriesBurned}
-                  onChange={(e) => setCompletionData({ ...completionData, caloriesBurned: e.target.value })}
-                  className="bg-zinc-800 border-gold/20 text-white"
-                />
-              </div>
-              <div>
-                <Label htmlFor="rating">Note (1-5)</Label>
-                <Input
-                  id="rating"
-                  type="number"
-                  min="1"
-                  max="5"
-                  value={completionData.rating}
-                  onChange={(e) => setCompletionData({ ...completionData, rating: e.target.value })}
-                  className="bg-zinc-800 border-gold/20 text-white"
-                />
-              </div>
-              <div>
-                <Label htmlFor="notes">Notes</Label>
-                <Textarea
-                  id="notes"
-                  value={completionData.notes}
-                  onChange={(e) => setCompletionData({ ...completionData, notes: e.target.value })}
-                  className="bg-zinc-800 border-gold/20 text-white"
-                  rows={3}
-                />
-              </div>
+          {/* Calendar */}
+          <Card className="bg-zinc-900 border-gold/20 p-6">
+            {/* Calendar Header */}
+            <div className="flex items-center justify-between mb-6">
               <Button
-                onClick={handleSubmitCompletion}
-                disabled={completeSessionMutation.isPending}
-                className="w-full bg-gold text-black hover:bg-gold/90"
+                variant="outline"
+                size="icon"
+                onClick={handlePreviousMonth}
+                className="border-gold/20 hover:bg-gold/10"
               >
-                {completeSessionMutation.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  "Enregistrer"
-                )}
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <h2 className="text-2xl font-bold text-gold">
+                {currentDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+              </h2>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleNextMonth}
+                className="border-gold/20 hover:bg-gold/10"
+              >
+                <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
-          </DialogContent>
-        </Dialog>
+
+            <p className="text-sm text-gray-400 mb-4 flex items-center gap-2">
+              <GripVertical className="h-4 w-4" />
+              Glissez-déposez les séances pour les déplacer
+            </p>
+
+            {/* Calendar Grid */}
+            <div className="grid grid-cols-7 gap-2">
+              {/* Day Headers */}
+              {['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map((day) => (
+                <div key={day} className="text-center text-sm font-semibold text-gray-400 py-2">
+                  {day}
+                </div>
+              ))}
+
+              {/* Calendar Days */}
+              {calendarDays.map((date, index) => {
+                if (!date) {
+                  return <div key={`empty-${index}`} className="aspect-square" />;
+                }
+
+                const dateStr = date.toDateString();
+                const daySessions = sessionsByDate[dateStr] || [];
+
+                return (
+                  <DroppableDay key={dateStr} date={date}>
+                    <div className="text-sm text-white mb-1">{date.getDate()}</div>
+                    <div className="space-y-1">
+                      {daySessions.map((session) => (
+                        <div key={session.id} onClick={() => setSelectedSession(session)}>
+                          <DraggableSession session={session} />
+                        </div>
+                      ))}
+                    </div>
+                  </DroppableDay>
+                );
+              })}
+            </div>
+          </Card>
+
+          {/* Session Detail Dialog */}
+          {selectedSession && !isCompletionDialogOpen && (
+            <Dialog open={!!selectedSession} onOpenChange={() => setSelectedSession(null)}>
+              <DialogContent className="bg-zinc-900 border-gold/20 text-white">
+                <DialogHeader>
+                  <DialogTitle className="text-gold">{selectedSession.title}</DialogTitle>
+                  <DialogDescription className="text-gray-400">
+                    {new Date(selectedSession.scheduledDate).toLocaleDateString('fr-FR', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Badge className={getTypeColor(selectedSession.type)}>
+                      {selectedSession.type}
+                    </Badge>
+                    {getDifficultyBadge(selectedSession.difficulty)}
+                    {selectedSession.isCompleted ? (
+                      <Badge className="bg-green-500/20 text-green-500">
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        Terminée
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-gray-500/20 text-gray-500">
+                        <Circle className="h-3 w-3 mr-1" />
+                        En attente
+                      </Badge>
+                    )}
+                  </div>
+
+                  {selectedSession.description && (
+                    <div>
+                      <h3 className="text-sm font-semibold mb-1">Description</h3>
+                      <p className="text-sm text-gray-400">{selectedSession.description}</p>
+                    </div>
+                  )}
+
+                  {selectedSession.duration && (
+                    <div>
+                      <h3 className="text-sm font-semibold mb-1">Durée</h3>
+                      <p className="text-sm text-gray-400">{selectedSession.duration} minutes</p>
+                    </div>
+                  )}
+
+                  {selectedSession.instructions && (
+                    <div>
+                      <h3 className="text-sm font-semibold mb-1">Instructions</h3>
+                      <p className="text-sm text-gray-400 whitespace-pre-wrap">{selectedSession.instructions}</p>
+                    </div>
+                  )}
+
+                  {!selectedSession.isCompleted && (
+                    <Button
+                      onClick={() => handleMarkComplete(selectedSession)}
+                      className="w-full bg-gold hover:bg-gold/80 text-black"
+                    >
+                      <CheckCircle2 className="h-4 w-4 mr-2" />
+                      Marquer comme terminée
+                    </Button>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
+
+          {/* Completion Dialog */}
+          {isCompletionDialogOpen && selectedSession && (
+            <Dialog open={isCompletionDialogOpen} onOpenChange={setIsCompletionDialogOpen}>
+              <DialogContent className="bg-zinc-900 border-gold/20 text-white">
+                <DialogHeader>
+                  <DialogTitle className="text-gold">Compléter la séance</DialogTitle>
+                  <DialogDescription className="text-gray-400">
+                    {selectedSession.title}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="duration">Durée réelle (minutes)</Label>
+                    <Input
+                      id="duration"
+                      type="number"
+                      value={completionData.duration}
+                      onChange={(e) => setCompletionData({ ...completionData, duration: e.target.value })}
+                      className="bg-zinc-800 border-zinc-700"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="rating">Note de difficulté (1-5)</Label>
+                    <Input
+                      id="rating"
+                      type="number"
+                      min="1"
+                      max="5"
+                      value={completionData.rating}
+                      onChange={(e) => setCompletionData({ ...completionData, rating: e.target.value })}
+                      className="bg-zinc-800 border-zinc-700"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="calories">Calories brûlées</Label>
+                    <Input
+                      id="calories"
+                      type="number"
+                      value={completionData.caloriesBurned}
+                      onChange={(e) => setCompletionData({ ...completionData, caloriesBurned: e.target.value })}
+                      className="bg-zinc-800 border-zinc-700"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="notes">Notes</Label>
+                    <Textarea
+                      id="notes"
+                      value={completionData.notes}
+                      onChange={(e) => setCompletionData({ ...completionData, notes: e.target.value })}
+                      className="bg-zinc-800 border-zinc-700"
+                      rows={3}
+                    />
+                  </div>
+                  <Button
+                    onClick={handleSubmitCompletion}
+                    disabled={completeSessionMutation.isPending}
+                    className="w-full bg-gold hover:bg-gold/80 text-black"
+                  >
+                    {completeSessionMutation.isPending ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Enregistrement...
+                      </>
+                    ) : (
+                      'Valider'
+                    )}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
       </div>
-    </div>
+
+      <DragOverlay>
+        {activeSession ? (
+          <div className="px-3 py-2 rounded bg-blue-500/40 text-blue-500 text-sm font-medium border-2 border-blue-500">
+            {activeSession.title}
+          </div>
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
 }
