@@ -131,6 +131,237 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section className="section-padding bg-white">
+        <div className="container">
+          <div className="text-center mb-16">
+            <h2 className="heading-lg text-black mb-4">
+              Ils Ont Transformé Leur Vie
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Découvrez les résultats concrets de mes clients qui ont atteint leurs objectifs
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Témoignage 1 */}
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-200 hover:border-gold transition-all duration-300">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gold to-orange-500 flex items-center justify-center text-white font-bold text-xl">
+                  SM
+                </div>
+                <div>
+                  <h4 className="font-bold text-black">Sophie M.</h4>
+                  <p className="text-sm text-gray-600">Transformation - 6 mois</p>
+                </div>
+              </div>
+              <div className="mb-6">
+                <div className="flex gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <span key={i} className="text-gold">★</span>
+                  ))}
+                </div>
+                <p className="text-gray-700 italic">
+                  "J'ai perdu 18kg en 6 mois tout en gagnant en énergie. Le suivi personnalisé d'Ahmed et ses conseils nutrition ont tout changé. Je me sens enfin bien dans mon corps !"
+                </p>
+              </div>
+              <div className="flex gap-4 text-sm">
+                <div className="bg-white px-4 py-2 rounded-lg border border-gray-200">
+                  <span className="text-gold font-bold">-18kg</span>
+                </div>
+                <div className="bg-white px-4 py-2 rounded-lg border border-gray-200">
+                  <span className="text-gold font-bold">-12cm</span>
+                  <span className="text-gray-600 ml-1">tour de taille</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Témoignage 2 */}
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-200 hover:border-gold transition-all duration-300">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gold to-orange-500 flex items-center justify-center text-white font-bold text-xl">
+                  JL
+                </div>
+                <div>
+                  <h4 className="font-bold text-black">Julien L.</h4>
+                  <p className="text-sm text-gray-600">Performance - 4 mois</p>
+                </div>
+              </div>
+              <div className="mb-6">
+                <div className="flex gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <span key={i} className="text-gold">★</span>
+                  ))}
+                </div>
+                <p className="text-gray-700 italic">
+                  "En préparation pour mon premier marathon, Ahmed m'a aidé à structurer mon entraînement. Résultat : 3h42 alors que je visais 4h ! Son expertise fait vraiment la différence."
+                </p>
+              </div>
+              <div className="flex gap-4 text-sm">
+                <div className="bg-white px-4 py-2 rounded-lg border border-gray-200">
+                  <span className="text-gold font-bold">3h42</span>
+                  <span className="text-gray-600 ml-1">marathon</span>
+                </div>
+                <div className="bg-white px-4 py-2 rounded-lg border border-gray-200">
+                  <span className="text-gold font-bold">-18min</span>
+                  <span className="text-gray-600 ml-1">vs objectif</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Témoignage 3 */}
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-200 hover:border-gold transition-all duration-300">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gold to-orange-500 flex items-center justify-center text-white font-bold text-xl">
+                  MC
+                </div>
+                <div>
+                  <h4 className="font-bold text-black">Marie C.</h4>
+                  <p className="text-sm text-gray-600">Prise de masse - 5 mois</p>
+                </div>
+              </div>
+              <div className="mb-6">
+                <div className="flex gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <span key={i} className="text-gold">★</span>
+                  ))}
+                </div>
+                <p className="text-gray-700 italic">
+                  "Après des années à stagner, j'ai enfin pris 6kg de muscle sec grâce au programme d'Ahmed. Ses plans d'entraînement et conseils nutrition sont ultra précis. Je suis plus forte que jamais !"
+                </p>
+              </div>
+              <div className="flex gap-4 text-sm">
+                <div className="bg-white px-4 py-2 rounded-lg border border-gray-200">
+                  <span className="text-gold font-bold">+6kg</span>
+                  <span className="text-gray-600 ml-1">muscle</span>
+                </div>
+                <div className="bg-white px-4 py-2 rounded-lg border border-gray-200">
+                  <span className="text-gold font-bold">+35%</span>
+                  <span className="text-gray-600 ml-1">force</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Témoignage 4 */}
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-200 hover:border-gold transition-all duration-300">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gold to-orange-500 flex items-center justify-center text-white font-bold text-xl">
+                  PD
+                </div>
+                <div>
+                  <h4 className="font-bold text-black">Pierre D.</h4>
+                  <p className="text-sm text-gray-600">Handi-coaching - 8 mois</p>
+                </div>
+              </div>
+              <div className="mb-6">
+                <div className="flex gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <span key={i} className="text-gold">★</span>
+                  ))}
+                </div>
+                <p className="text-gray-700 italic">
+                  "En fauteuil roulant depuis 3 ans, je pensais que le sport était derrière moi. Ahmed a adapté chaque exercice à ma situation. Aujourd'hui je participe à des compétitions handisport !"
+                </p>
+              </div>
+              <div className="flex gap-4 text-sm">
+                <div className="bg-white px-4 py-2 rounded-lg border border-gray-200">
+                  <span className="text-gold font-bold">1ère</span>
+                  <span className="text-gray-600 ml-1">compétition</span>
+                </div>
+                <div className="bg-white px-4 py-2 rounded-lg border border-gray-200">
+                  <span className="text-gold font-bold">+200%</span>
+                  <span className="text-gray-600 ml-1">confiance</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Témoignage 5 */}
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-200 hover:border-gold transition-all duration-300">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gold to-orange-500 flex items-center justify-center text-white font-bold text-xl">
+                  LB
+                </div>
+                <div>
+                  <h4 className="font-bold text-black">Laura B.</h4>
+                  <p className="text-sm text-gray-600">Remise en forme - 3 mois</p>
+                </div>
+              </div>
+              <div className="mb-6">
+                <div className="flex gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <span key={i} className="text-gold">★</span>
+                  ))}
+                </div>
+                <p className="text-gray-700 italic">
+                  "Après ma grossesse, je voulais retrouver ma forme sans pression. Le coaching en ligne d'Ahmed était parfait : flexible, bienveillant et efficace. Je suis de retour à mon poids d'avant bébé !"
+                </p>
+              </div>
+              <div className="flex gap-4 text-sm">
+                <div className="bg-white px-4 py-2 rounded-lg border border-gray-200">
+                  <span className="text-gold font-bold">-12kg</span>
+                </div>
+                <div className="bg-white px-4 py-2 rounded-lg border border-gray-200">
+                  <span className="text-gold font-bold">100%</span>
+                  <span className="text-gray-600 ml-1">post-partum</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Témoignage 6 */}
+            <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-200 hover:border-gold transition-all duration-300">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gold to-orange-500 flex items-center justify-center text-white font-bold text-xl">
+                  TM
+                </div>
+                <div>
+                  <h4 className="font-bold text-black">Thomas M.</h4>
+                  <p className="text-sm text-gray-600">Transformation - 10 mois</p>
+                </div>
+              </div>
+              <div className="mb-6">
+                <div className="flex gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <span key={i} className="text-gold">★</span>
+                  ))}
+                </div>
+                <p className="text-gray-700 italic">
+                  "De 105kg à 78kg, j'ai complètement transformé mon corps et mon mental. Ahmed ne se contente pas de donner des exercices, il transmet sa passion et sa détermination. Merci pour tout !"
+                </p>
+              </div>
+              <div className="flex gap-4 text-sm">
+                <div className="bg-white px-4 py-2 rounded-lg border border-gray-200">
+                  <span className="text-gold font-bold">-27kg</span>
+                </div>
+                <div className="bg-white px-4 py-2 rounded-lg border border-gray-200">
+                  <span className="text-gold font-bold">-20cm</span>
+                  <span className="text-gray-600 ml-1">tour de taille</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats globales */}
+          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+            <div className="text-center">
+              <div className="text-4xl font-bold text-gold mb-2">250+</div>
+              <div className="text-gray-600">Clients Accompagnés</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-gold mb-2">98%</div>
+              <div className="text-gray-600">Taux de Satisfaction</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-gold mb-2">-15kg</div>
+              <div className="text-gray-600">Perte Moyenne</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-gold mb-2">6 mois</div>
+              <div className="text-gray-600">Durée Moyenne</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="section-padding bg-black text-white">
         <div className="container text-center">

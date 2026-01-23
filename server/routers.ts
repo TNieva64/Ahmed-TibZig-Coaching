@@ -34,7 +34,8 @@ import { playlistRouter } from "./playlistRouter";
 import { videoAnnotationRouter } from "./videoAnnotationRouter";
 import { emailRouter } from "./emailRouter";
 import { progressRouter } from "./progressRouter";
-import { macroAdjustmentRouter } from "./routers/macroAdjustmentRouter";
+import { macroAdjustmentRouter } from './routers/macroAdjustmentRouter';
+import { demoRouter } from './routers/demoRouter';
 import { rgpdRouter } from "./routers/rgpdRouter";
 
 // Admin-only procedure
@@ -63,8 +64,9 @@ export const appRouter = router({
   videoAnnotation: videoAnnotationRouter,
   email: emailRouter,
   progress: progressRouter,
-  macroAdjustment: macroAdjustmentRouter,
   rgpd: rgpdRouter,
+  macroAdjustment: macroAdjustmentRouter,
+  demo: demoRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
