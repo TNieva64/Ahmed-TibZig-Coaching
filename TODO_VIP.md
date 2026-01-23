@@ -414,3 +414,13 @@
 - [x] Scénarios de démonstration préparés
 - [x] Checklist de préparation démo
 - [x] Conseils pour Ahmed, marketing, et validateur technique
+
+
+## 🐛 BUGS CRITIQUES À CORRIGER
+
+### Authentification et Navigation
+- [x] Corriger navigation pour utilisateurs non connectés
+- [x] Masquer onglets "Exercices", "Messages", "Entraînement", "Mon Espace" pour utilisateurs déconnectés
+- [x] Ajouter bouton de déconnexion dans le header
+- [x] Afficher nom de l'utilisateur connecté dans le header
+- [x] Logique conditionnelle d'affichage selon statut d'authentification

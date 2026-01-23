@@ -1,20 +1,42 @@
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
 import { Link } from 'wouter';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { trpc } from '@/lib/trpc';
+import { toast } from 'sonner';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, loading } = useAuth();
+  const logoutMutation = trpc.auth.logout.useMutation();
 
-  const navLinks = [
+  const handleLogout = async () => {
+    try {
+      await logoutMutation.mutateAsync();
+      toast.success('Déconnexion réussie');
+      window.location.href = '/';
+    } catch (error) {
+      toast.error('Erreur lors de la déconnexion');
+    }
+  };
+
+  // Liens publics (toujours visibles)
+  const publicLinks = [
     { label: 'Accueil', href: '/' },
     { label: 'Mon Parcours', href: '/parcours' },
     { label: 'Coaching', href: '/coaching' },
     { label: 'Contact', href: '/contact' },
+  ];
+
+  // Liens privés (uniquement pour utilisateurs connectés)
+  const privateLinks = [
     { label: 'Entraînement', href: '/workouts' },
     { label: 'Exercices', href: '/exercises' },
     { label: 'Messages', href: '/messages' },
     { label: 'Mon Espace', href: '/dashboard' },
   ];
+
+  const navLinks = user ? [...publicLinks, ...privateLinks] : publicLinks;
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
@@ -37,11 +59,24 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* CTA Button */}
-          <div className="hidden md:block">
-            <Link href="/reservation" className="premium-button inline-block">
-              Réserver
-            </Link>
+          {/* CTA Button or User Menu */}
+          <div className="hidden md:flex items-center gap-4">
+            {user ? (
+              <>
+                <span className="text-sm text-gray-600">Bonjour, {user.name}</span>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-gold transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Déconnexion
+                </button>
+              </>
+            ) : (
+              <Link href="/reservation" className="premium-button inline-block">
+                Réserver
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -72,13 +107,26 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
-              <Link
-                href="/reservation"
-                className="premium-button text-center block"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Réserver
-              </Link>
+              {user ? (
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}
+                  className="flex items-center gap-2 justify-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-gold transition-colors border border-gray-300 rounded-lg"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Déconnexion
+                </button>
+              ) : (
+                <Link
+                  href="/reservation"
+                  className="premium-button text-center block"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Réserver
+                </Link>
+              )}
             </div>
           </nav>
         )}
