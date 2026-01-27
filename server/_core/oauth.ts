@@ -60,7 +60,16 @@ export function registerOAuthRoutes(app: Express) {
       const cookieOptions = getSessionCookieOptions(req);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
 
-      res.redirect(302, "/");
+      // Redirection intelligente selon le statut d'onboarding
+      const onboardingStatus = await db.getOnboardingStatus(result.userId);
+      
+      if (!onboardingStatus || !onboardingStatus.isComplete) {
+        // Nouvel utilisateur ou onboarding incomplet → onboarding
+        res.redirect(302, "/onboarding");
+      } else {
+        // Client existant avec onboarding complet → dashboard
+        res.redirect(302, "/dashboard");
+      }
     } catch (error) {
       console.error("[OAuth] Callback failed", error);
       res.status(500).json({ error: "OAuth callback failed" });

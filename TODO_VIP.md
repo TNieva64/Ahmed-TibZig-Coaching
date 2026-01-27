@@ -424,3 +424,16 @@
 - [x] Ajouter bouton de déconnexion dans le header
 - [x] Afficher nom de l'utilisateur connecté dans le header
 - [x] Logique conditionnelle d'affichage selon statut d'authentification
+
+
+## 🎨 Amélioration UX - Connexion
+- [x] Ajouter bouton "Connexion" clair dans le header pour utilisateurs déconnectés
+- [x] Bouton redirige vers l'authentification OAuth avec getLoginUrl()
+
+
+## 🔄 Parcours Utilisateurs
+- [x] Implémenter redirection intelligente selon statut onboarding
+- [x] Nouveaux utilisateurs (sans onboarding) → /onboarding
+- [x] Clients existants (onboarding complet) → /dashboard
+- [x] Fonction getOnboardingStatus() ajoutée dans db.ts
+- [x] Logique de redirection dans OAuth callback

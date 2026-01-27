@@ -353,3 +353,43 @@ export async function getTotalUnreadCount(userId: number, isCoach: boolean) {
     return 0;
   }
 }
+
+
+/**
+ * Get onboarding status for a user
+ * Returns null if no onboarding data exists, or an object with isComplete flag
+ */
+export async function getOnboardingStatus(userId: number): Promise<{ isComplete: boolean } | null> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get onboarding status: database not available");
+    return null;
+  }
+
+  try {
+    const { onboardingResponses } = await import("../drizzle/schema");
+    
+    // Check if user has completed onboarding by looking for onboarding responses
+    const responses = await db
+      .select()
+      .from(onboardingResponses)
+      .where(eq(onboardingResponses.userId, userId))
+      .limit(1);
+
+    if (responses.length === 0) {
+      return null; // No onboarding data
+    }
+
+    // Consider onboarding complete if basic required fields are filled
+    const response = responses[0];
+    const isComplete = !!(
+      response.primaryGoal &&
+      response.currentActivityLevel
+    );
+
+    return { isComplete };
+  } catch (error) {
+    console.error("[Database] Failed to get onboarding status:", error);
+    return null;
+  }
+}

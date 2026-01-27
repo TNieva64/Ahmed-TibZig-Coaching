@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Menu, X, LogOut } from 'lucide-react';
+import { Menu, X, LogOut, LogIn } from 'lucide-react';
 import { Link } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
+import { getLoginUrl } from '@/const';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -60,7 +61,7 @@ export default function Header() {
           </nav>
 
           {/* CTA Button or User Menu */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
             {user ? (
               <>
                 <span className="text-sm text-gray-600">Bonjour, {user.name}</span>
@@ -73,9 +74,18 @@ export default function Header() {
                 </button>
               </>
             ) : (
-              <Link href="/reservation" className="premium-button inline-block">
-                Réserver
-              </Link>
+              <>
+                <a
+                  href={getLoginUrl()}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-gold transition-colors border border-gray-300 rounded-lg"
+                >
+                  <LogIn className="w-4 h-4" />
+                  Connexion
+                </a>
+                <Link href="/reservation" className="premium-button inline-block">
+                  Réserver
+                </Link>
+              </>
             )}
           </div>
 
@@ -119,13 +129,23 @@ export default function Header() {
                   Déconnexion
                 </button>
               ) : (
-                <Link
-                  href="/reservation"
-                  className="premium-button text-center block"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Réserver
-                </Link>
+                <>
+                  <a
+                    href={getLoginUrl()}
+                    className="flex items-center gap-2 justify-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-gold transition-colors border border-gray-300 rounded-lg"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <LogIn className="w-4 h-4" />
+                    Connexion
+                  </a>
+                  <Link
+                    href="/reservation"
+                    className="premium-button text-center block"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Réserver
+                  </Link>
+                </>
               )}
             </div>
           </nav>
