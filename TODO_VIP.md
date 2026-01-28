@@ -437,3 +437,7 @@
 - [x] Clients existants (onboarding complet) → /dashboard
 - [x] Fonction getOnboardingStatus() ajoutée dans db.ts
 - [x] Logique de redirection dans OAuth callback
+
+
+## 🎨 Branding
+- [x] Vérification : Aucune mention "Propulsé par Manus" trouvée dans le projet
