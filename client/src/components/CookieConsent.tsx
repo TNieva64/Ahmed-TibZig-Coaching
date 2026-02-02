@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { trpc } from '@/lib/trpc';
 import { X } from 'lucide-react';
 
 export default function CookieConsent() {
   const [isVisible, setIsVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
-  
-  const saveConsentsMutation = trpc.rgpd.saveConsents.useMutation();
 
   useEffect(() => {
     // Vérifier si l'utilisateur a déjà donné son consentement
@@ -19,40 +16,16 @@ export default function CookieConsent() {
     }
   }, []);
 
-  const handleAcceptAll = async () => {
-    try {
-      await saveConsentsMutation.mutateAsync({
-        cookiesAnalytics: true,
-        cookiesMarketing: true,
-        emailMarketing: false,
-        smsMarketing: false,
-        ipAddress: undefined,
-        userAgent: navigator.userAgent,
-      });
-      
-      localStorage.setItem('cookieConsent', 'all');
-      setIsVisible(false);
-    } catch (error) {
-      console.error('Error saving consents:', error);
-    }
+  const handleAcceptAll = () => {
+    // TODO: Connect to backend RGPD router when implemented
+    localStorage.setItem('cookieConsent', 'all');
+    setIsVisible(false);
   };
 
-  const handleAcceptNecessary = async () => {
-    try {
-      await saveConsentsMutation.mutateAsync({
-        cookiesAnalytics: false,
-        cookiesMarketing: false,
-        emailMarketing: false,
-        smsMarketing: false,
-        ipAddress: undefined,
-        userAgent: navigator.userAgent,
-      });
-      
-      localStorage.setItem('cookieConsent', 'necessary');
-      setIsVisible(false);
-    } catch (error) {
-      console.error('Error saving consents:', error);
-    }
+  const handleAcceptNecessary = () => {
+    // TODO: Connect to backend RGPD router when implemented
+    localStorage.setItem('cookieConsent', 'necessary');
+    setIsVisible(false);
   };
 
   if (!isVisible) return null;
@@ -64,8 +37,8 @@ export default function CookieConsent() {
           <div className="flex-1">
             <h3 className="text-lg font-bold text-white mb-2">🍪 Respect de votre vie privée</h3>
             <p className="text-gray-300 text-sm mb-4">
-              Nous utilisons des cookies pour améliorer votre expérience sur notre site. 
-              Les cookies fonctionnels sont nécessaires au bon fonctionnement de la plateforme. 
+              Nous utilisons des cookies pour améliorer votre expérience sur notre site.
+              Les cookies fonctionnels sont nécessaires au bon fonctionnement de la plateforme.
               Les cookies analytiques nous aident à comprendre comment vous utilisez le site.
             </p>
           </div>
@@ -88,7 +61,7 @@ export default function CookieConsent() {
             <div>
               <h4 className="font-semibold text-white mb-1">📊 Cookies Analytiques (Optionnels)</h4>
               <p className="text-gray-400 text-sm">
-                Nous aident à comprendre comment vous utilisez le site pour l'améliorer (Google Analytics, Manus Analytics).
+                Nous aident à comprendre comment vous utilisez le site pour l'améliorer.
               </p>
             </div>
             <div>
@@ -104,7 +77,6 @@ export default function CookieConsent() {
           <Button
             onClick={handleAcceptAll}
             className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold"
-            disabled={saveConsentsMutation.isPending}
           >
             ✅ Tout Accepter
           </Button>
@@ -112,7 +84,6 @@ export default function CookieConsent() {
             onClick={handleAcceptNecessary}
             variant="outline"
             className="flex-1 border-zinc-700 text-white hover:bg-zinc-800"
-            disabled={saveConsentsMutation.isPending}
           >
             ⚙️ Cookies Nécessaires Uniquement
           </Button>

@@ -7,7 +7,7 @@ import { eq, desc } from "drizzle-orm";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.user.role !== 'admin') {
+  if (ctx.user?.role !== 'ADMIN') {
     throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
   }
   return next({ ctx });
@@ -22,7 +22,7 @@ export const formVideoRouter = router({
     const videos = await db
       .select()
       .from(formVideos)
-      .where(eq(formVideos.userId, ctx.user.id))
+      .where(eq(formVideos.userId, ctx.user?.id ?? 0))
       .orderBy(desc(formVideos.uploadedAt));
 
     return videos;
@@ -71,7 +71,7 @@ export const formVideoRouter = router({
       }
 
       // Check access
-      if (video[0].userId !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (video[0].userId !== ctx.user?.id && ctx.user?.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 
@@ -92,7 +92,7 @@ export const formVideoRouter = router({
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
       const newVideo: InsertFormVideo = {
-        userId: ctx.user.id,
+        userId: ctx.user!.id,
         ...input,
         status: "pending",
       };
@@ -162,7 +162,7 @@ export const formVideoRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Video not found' });
       }
 
-      if (video[0].userId !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (video[0].userId !== ctx.user?.id && ctx.user?.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 

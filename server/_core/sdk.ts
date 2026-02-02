@@ -1,4 +1,4 @@
-import { AXIOS_TIMEOUT_MS, COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+import { AXIOS_TIMEOUT_MS, COOKIE_NAME, SEVEN_DAYS_MS } from "@shared/const";
 import { ForbiddenError } from "@shared/_core/errors";
 import axios, { type AxiosInstance } from "axios";
 import { parse as parseCookieHeader } from "cookie";
@@ -14,6 +14,7 @@ import type {
   GetUserInfoWithJwtRequest,
   GetUserInfoWithJwtResponse,
 } from "./types/manusTypes";
+
 // Utility function
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.length > 0;
@@ -28,6 +29,60 @@ const EXCHANGE_TOKEN_PATH = `/webdev.v1.WebDevAuthPublicService/ExchangeToken`;
 const GET_USER_INFO_PATH = `/webdev.v1.WebDevAuthPublicService/GetUserInfo`;
 const GET_USER_INFO_WITH_JWT_PATH = `/webdev.v1.WebDevAuthPublicService/GetUserInfoWithJwt`;
 
+/**
+ * Décode le state OAuth de manière sécurisée
+ *
+ * SÉCURITÉ:
+ * - Utilise Buffer.from() au lieu de atob() pour une meilleure gestion des caractères UTF-8
+ * - Valide que le decoded est une URL valide
+ * - Valide que le redirectUri correspond à l'origin autorisée
+ * - Prévient les injections via le paramètre state
+ *
+ * Pourquoi Buffer.from() au lieu de atob() ?
+ * - atob() ne gère pas correctement les caractères UTF-8 multi-octets
+ * - atob() peut échouer sur certains caractères spéciaux
+ * - Buffer.from() est plus robuste et prévisible
+ */
+function decodeStateSecurely(state: string, expectedOrigin: string): string {
+  try {
+    // Utiliser Buffer.from() au lieu de atob() pour une meilleure gestion UTF-8
+    const decoded = Buffer.from(state, "base64").toString("utf-8");
+
+    // Validation: doit être une URL valide
+    try {
+      const url = new URL(decoded);
+
+      // Validation: le protocole doit être HTTPS (sauf en développement)
+      if (ENV.isProduction && url.protocol !== "https:") {
+        throw new Error("Redirect URI must use HTTPS in production");
+      }
+
+      // Validation: l'origin doit correspondre à l'origin attendue
+      const redirectOrigin = `${url.protocol}//${url.host}`;
+      if (redirectOrigin !== expectedOrigin) {
+        throw new Error(
+          `Redirect URI origin mismatch. Expected: ${expectedOrigin}, Got: ${redirectOrigin}`
+        );
+      }
+
+      return decoded;
+    } catch (urlError) {
+      throw new Error(`Invalid redirect URI in state: ${urlError}`);
+    }
+  } catch (error) {
+    console.error("[OAuth] Failed to decode state:", error);
+    throw new Error("Invalid OAuth state parameter");
+  }
+}
+
+/**
+ * Encode le state OAuth de manière sécurisée
+ */
+function encodeStateSecurely(redirectUri: string): string {
+  // Utiliser Buffer.from() pour l'encodage base64 robuste
+  return Buffer.from(redirectUri, "utf-8").toString("base64");
+}
+
 class OAuthService {
   constructor(private client: ReturnType<typeof axios.create>) {
     console.log("[OAuth] Initialized with baseURL:", ENV.oAuthServerUrl);
@@ -38,20 +93,19 @@ class OAuthService {
     }
   }
 
-  private decodeState(state: string): string {
-    const redirectUri = atob(state);
-    return redirectUri;
-  }
-
   async getTokenByCode(
     code: string,
-    state: string
+    state: string,
+    expectedOrigin: string
   ): Promise<ExchangeTokenResponse> {
+    // Décoder et valider le state de manière sécurisée
+    const redirectUri = decodeStateSecurely(state, expectedOrigin);
+
     const payload: ExchangeTokenRequest = {
       clientId: ENV.appId,
       grantType: "authorization_code",
       code,
-      redirectUri: this.decodeState(state),
+      redirectUri,
     };
 
     const { data } = await this.client.post<ExchangeTokenResponse>(
@@ -116,13 +170,14 @@ class SDKServer {
   /**
    * Exchange OAuth authorization code for access token
    * @example
-   * const tokenResponse = await sdk.exchangeCodeForToken(code, state);
+   * const tokenResponse = await sdk.exchangeCodeForToken(code, state, expectedOrigin);
    */
   async exchangeCodeForToken(
     code: string,
-    state: string
+    state: string,
+    expectedOrigin: string
   ): Promise<ExchangeTokenResponse> {
-    return this.oauthService.getTokenByCode(code, state);
+    return this.oauthService.getTokenByCode(code, state, expectedOrigin);
   }
 
   /**
@@ -161,6 +216,12 @@ class SDKServer {
 
   /**
    * Create a session token for a Manus user openId
+   *
+   * SÉCURITÉ:
+   * - L'expiration par défaut est de 7 jours (SEVEN_DAYS_MS) au lieu d'un an
+   * - Réduit la fenêtre d'attaque en cas de vol de cookie
+   * - Force les utilisateurs à se réauthentifier régulièrement
+   *
    * @example
    * const sessionToken = await sdk.createSessionToken(userInfo.openId);
    */
@@ -183,7 +244,8 @@ class SDKServer {
     options: { expiresInMs?: number } = {}
   ): Promise<string> {
     const issuedAt = Date.now();
-    const expiresInMs = options.expiresInMs ?? ONE_YEAR_MS;
+    // Utiliser SEVEN_DAYS_MS par défaut au lieu de ONE_YEAR_MS
+    const expiresInMs = options.expiresInMs ?? SEVEN_DAYS_MS;
     const expirationSeconds = Math.floor((issuedAt + expiresInMs) / 1000);
     const secretKey = this.getSessionSecret();
 

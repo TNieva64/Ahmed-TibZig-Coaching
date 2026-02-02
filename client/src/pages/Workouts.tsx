@@ -18,16 +18,16 @@ interface WorkoutSession {
   userId: number;
   programId: number | null;
   title: string;
-  description: string | null;
+  description?: string | null;
   type: "cardio" | "strength" | "flexibility" | "hiit" | "endurance" | "recovery";
   scheduledDate: Date;
-  duration: number | null;
-  difficulty: "easy" | "medium" | "hard" | "extreme" | null;
-  instructions: string | null;
-  videoUrl: string | null;
+  duration?: number | null;
+  difficulty?: "easy" | "medium" | "hard" | "extreme" | null;
+  instructions?: string | null;
+  videoUrl?: string | null;
   isCompleted: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 function DraggableSession({ session }: { session: WorkoutSession }) {
@@ -210,7 +210,7 @@ export default function Workouts() {
     return colors[type] || "bg-gray-500";
   };
 
-  const getDifficultyBadge = (difficulty: string | null) => {
+  const getDifficultyBadge = (difficulty?: string | null) => {
     if (!difficulty) return null;
     const variants: Record<string, string> = {
       easy: "bg-green-500/20 text-green-500",

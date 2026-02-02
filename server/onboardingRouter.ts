@@ -23,7 +23,7 @@ export const onboardingRouter = router({
     const results = await db
       .select()
       .from(onboardingResponses)
-      .where(eq(onboardingResponses.userId, ctx.user.id))
+      .where(eq(onboardingResponses.userId, ctx.user?.id || 0))
       .limit(1);
 
     return results[0] || null;
@@ -58,7 +58,7 @@ export const onboardingRouter = router({
       const existing = await db
         .select()
         .from(onboardingResponses)
-        .where(eq(onboardingResponses.userId, ctx.user.id))
+        .where(eq(onboardingResponses.userId, ctx.user?.id || 0))
         .limit(1);
 
       if (existing.length > 0) {
@@ -69,11 +69,11 @@ export const onboardingRouter = router({
             ...input,
             updatedAt: new Date(),
           })
-          .where(eq(onboardingResponses.userId, ctx.user.id));
+          .where(eq(onboardingResponses.userId, ctx.user?.id || 0));
       } else {
         // Insert new
         await db.insert(onboardingResponses).values({
-          userId: ctx.user.id,
+          userId: ctx.user?.id || 0,
           ...input,
         });
       }
@@ -89,7 +89,7 @@ export const onboardingRouter = router({
     const progress = await db
       .select()
       .from(onboardingProgress)
-      .where(eq(onboardingProgress.userId, ctx.user.id));
+      .where(eq(onboardingProgress.userId, ctx.user?.id || 0));
 
     const completedSteps = progress.map(p => p.step);
     const totalSteps = ONBOARDING_STEPS.length;
@@ -126,7 +126,7 @@ export const onboardingRouter = router({
         .from(onboardingProgress)
         .where(
           and(
-            eq(onboardingProgress.userId, ctx.user.id),
+            eq(onboardingProgress.userId, ctx.user?.id || 0),
             eq(onboardingProgress.step, input.step)
           )
         )
@@ -138,7 +138,7 @@ export const onboardingRouter = router({
 
       // Insert new progress record
       await db.insert(onboardingProgress).values({
-        userId: ctx.user.id,
+        userId: ctx.user?.id || 0,
         step: input.step,
       });
 

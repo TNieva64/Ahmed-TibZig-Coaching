@@ -7,7 +7,7 @@ import { eq, desc, like, and } from "drizzle-orm";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.user.role !== 'admin') {
+  if (ctx.user?.role !== 'ADMIN') {
     throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
   }
   return next({ ctx });
@@ -79,7 +79,7 @@ export const exerciseRouter = router({
     const favorites = await db
       .select()
       .from(userFavoriteExercises)
-      .where(eq(userFavoriteExercises.userId, ctx.user.id));
+      .where(eq(userFavoriteExercises.userId, ctx.user!.id));
 
     return favorites;
   }),
@@ -95,7 +95,7 @@ export const exerciseRouter = router({
       const existing = await db
         .select()
         .from(userFavoriteExercises)
-        .where(eq(userFavoriteExercises.userId, ctx.user.id))
+        .where(eq(userFavoriteExercises.userId, ctx.user!.id))
         .limit(100);
 
       const isFavorite = existing.some(f => f.exerciseId === input.exerciseId);
@@ -104,12 +104,12 @@ export const exerciseRouter = router({
         // Remove from favorites
         await db
           .delete(userFavoriteExercises)
-          .where(eq(userFavoriteExercises.userId, ctx.user.id));
+          .where(eq(userFavoriteExercises.userId, ctx.user!.id));
         return { isFavorite: false };
       } else {
         // Add to favorites
         const newFavorite: InsertUserFavoriteExercise = {
-          userId: ctx.user.id,
+          userId: ctx.user!.id,
           exerciseId: input.exerciseId,
         };
         await db.insert(userFavoriteExercises).values(newFavorite);

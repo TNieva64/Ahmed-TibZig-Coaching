@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, json, serial } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, json, serial, index } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -16,11 +16,15 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  role: mysqlEnum("role", ["CLIENT", "COACH", "ADMIN"]).default("CLIENT").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
-});
+}, (table: any) => ({
+  idxUsersEmail: index("idx_users_email").on(table.email),
+  idxUsersRole: index("idx_users_role").on(table.role),
+  idxUsersCreatedAt: index("idx_users_createdAt").on(table.createdAt),
+}));
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
@@ -36,7 +40,10 @@ export const programs = mysqlTable("programs", {
   duration: int("duration"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table: any) => ({
+  idxProgramsCategory: index("idx_programs_category").on(table.category),
+  idxProgramsCreatedAt: index("idx_programs_createdAt").on(table.createdAt),
+}));
 
 export type Program = typeof programs.$inferSelect;
 export type InsertProgram = typeof programs.$inferInsert;
@@ -53,7 +60,14 @@ export const clientPrograms = mysqlTable("clientPrograms", {
   status: mysqlEnum("status", ["active", "completed", "paused"]).default("active").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table: any) => ({
+  idxClientProgramsUserId: index("idx_clientPrograms_userId").on(table.userId),
+  idxClientProgramsProgramId: index("idx_clientPrograms_programId").on(table.programId),
+  idxClientProgramsStatus: index("idx_clientPrograms_status").on(table.status),
+  idxClientProgramsCreatedAt: index("idx_clientPrograms_createdAt").on(table.createdAt),
+  idxClientProgramsUserIdStatus: index("idx_clientPrograms_userId_status").on(table.userId, table.status),
+  idxClientProgramsUserIdCreatedAt: index("idx_clientPrograms_userId_createdAt").on(table.userId, table.createdAt),
+}));
 
 export type ClientProgram = typeof clientPrograms.$inferSelect;
 export type InsertClientProgram = typeof clientPrograms.$inferInsert;
@@ -71,7 +85,11 @@ export const programResources = mysqlTable("programResources", {
   order: int("order").default(0),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table: any) => ({
+  idxProgramResourcesProgramId: index("idx_programResources_programId").on(table.programId),
+  idxProgramResourcesType: index("idx_programResources_type").on(table.type),
+  idxProgramResourcesCreatedAt: index("idx_programResources_createdAt").on(table.createdAt),
+}));
 
 export type ProgramResource = typeof programResources.$inferSelect;
 export type InsertProgramResource = typeof programResources.$inferInsert;
@@ -88,7 +106,12 @@ export const progressMetrics = mysqlTable("progressMetrics", {
   notes: text("notes"),
   recordedAt: timestamp("recordedAt").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+}, (table: any) => ({
+  idxProgressMetricsClientProgramId: index("idx_progressMetrics_clientProgramId").on(table.clientProgramId),
+  idxProgressMetricsMetricType: index("idx_progressMetrics_metricType").on(table.metricType),
+  idxProgressMetricsRecordedAt: index("idx_progressMetrics_recordedAt").on(table.recordedAt),
+  idxProgressMetricsClientProgramIdMetricTypeRecordedAt: index("idx_progressMetrics_clientProgramId_metricType_recordedAt").on(table.clientProgramId, table.metricType, table.recordedAt),
+}));
 
 export type ProgressMetric = typeof progressMetrics.$inferSelect;
 export type InsertProgressMetric = typeof progressMetrics.$inferInsert;
@@ -106,7 +129,11 @@ export const progressGoals = mysqlTable("progressGoals", {
   description: text("description"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table: any) => ({
+  idxProgressGoalsClientProgramId: index("idx_progressGoals_clientProgramId").on(table.clientProgramId),
+  idxProgressGoalsGoalType: index("idx_progressGoals_goalType").on(table.goalType),
+  idxProgressGoalsCreatedAt: index("idx_progressGoals_createdAt").on(table.createdAt),
+}));
 
 export type ProgressGoal = typeof progressGoals.$inferSelect;
 export type InsertProgressGoal = typeof progressGoals.$inferInsert;
@@ -123,7 +150,13 @@ export const conversations = mysqlTable("conversations", {
   unreadCountCoach: int("unreadCountCoach").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table: any) => ({
+  idxConversationsClientId: index("idx_conversations_clientId").on(table.clientId),
+  idxConversationsCoachId: index("idx_conversations_coachId").on(table.coachId),
+  idxConversationsLastMessageAt: index("idx_conversations_lastMessageAt").on(table.lastMessageAt),
+  idxConversationsClientIdLastMessageAt: index("idx_conversations_clientId_lastMessageAt").on(table.clientId, table.lastMessageAt),
+  idxConversationsCoachIdLastMessageAt: index("idx_conversations_coachId_lastMessageAt").on(table.coachId, table.lastMessageAt),
+}));
 
 export type Conversation = typeof conversations.$inferSelect;
 export type InsertConversation = typeof conversations.$inferInsert;
@@ -140,7 +173,14 @@ export const messages = mysqlTable("messages", {
   fileUrl: text("fileUrl"),
   isRead: int("isRead").default(0).notNull(), // 0 = false, 1 = true
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+}, (table: any) => ({
+  idxMessagesConversationId: index("idx_messages_conversationId").on(table.conversationId),
+  idxMessagesSenderId: index("idx_messages_senderId").on(table.senderId),
+  idxMessagesIsRead: index("idx_messages_isRead").on(table.isRead),
+  idxMessagesCreatedAt: index("idx_messages_createdAt").on(table.createdAt),
+  idxMessagesConversationIdCreatedAt: index("idx_messages_conversationId_createdAt").on(table.conversationId, table.createdAt),
+  idxMessagesSenderIdCreatedAt: index("idx_messages_senderId_createdAt").on(table.senderId, table.createdAt),
+}));
 
 export type Message = typeof messages.$inferSelect;
 export type InsertMessage = typeof messages.$inferInsert;
@@ -163,7 +203,16 @@ export const workoutSessions = mysqlTable("workoutSessions", {
   isCompleted: int("isCompleted").default(0).notNull(), // 0 = false, 1 = true
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table: any) => ({
+  idxWorkoutSessionsUserId: index("idx_workoutSessions_userId").on(table.userId),
+  idxWorkoutSessionsProgramId: index("idx_workoutSessions_programId").on(table.programId),
+  idxWorkoutSessionsScheduledDate: index("idx_workoutSessions_scheduledDate").on(table.scheduledDate),
+  idxWorkoutSessionsType: index("idx_workoutSessions_type").on(table.type),
+  idxWorkoutSessionsIsCompleted: index("idx_workoutSessions_isCompleted").on(table.isCompleted),
+  idxWorkoutSessionsCreatedAt: index("idx_workoutSessions_createdAt").on(table.createdAt),
+  idxWorkoutSessionsUserIdScheduledDate: index("idx_workoutSessions_userId_scheduledDate").on(table.userId, table.scheduledDate),
+  idxWorkoutSessionsUserIdIsCompleted: index("idx_workoutSessions_userId_isCompleted").on(table.userId, table.isCompleted),
+}));
 
 export type WorkoutSession = typeof workoutSessions.$inferSelect;
 export type InsertWorkoutSession = typeof workoutSessions.$inferInsert;
@@ -182,7 +231,12 @@ export const workoutCompletions = mysqlTable("workoutCompletions", {
   caloriesBurned: int("caloriesBurned"),
   heartRateAvg: int("heartRateAvg"),
   heartRateMax: int("heartRateMax"),
-});
+}, (table: any) => ({
+  idxWorkoutCompletionsSessionId: index("idx_workoutCompletions_sessionId").on(table.sessionId),
+  idxWorkoutCompletionsUserId: index("idx_workoutCompletions_userId").on(table.userId),
+  idxWorkoutCompletionsCompletedAt: index("idx_workoutCompletions_completedAt").on(table.completedAt),
+  idxWorkoutCompletionsUserIdCompletedAt: index("idx_workoutCompletions_userId_completedAt").on(table.userId, table.completedAt),
+}));
 
 export type WorkoutCompletion = typeof workoutCompletions.$inferSelect;
 export type InsertWorkoutCompletion = typeof workoutCompletions.$inferInsert;
@@ -197,7 +251,13 @@ export const workoutReminders = mysqlTable("workoutReminders", {
   reminderTime: timestamp("reminderTime").notNull(),
   isSent: int("isSent").default(0).notNull(), // 0 = false, 1 = true
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+}, (table: any) => ({
+  idxWorkoutRemindersUserId: index("idx_workoutReminders_userId").on(table.userId),
+  idxWorkoutRemindersSessionId: index("idx_workoutReminders_sessionId").on(table.sessionId),
+  idxWorkoutRemindersReminderTime: index("idx_workoutReminders_reminderTime").on(table.reminderTime),
+  idxWorkoutRemindersIsSent: index("idx_workoutReminders_isSent").on(table.isSent),
+  idxWorkoutRemindersUserIdReminderTime: index("idx_workoutReminders_userId_reminderTime").on(table.userId, table.reminderTime),
+}));
 
 export type WorkoutReminder = typeof workoutReminders.$inferSelect;
 export type InsertWorkoutReminder = typeof workoutReminders.$inferInsert;
@@ -218,7 +278,13 @@ export const formVideos = mysqlTable("formVideos", {
   annotations: text("annotations"), // JSON string of annotations
   uploadedAt: timestamp("uploadedAt").defaultNow().notNull(),
   reviewedAt: timestamp("reviewedAt"),
-});
+}, (table: any) => ({
+  idxFormVideosUserId: index("idx_formVideos_userId").on(table.userId),
+  idxFormVideosStatus: index("idx_formVideos_status").on(table.status),
+  idxFormVideosUploadedAt: index("idx_formVideos_uploadedAt").on(table.uploadedAt),
+  idxFormVideosReviewedAt: index("idx_formVideos_reviewedAt").on(table.reviewedAt),
+  idxFormVideosUserIdStatus: index("idx_formVideos_userId_status").on(table.userId, table.status),
+}));
 
 export type FormVideo = typeof formVideos.$inferSelect;
 export type InsertFormVideo = typeof formVideos.$inferInsert;
@@ -333,7 +399,10 @@ export const onboardingResponses = mysqlTable("onboarding_responses", {
   // Complétion
   completedAt: timestamp("completed_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
-});
+}, (table: any) => ({
+  idxOnboardingResponsesUserId: index("idx_onboardingResponses_userId").on(table.userId),
+  idxOnboardingResponsesCompletedAt: index("idx_onboardingResponses_completedAt").on(table.completedAt),
+}));
 
 export type OnboardingResponse = typeof onboardingResponses.$inferSelect;
 export type InsertOnboardingResponse = typeof onboardingResponses.$inferInsert;
@@ -355,7 +424,11 @@ export const nutritionPlans = mysqlTable("nutrition_plans", {
   isActive: int("is_active").default(1).notNull(), // boolean
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
-});
+}, (table: any) => ({
+  idxNutritionPlansUserId: index("idx_nutritionPlans_userId").on(table.userId),
+  idxNutritionPlansIsActive: index("idx_nutritionPlans_isActive").on(table.isActive),
+  idxNutritionPlansStartDate: index("idx_nutritionPlans_startDate").on(table.startDate),
+}));
 
 export type NutritionPlan = typeof nutritionPlans.$inferSelect;
 export type InsertNutritionPlan = typeof nutritionPlans.$inferInsert;
@@ -373,7 +446,15 @@ export const mealLogs = mysqlTable("meal_logs", {
   fatGrams: int("fat_grams").notNull(),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (table: any) => ({
+  idxMealLogsUserId: index("idx_mealLogs_userId").on(table.userId),
+  idxMealLogsNutritionPlanId: index("idx_mealLogs_nutritionPlanId").on(table.nutritionPlanId),
+  idxMealLogsDate: index("idx_mealLogs_date").on(table.date),
+  idxMealLogsMealType: index("idx_mealLogs_mealType").on(table.mealType),
+  idxMealLogsCreatedAt: index("idx_mealLogs_createdAt").on(table.createdAt),
+  idxMealLogsUserIdDate: index("idx_mealLogs_userId_date").on(table.userId, table.date),
+  idxMealLogsUserIdMealTypeDate: index("idx_mealLogs_userId_mealType_date").on(table.userId, table.mealType, table.date),
+}));
 
 export type MealLog = typeof mealLogs.$inferSelect;
 export type InsertMealLog = typeof mealLogs.$inferInsert;
@@ -403,7 +484,16 @@ export const aiInsights = mysqlTable("ai_insights", {
   isRead: int("is_read").default(0).notNull(), // boolean
   expiresAt: timestamp("expires_at"), // Optional expiration for time-sensitive insights
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (table: any) => ({
+  idxAiInsightsUserId: index("idx_aiInsights_userId").on(table.userId),
+  idxAiInsightsInsightType: index("idx_aiInsights_insightType").on(table.insightType),
+  idxAiInsightsCategory: index("idx_aiInsights_category").on(table.category),
+  idxAiInsightsPriority: index("idx_aiInsights_priority").on(table.priority),
+  idxAiInsightsIsRead: index("idx_aiInsights_isRead").on(table.isRead),
+  idxAiInsightsCreatedAt: index("idx_aiInsights_createdAt").on(table.createdAt),
+  idxAiInsightsUserIdIsReadCreatedAt: index("idx_aiInsights_userId_isRead_createdAt").on(table.userId, table.isRead, table.createdAt),
+  idxAiInsightsUserIdPriorityCreatedAt: index("idx_aiInsights_userId_priority_createdAt").on(table.userId, table.priority, table.createdAt),
+}));
 
 export type AiInsight = typeof aiInsights.$inferSelect;
 export type InsertAiInsight = typeof aiInsights.$inferInsert;
@@ -418,7 +508,11 @@ export const healthScores = mysqlTable("health_scores", {
   recoveryScore: int("recovery_score").notNull(), // 0-100
   consistencyScore: int("consistency_score").notNull(), // 0-100
   calculatedAt: timestamp("calculated_at").defaultNow().notNull(),
-});
+}, (table: any) => ({
+  idxHealthScoresUserId: index("idx_healthScores_userId").on(table.userId),
+  idxHealthScoresCalculatedAt: index("idx_healthScores_calculatedAt").on(table.calculatedAt),
+  idxHealthScoresUserIdCalculatedAt: index("idx_healthScores_userId_calculatedAt").on(table.userId, table.calculatedAt),
+}));
 
 export type HealthScore = typeof healthScores.$inferSelect;
 export type InsertHealthScore = typeof healthScores.$inferInsert;
@@ -434,7 +528,11 @@ export const progressPredictions = mysqlTable("progress_predictions", {
   weeklyChangeRate: decimal("weekly_change_rate", { precision: 10, scale: 2 }), // Taux de changement hebdomadaire
   recommendedActions: text("recommended_actions"), // JSON array of recommendations
   calculatedAt: timestamp("calculated_at").defaultNow().notNull(),
-});
+}, (table: any) => ({
+  idxProgressPredictionsUserId: index("idx_progressPredictions_userId").on(table.userId),
+  idxProgressPredictionsGoalId: index("idx_progressPredictions_goalId").on(table.goalId),
+  idxProgressPredictionsCalculatedAt: index("idx_progressPredictions_calculatedAt").on(table.calculatedAt),
+}));
 
 export type ProgressPrediction = typeof progressPredictions.$inferSelect;
 export type InsertProgressPrediction = typeof progressPredictions.$inferInsert;
@@ -468,7 +566,14 @@ export const monthlyReports = mysqlTable("monthly_reports", {
   generatedAt: timestamp("generated_at").defaultNow().notNull(),
   sentAt: timestamp("sent_at"), // Date d'envoi par email
   isRead: int("is_read").default(0).notNull(), // boolean
-});
+}, (table: any) => ({
+  idxMonthlyReportsUserId: index("idx_monthlyReports_userId").on(table.userId),
+  idxMonthlyReportsMonth: index("idx_monthlyReports_month").on(table.month),
+  idxMonthlyReportsYear: index("idx_monthlyReports_year").on(table.year),
+  idxMonthlyReportsGeneratedAt: index("idx_monthlyReports_generatedAt").on(table.generatedAt),
+  idxMonthlyReportsUserIdMonthYear: index("idx_monthlyReports_userId_month_year").on(table.userId, table.month, table.year),
+  idxMonthlyReportsUserIdYearMonth: index("idx_monthlyReports_userId_year_month").on(table.userId, table.year, table.month),
+}));
 
 export type MonthlyReport = typeof monthlyReports.$inferSelect;
 export type InsertMonthlyReport = typeof monthlyReports.$inferInsert;
@@ -488,7 +593,12 @@ export const referrals = mysqlTable("referrals", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   completedAt: timestamp("completed_at"), // Date d'inscription du filleul
   rewardedAt: timestamp("rewarded_at"), // Date d'attribution de la récompense
-});
+}, (table: any) => ({
+  idxReferralsReferrerId: index("idx_referrals_referrerId").on(table.referrerId),
+  idxReferralsReferredId: index("idx_referrals_referredId").on(table.referredId),
+  idxReferralsStatus: index("idx_referrals_status").on(table.status),
+  idxReferralsCreatedAt: index("idx_referrals_createdAt").on(table.createdAt),
+}));
 
 export type Referral = typeof referrals.$inferSelect;
 export type InsertReferral = typeof referrals.$inferInsert;
@@ -507,7 +617,15 @@ export const missedSessionReschedules = mysqlTable("missedSessionReschedules", {
   notificationSent: int("notificationSent").default(0).notNull(), // 0 = false, 1 = true
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   respondedAt: timestamp("respondedAt"),
-});
+}, (table: any) => ({
+  idxMissedSessionReschedulesUserId: index("idx_missedSessionReschedules_userId").on(table.userId),
+  idxMissedSessionReschedulesOriginalSessionId: index("idx_missedSessionReschedules_originalSessionId").on(table.originalSessionId),
+  idxMissedSessionReschedulesNewSessionId: index("idx_missedSessionReschedules_newSessionId").on(table.newSessionId),
+  idxMissedSessionReschedulesStatus: index("idx_missedSessionReschedules_status").on(table.status),
+  idxMissedSessionReschedulesOriginalDate: index("idx_missedSessionReschedules_originalDate").on(table.originalDate),
+  idxMissedSessionReschedulesProposedDate: index("idx_missedSessionReschedules_proposedDate").on(table.proposedDate),
+  idxMissedSessionReschedulesUserIdStatus: index("idx_missedSessionReschedules_userId_status").on(table.userId, table.status),
+}));
 
 export type MissedSessionReschedule = typeof missedSessionReschedules.$inferSelect;
 export type InsertMissedSessionReschedule = typeof missedSessionReschedules.$inferInsert;
@@ -552,7 +670,12 @@ export const recipes = mysqlTable("recipes", {
   
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table: any) => ({
+  idxRecipesCategory: index("idx_recipes_category").on(table.category),
+  idxRecipesDifficulty: index("idx_recipes_difficulty").on(table.difficulty),
+  idxRecipesGoal: index("idx_recipes_goal").on(table.goal),
+  idxRecipesCreatedAt: index("idx_recipes_createdAt").on(table.createdAt),
+}));
 
 export type Recipe = typeof recipes.$inferSelect;
 export type InsertRecipe = typeof recipes.$inferInsert;
@@ -565,7 +688,12 @@ export const userFavoriteRecipes = mysqlTable("userFavoriteRecipes", {
   userId: int("userId").notNull(),
   recipeId: int("recipeId").notNull(),
   addedAt: timestamp("addedAt").defaultNow().notNull(),
-});
+}, (table: any) => ({
+  idxUserFavoriteRecipesUserId: index("idx_userFavoriteRecipes_userId").on(table.userId),
+  idxUserFavoriteRecipesRecipeId: index("idx_userFavoriteRecipes_recipeId").on(table.recipeId),
+  idxUserFavoriteRecipesAddedAt: index("idx_userFavoriteRecipes_addedAt").on(table.addedAt),
+  idxUserFavoriteRecipesUserIdRecipeId: index("idx_userFavoriteRecipes_userId_recipeId").on(table.userId, table.recipeId),
+}));
 
 export type UserFavoriteRecipe = typeof userFavoriteRecipes.$inferSelect;
 export type InsertUserFavoriteRecipe = typeof userFavoriteRecipes.$inferInsert;
@@ -586,7 +714,12 @@ export const mealPlans = mysqlTable("mealPlans", {
   targetFat: int("targetFat").notNull(),
   isActive: int("isActive").default(1).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+}, (table: any) => ({
+  idxMealPlansUserId: index("idx_mealPlans_userId").on(table.userId),
+  idxMealPlansIsActive: index("idx_mealPlans_isActive").on(table.isActive),
+  idxMealPlansStartDate: index("idx_mealPlans_startDate").on(table.startDate),
+  idxMealPlansUserIdIsActive: index("idx_mealPlans_userId_isActive").on(table.userId, table.isActive),
+}));
 
 export type MealPlan = typeof mealPlans.$inferSelect;
 export type InsertMealPlan = typeof mealPlans.$inferInsert;
@@ -601,7 +734,13 @@ export const mealPlanRecipes = mysqlTable("mealPlanRecipes", {
   dayOfWeek: int("dayOfWeek").notNull(), // 0 = Sunday, 6 = Saturday
   mealType: mysqlEnum("mealType", ["breakfast", "lunch", "dinner", "snack"]).notNull(),
   servings: int("servings").default(1).notNull(),
-});
+}, (table: any) => ({
+  idxMealPlanRecipesMealPlanId: index("idx_mealPlanRecipes_mealPlanId").on(table.mealPlanId),
+  idxMealPlanRecipesRecipeId: index("idx_mealPlanRecipes_recipeId").on(table.recipeId),
+  idxMealPlanRecipesDayOfWeek: index("idx_mealPlanRecipes_dayOfWeek").on(table.dayOfWeek),
+  idxMealPlanRecipesMealType: index("idx_mealPlanRecipes_mealType").on(table.mealType),
+  idxMealPlanRecipesMealPlanIdDayOfWeekMealType: index("idx_mealPlanRecipes_mealPlanId_dayOfWeek_mealType").on(table.mealPlanId, table.dayOfWeek, table.mealType),
+}));
 
 export type MealPlanRecipe = typeof mealPlanRecipes.$inferSelect;
 export type InsertMealPlanRecipe = typeof mealPlanRecipes.$inferInsert;
@@ -632,7 +771,14 @@ export const emailLogs = mysqlTable("email_logs", {
   openedAt: timestamp("opened_at"),
   clickedAt: timestamp("clicked_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (table: any) => ({
+  idxEmailLogsUserId: index("idx_emailLogs_userId").on(table.userId),
+  idxEmailLogsTemplateId: index("idx_emailLogs_templateId").on(table.templateId),
+  idxEmailLogsStatus: index("idx_emailLogs_status").on(table.status),
+  idxEmailLogsSentAt: index("idx_emailLogs_sentAt").on(table.sentAt),
+  idxEmailLogsCreatedAt: index("idx_emailLogs_createdAt").on(table.createdAt),
+  idxEmailLogsUserIdStatus: index("idx_emailLogs_userId_status").on(table.userId, table.status),
+}));
 
 export const emailUnsubscribes = mysqlTable("email_unsubscribes", {
   id: int("id").autoincrement().primaryKey(),
@@ -640,7 +786,11 @@ export const emailUnsubscribes = mysqlTable("email_unsubscribes", {
   email: text("email").notNull(),
   category: text("category").notNull(), // "all", "marketing", "onboarding"
   unsubscribedAt: timestamp("unsubscribed_at").defaultNow().notNull(),
-});
+}, (table: any) => ({
+  idxEmailUnsubscribesUserId: index("idx_emailUnsubscribes_userId").on(table.userId),
+  idxEmailUnsubscribesEmail: index("idx_emailUnsubscribes_email").on(table.email),
+  idxEmailUnsubscribesCategory: index("idx_emailUnsubscribes_category").on(table.category),
+}));
 
 export type InsertEmailTemplate = typeof emailTemplates.$inferInsert;
 export type SelectEmailTemplate = typeof emailTemplates.$inferSelect;
@@ -658,7 +808,11 @@ export const exercisePlaylists = mysqlTable("exercise_playlists", {
   isPublic: boolean("is_public").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
-});
+}, (table: any) => ({
+  idxExercisePlaylistsUserId: index("idx_exercisePlaylists_userId").on(table.userId),
+  idxExercisePlaylistsIsPublic: index("idx_exercisePlaylists_isPublic").on(table.isPublic),
+  idxExercisePlaylistsCreatedAt: index("idx_exercisePlaylists_createdAt").on(table.createdAt),
+}));
 
 export const playlistExercises = mysqlTable("playlist_exercises", {
   id: int("id").primaryKey().autoincrement(),
@@ -670,7 +824,12 @@ export const playlistExercises = mysqlTable("playlist_exercises", {
   duration: int("duration"), // en secondes
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
-});
+}, (table: any) => ({
+  idxPlaylistExercisesPlaylistId: index("idx_playlistExercises_playlistId").on(table.playlistId),
+  idxPlaylistExercisesExerciseId: index("idx_playlistExercises_exerciseId").on(table.exerciseId),
+  idxPlaylistExercisesOrderIndex: index("idx_playlistExercises_orderIndex").on(table.orderIndex),
+  idxPlaylistExercisesPlaylistIdOrderIndex: index("idx_playlistExercises_playlistId_orderIndex").on(table.playlistId, table.orderIndex),
+}));
 
 // Tables pour le lecteur vidéo avec annotations
 export const videoAnalyses = mysqlTable("video_analyses", {
@@ -684,7 +843,14 @@ export const videoAnalyses = mysqlTable("video_analyses", {
   status: mysqlEnum("status", ["pending", "in_progress", "completed"]).default("pending"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
-});
+}, (table: any) => ({
+  idxVideoAnalysesClientId: index("idx_videoAnalyses_clientId").on(table.clientId),
+  idxVideoAnalysesCoachId: index("idx_videoAnalyses_coachId").on(table.coachId),
+  idxVideoAnalysesStatus: index("idx_videoAnalyses_status").on(table.status),
+  idxVideoAnalysesCreatedAt: index("idx_videoAnalyses_createdAt").on(table.createdAt),
+  idxVideoAnalysesClientIdStatus: index("idx_videoAnalyses_clientId_status").on(table.clientId, table.status),
+  idxVideoAnalysesCoachIdStatus: index("idx_videoAnalyses_coachId_status").on(table.coachId, table.status),
+}));
 
 export const videoAnnotations = mysqlTable("video_annotations", {
   id: int("id").primaryKey().autoincrement(),
@@ -695,7 +861,12 @@ export const videoAnnotations = mysqlTable("video_annotations", {
   data: json("data").notNull(), // Coordonnées et propriétés de l'annotation (x, y, width, height, text, color, etc.)
   notes: text("notes"), // Notes textuelles associées
   createdAt: timestamp("created_at").defaultNow(),
-});
+}, (table: any) => ({
+  idxVideoAnnotationsVideoAnalysisId: index("idx_videoAnnotations_videoAnalysisId").on(table.videoAnalysisId),
+  idxVideoAnnotationsCoachId: index("idx_videoAnnotations_coachId").on(table.coachId),
+  idxVideoAnnotationsTimestamp: index("idx_videoAnnotations_timestamp").on(table.timestamp),
+  idxVideoAnnotationsVideoAnalysisIdTimestamp: index("idx_videoAnnotations_videoAnalysisId_timestamp").on(table.videoAnalysisId, table.timestamp),
+}));
 
 export const videoMarkers = mysqlTable("video_markers", {
   id: int("id").primaryKey().autoincrement(),
@@ -706,7 +877,12 @@ export const videoMarkers = mysqlTable("video_markers", {
   description: text("description"),
   color: varchar("color", { length: 7 }).default("#FFD700"), // Couleur du marqueur (hex)
   createdAt: timestamp("created_at").defaultNow(),
-});
+}, (table: any) => ({
+  idxVideoMarkersVideoAnalysisId: index("idx_videoMarkers_videoAnalysisId").on(table.videoAnalysisId),
+  idxVideoMarkersCoachId: index("idx_videoMarkers_coachId").on(table.coachId),
+  idxVideoMarkersTimestamp: index("idx_videoMarkers_timestamp").on(table.timestamp),
+  idxVideoMarkersVideoAnalysisIdTimestamp: index("idx_videoMarkers_videoAnalysisId_timestamp").on(table.videoAnalysisId, table.timestamp),
+}));
 
 // Onboarding Progress
 export const onboardingProgress = mysqlTable('onboarding_progress', {
@@ -715,7 +891,12 @@ export const onboardingProgress = mysqlTable('onboarding_progress', {
   step: varchar('step', { length: 50 }).notNull(), // 'account_created', 'questionnaire_completed', 'measurements_added', 'goals_set', 'video_watched', 'first_session_booked', 'profile_complete'
   completedAt: timestamp('completed_at').defaultNow(),
   createdAt: timestamp('created_at').defaultNow(),
-});
+}, (table: any) => ({
+  idxOnboardingProgressUserId: index("idx_onboardingProgress_userId").on(table.userId),
+  idxOnboardingProgressStep: index("idx_onboardingProgress_step").on(table.step),
+  idxOnboardingProgressCompletedAt: index("idx_onboardingProgress_completedAt").on(table.completedAt),
+  idxOnboardingProgressUserIdStep: index("idx_onboardingProgress_userId_step").on(table.userId, table.step),
+}));
 
 export type OnboardingProgress = typeof onboardingProgress.$inferSelect;
 export type InsertOnboardingProgress = typeof onboardingProgress.$inferInsert;
@@ -755,7 +936,12 @@ export const macroAdjustmentProposals = mysqlTable('macro_adjustment_proposals',
   createdAt: timestamp('created_at').notNull().defaultNow(),
   reviewedAt: timestamp('reviewed_at'),
   reviewedBy: int('reviewed_by').references(() => users.id), // Admin qui a validé
-});
+}, (table: any) => ({
+  idxMacroAdjustmentProposalsUserId: index("idx_macroAdjustmentProposals_userId").on(table.userId),
+  idxMacroAdjustmentProposalsStatus: index("idx_macroAdjustmentProposals_status").on(table.status),
+  idxMacroAdjustmentProposalsCreatedAt: index("idx_macroAdjustmentProposals_createdAt").on(table.createdAt),
+  idxMacroAdjustmentProposalsUserIdStatus: index("idx_macroAdjustmentProposals_userId_status").on(table.userId, table.status),
+}));
 
 export const macroAdjustments = mysqlTable('macro_adjustments', {
   id: int('id').primaryKey().autoincrement(),
@@ -782,7 +968,12 @@ export const macroAdjustments = mysqlTable('macro_adjustments', {
   // Timestamps
   createdAt: timestamp('created_at').notNull().defaultNow(),
   appliedAt: timestamp('applied_at'),
-});
+}, (table: any) => ({
+  idxMacroAdjustmentsUserId: index("idx_macroAdjustments_userId").on(table.userId),
+  idxMacroAdjustmentsProposalId: index("idx_macroAdjustments_proposalId").on(table.proposalId),
+  idxMacroAdjustmentsCreatedAt: index("idx_macroAdjustments_createdAt").on(table.createdAt),
+  idxMacroAdjustmentsUserIdCreatedAt: index("idx_macroAdjustments_userId_createdAt").on(table.userId, table.createdAt),
+}));
 
 // ============================================
 // RGPD - Consentements Utilisateur
@@ -808,7 +999,10 @@ export const userConsents = mysqlTable('user_consents', {
   
   // Historique
   updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
-});
+}, (table: any) => ({
+  idxUserConsentsUserId: index("idx_userConsents_userId").on(table.userId),
+  idxUserConsentsConsentDate: index("idx_userConsents_consentDate").on(table.consentDate),
+}));
 
 export type UserConsent = typeof userConsents.$inferSelect;
 export type InsertUserConsent = typeof userConsents.$inferInsert;

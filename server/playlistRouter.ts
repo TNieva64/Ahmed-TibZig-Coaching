@@ -18,7 +18,7 @@ export const playlistRouter = router({
       const db = await getDb();
       if (!db) throw new Error("Database connection failed");
       const [playlist] = await db.insert(exercisePlaylists).values({
-        userId: ctx.user.id,
+        userId: ctx.user!.id,
         name: input.name,
         description: input.description,
         isPublic: input.isPublic,
@@ -33,7 +33,7 @@ export const playlistRouter = router({
     const playlists = await db
       .select()
       .from(exercisePlaylists)
-      .where(eq(exercisePlaylists.userId, ctx.user.id))
+      .where(eq(exercisePlaylists.userId, ctx.user!.id))
       .orderBy(desc(exercisePlaylists.createdAt));
     return playlists;
   }),
@@ -112,7 +112,7 @@ export const playlistRouter = router({
         .from(exercisePlaylists)
         .where(eq(exercisePlaylists.id, input.playlistId));
 
-      if (!playlist || playlist.userId !== ctx.user.id) {
+      if (!playlist || playlist.userId !== ctx.user!.id) {
         throw new Error("Playlist non trouvée ou accès refusé");
       }
 
@@ -160,7 +160,7 @@ export const playlistRouter = router({
         .from(exercisePlaylists)
         .where(eq(exercisePlaylists.id, playlistExercise.playlistId));
 
-      if (!playlist || playlist.userId !== ctx.user.id) {
+      if (!playlist || playlist.userId !== ctx.user!.id) {
         throw new Error("Accès refusé");
       }
 
@@ -192,7 +192,7 @@ export const playlistRouter = router({
         .from(exercisePlaylists)
         .where(eq(exercisePlaylists.id, input.id));
 
-      if (!playlist || playlist.userId !== ctx.user.id) {
+      if (!playlist || playlist.userId !== ctx.user!.id) {
         throw new Error("Playlist non trouvée ou accès refusé");
       }
 
@@ -222,7 +222,7 @@ export const playlistRouter = router({
         .from(exercisePlaylists)
         .where(eq(exercisePlaylists.id, input.id));
 
-      if (!playlist || playlist.userId !== ctx.user.id) {
+      if (!playlist || playlist.userId !== ctx.user!.id) {
         throw new Error("Playlist non trouvée ou accès refusé");
       }
 
@@ -252,7 +252,7 @@ export const playlistRouter = router({
         .from(exercisePlaylists)
         .where(eq(exercisePlaylists.id, input.playlistId));
 
-      if (!playlist || playlist.userId !== ctx.user.id) {
+      if (!playlist || playlist.userId !== ctx.user!.id) {
         throw new Error("Playlist non trouvée ou accès refusé");
       }
 

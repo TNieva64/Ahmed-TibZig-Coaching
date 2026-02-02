@@ -20,7 +20,7 @@ export const reportsRouter = router({
     const reports = await db
       .select()
       .from(monthlyReports)
-      .where(eq(monthlyReports.userId, ctx.user.id))
+      .where(eq(monthlyReports.userId, ctx.user!.id))
       .orderBy(desc(monthlyReports.year), desc(monthlyReports.month));
 
     return reports;
@@ -39,7 +39,7 @@ export const reportsRouter = router({
         .where(
           and(
             eq(monthlyReports.id, input.reportId),
-            eq(monthlyReports.userId, ctx.user.id)
+            eq(monthlyReports.userId, ctx.user!.id)
           )
         )
         .limit(1);
@@ -60,7 +60,7 @@ export const reportsRouter = router({
         .where(
           and(
             eq(monthlyReports.id, input.reportId),
-            eq(monthlyReports.userId, ctx.user.id)
+            eq(monthlyReports.userId, ctx.user!.id)
           )
         );
 

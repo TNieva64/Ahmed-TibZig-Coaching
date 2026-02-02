@@ -26,7 +26,7 @@ export const aiInsightsRouter = router({
       const db = await getDb();
       if (!db) return [];
 
-      const conditions = [eq(aiInsights.userId, ctx.user.id)];
+      const conditions = [eq(aiInsights.userId, ctx.user!.id)];
       
       if (input.unreadOnly) {
         conditions.push(eq(aiInsights.isRead, 0));
@@ -55,7 +55,7 @@ export const aiInsightsRouter = router({
         .where(
           and(
             eq(aiInsights.id, input.insightId),
-            eq(aiInsights.userId, ctx.user.id)
+            eq(aiInsights.userId, ctx.user!.id)
           )
         );
 
@@ -70,7 +70,7 @@ export const aiInsightsRouter = router({
     const scores = await db
       .select()
       .from(healthScores)
-      .where(eq(healthScores.userId, ctx.user.id))
+      .where(eq(healthScores.userId, ctx.user!.id))
       .orderBy(desc(healthScores.calculatedAt))
       .limit(1);
 
@@ -82,7 +82,7 @@ export const aiInsightsRouter = router({
     const db = await getDb();
     if (!db) return null;
 
-    const userId = ctx.user.id;
+    const userId = ctx.user!.id;
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
@@ -190,7 +190,7 @@ export const aiInsightsRouter = router({
     const predictions = await db
       .select()
       .from(progressPredictions)
-      .where(eq(progressPredictions.userId, ctx.user.id))
+      .where(eq(progressPredictions.userId, ctx.user!.id))
       .orderBy(desc(progressPredictions.calculatedAt))
       .limit(5);
 
@@ -202,7 +202,7 @@ export const aiInsightsRouter = router({
     const db = await getDb();
     if (!db) return { success: false, predictionsGenerated: 0 };
 
-    const userId = ctx.user.id;
+    const userId = ctx.user!.id;
     const now = new Date();
 
     // Récupérer les objectifs actifs
@@ -307,7 +307,7 @@ export const aiInsightsRouter = router({
     const db = await getDb();
     if (!db) return { success: false };
 
-    const userId = ctx.user.id;
+    const userId = ctx.user!.id;
     const now = new Date();
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 

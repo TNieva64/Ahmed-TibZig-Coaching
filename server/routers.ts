@@ -16,14 +16,15 @@ import {
 } from "./db";
 import { notifyProgramAssigned, notifyResourceAdded } from "./notifications";
 import { z } from "zod";
-import { eq } from "drizzle-orm";
-import { users, programs, clientPrograms, programResources, InsertProgram, InsertClientProgram, InsertProgramResource } from "../drizzle/schema";
+import { eq, and } from "drizzle-orm";
+import { users, programs, clientPrograms, programResources, progressMetrics, progressGoals, InsertProgram, InsertClientProgram, InsertProgramResource } from "../drizzle/schema";
 import { messagingRouter } from "./messagingRouter";
 import { workoutRouter } from "./workoutRouter";
 import { formVideoRouter } from "./formVideoRouter";
 import { gamificationRouter } from "./gamificationRouter";
 import { exerciseRouter } from "./exerciseRouter";
 import { onboardingRouter } from "./onboardingRouter";
+import { simplifiedOnboardingRouter } from "./simplifiedOnboardingRouter";
 import { nutritionRouter } from "./nutritionRouter";
 import { aiInsightsRouter } from "./aiInsightsRouter";
 import { reportsRouter } from "./reportsRouter";
@@ -36,11 +37,10 @@ import { emailRouter } from "./emailRouter";
 import { progressRouter } from "./progressRouter";
 import { macroAdjustmentRouter } from './routers/macroAdjustmentRouter';
 import { demoRouter } from './routers/demoRouter';
-import { rgpdRouter } from "./routers/rgpdRouter";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.user.role !== 'admin') {
+  if (!ctx.user || ctx.user.role !== 'ADMIN') {
     throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
   }
   return next({ ctx });
@@ -54,6 +54,7 @@ export const appRouter = router({
   gamification: gamificationRouter,
   exercise: exerciseRouter,
   onboarding: onboardingRouter,
+  simplifiedOnboarding: simplifiedOnboardingRouter,
   nutrition: nutritionRouter,
   aiInsights: aiInsightsRouter,
   reports: reportsRouter,
@@ -64,7 +65,6 @@ export const appRouter = router({
   videoAnnotation: videoAnnotationRouter,
   email: emailRouter,
   progress: progressRouter,
-  rgpd: rgpdRouter,
   macroAdjustment: macroAdjustmentRouter,
   demo: demoRouter,
   auth: router({
@@ -87,8 +87,42 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return await getProgramById(input.id);
       }),
-    getResources: publicProcedure
+    getResources: protectedProcedure
       .input(z.object({ programId: z.number() }))
+      .use(async ({ ctx, input, next }) => {
+        // CONTRÔLE D'ACCÈS GRANULAIRE
+        // Vérifier que l'utilisateur a accès à ce programme
+        const db = await getDb();
+        if (!db) {
+          throw new TRPCError({ 
+            code: 'INTERNAL_SERVER_ERROR', 
+            message: 'Database not available' 
+          });
+        }
+
+        // Vérifier si l'utilisateur a un programme client actif pour ce programme
+        const clientProgram = await db
+          .select()
+          .from(clientPrograms)
+          .where(
+            and(
+              eq(clientPrograms.userId, ctx.user?.id || 0),
+              eq(clientPrograms.programId, input.programId),
+              eq(clientPrograms.status, 'active')
+            )
+          )
+          .limit(1);
+
+        // Si l'utilisateur n'a pas accès, retourner une erreur 403
+        if (clientProgram.length === 0 && ctx.user?.role !== 'ADMIN') {
+          throw new TRPCError({ 
+            code: 'FORBIDDEN', 
+            message: 'Vous n\'avez pas accès à ce programme' 
+          });
+        }
+
+        return next();
+      })
       .query(async ({ input }) => {
         return await getProgramResources(input.programId);
       }),
@@ -96,11 +130,61 @@ export const appRouter = router({
 
   dashboard: router({
     getPrograms: protectedProcedure.query(async ({ ctx }) => {
-      return await getClientPrograms(ctx.user.id);
+      return await getClientPrograms(ctx.user?.id || 0);
     }),
   }),
 
   admin: router({
+    // Tableau de bord avec KPIs globaux
+    getGlobalStats: adminProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) {
+        return {
+          totalClients: 0,
+          activeClients: 0,
+          totalPrograms: 0,
+          atRiskClients: 0,
+          successRate: 0,
+          monthlyRevenue: 0,
+        };
+      }
+
+      // Récupérer les statistiques globales
+      const [allClients, activePrograms, allPrograms, completedPrograms] = await Promise.all([
+        db.select().from(users).where(eq(users.role, 'CLIENT')),
+        db.select().from(clientPrograms).where(eq(clientPrograms.status, 'active')),
+        db.select().from(programs),
+        db.select().from(clientPrograms).where(eq(clientPrograms.status, 'completed')),
+      ]);
+
+      // Calculer le taux de réussite (programmes complétés / total programmes)
+      const totalClientPrograms = await db.select().from(clientPrograms);
+      const successRate = totalClientPrograms.length > 0 
+        ? Math.round((completedPrograms.length / totalClientPrograms.length) * 100)
+        : 0;
+
+      // Calculer les clients à risque (pas de progression depuis 30 jours)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      const recentMetrics = await db
+        .select()
+        .from(progressMetrics)
+        .where(eq(progressMetrics.clientProgramId, 1)); // Placeholder - nécessite une requête plus complexe
+
+      // Estimation des revenus mensuels (150€ par client actif)
+      const monthlyRevenue = activePrograms.length * 150;
+
+      return {
+        totalClients: allClients.length,
+        activeClients: activePrograms.length,
+        totalPrograms: allPrograms.length,
+        atRiskClients: 0, // À implémenter avec une logique plus avancée
+        successRate,
+        monthlyRevenue,
+      };
+    }),
+
     // Gestion des clients
     getAllClients: adminProcedure.query(async () => {
       const db = await getDb();

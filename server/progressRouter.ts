@@ -235,7 +235,7 @@ export const progressRouter = router({
         .from(workoutCompletions)
         .where(
           and(
-            eq(workoutCompletions.userId, ctx.user.id),
+            eq(workoutCompletions.userId, ctx.user!.id),
             gte(workoutCompletions.completedAt, thirtyDaysAgo)
           )
         );
@@ -249,7 +249,7 @@ export const progressRouter = router({
         .from(mealLogs)
         .where(
           and(
-            eq(mealLogs.userId, ctx.user.id),
+            eq(mealLogs.userId, ctx.user!.id),
             gte(mealLogs.date, sevenDaysAgo)
           )
         );

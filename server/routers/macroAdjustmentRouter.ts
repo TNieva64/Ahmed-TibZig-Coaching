@@ -98,7 +98,7 @@ export const macroAdjustmentRouter = router({
         .set({
           status: 'approved',
           reviewedAt: new Date(),
-          reviewedBy: ctx.user.id,
+          reviewedBy: ctx.user?.id ?? 0,
           // Sauvegarder les valeurs finales si modifiées
           ...(input.modifiedValues && {
             proposedCalories: finalValues.calories,
@@ -154,7 +154,7 @@ export const macroAdjustmentRouter = router({
         .set({
           status: 'rejected',
           reviewedAt: new Date(),
-          reviewedBy: ctx.user.id,
+          reviewedBy: ctx.user?.id ?? 0,
           coachNotes: input.reason || null,
         })
         .where(eq(macroAdjustmentProposals.id, input.proposalId));
@@ -171,10 +171,14 @@ export const macroAdjustmentRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
-      const targetUserId = input.userId || ctx.user.id;
+      const targetUserId = input.userId || ctx.user?.id;
+
+      if (!targetUserId) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'User ID required' });
+      }
 
       // Vérifier les permissions (admin ou propriétaire)
-      if (ctx.user.role !== 'admin' && targetUserId !== ctx.user.id) {
+      if (ctx.user?.role !== 'ADMIN' && targetUserId !== ctx.user?.id) {
         throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
       }
 

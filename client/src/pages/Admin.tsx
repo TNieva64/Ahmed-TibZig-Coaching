@@ -1,16 +1,17 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Loader2, Plus, Edit2, Trash2, Users, X, Check } from "lucide-react";
+import { Loader2, Plus, Edit2, Trash2, Users, X, Check, TrendingUp, Activity, DollarSign, AlertTriangle } from "lucide-react";
 import { useLocation } from "wouter";
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import PDFGenerator from "@/components/PDFGenerator";
 
 export default function Admin() {
   const { user, loading, isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
-  const [activeTab, setActiveTab] = useState<"programs" | "clients" | "resources">("programs");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "programs" | "clients" | "resources" | "pdf">("dashboard");
 
   if (loading) {
     return (
@@ -20,7 +21,7 @@ export default function Admin() {
     );
   }
 
-  if (!isAuthenticated || user?.role !== "admin") {
+  if (!isAuthenticated || user?.role !== "ADMIN") {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Card className="p-8 text-center border-gold/30">
@@ -48,6 +49,16 @@ export default function Admin() {
       {/* Navigation Tabs */}
       <div className="bg-white border-b border-gray-200">
         <div className="container flex gap-8">
+          <button
+            onClick={() => setActiveTab("dashboard")}
+            className={`px-4 py-4 font-medium border-b-2 transition-colors ${
+              activeTab === "dashboard"
+                ? "border-gold text-gold"
+                : "border-transparent text-gray-600 hover:text-black"
+            }`}
+          >
+            Tableau de bord
+          </button>
           <button
             onClick={() => setActiveTab("programs")}
             className={`px-4 py-4 font-medium border-b-2 transition-colors ${
@@ -78,15 +89,159 @@ export default function Admin() {
           >
             Ressources
           </button>
+          <button
+            onClick={() => setActiveTab("pdf")}
+            className={`px-4 py-4 font-medium border-b-2 transition-colors ${
+              activeTab === "pdf"
+                ? "border-gold text-gold"
+                : "border-transparent text-gray-600 hover:text-black"
+            }`}
+          >
+            Générer Plans PDF
+          </button>
         </div>
       </div>
 
       {/* Main Content */}
       <main className="container py-12">
+        {activeTab === "dashboard" && <DashboardSection />}
         {activeTab === "programs" && <ProgramsSection />}
         {activeTab === "clients" && <ClientsSection />}
         {activeTab === "resources" && <ResourcesSection />}
+        {activeTab === "pdf" && <PDFGenerator />}
       </main>
+    </div>
+  );
+}
+
+function DashboardSection() {
+  const { data: stats, isLoading } = trpc.admin.getGlobalStats.useQuery();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+      </div>
+    );
+  }
+
+  const kpis = [
+    {
+      title: "Total Clients",
+      value: stats?.totalClients || 0,
+      icon: Users,
+      color: "bg-blue-500",
+      textColor: "text-blue-600",
+      bgColor: "bg-blue-50",
+    },
+    {
+      title: "Clients Actifs",
+      value: stats?.activeClients || 0,
+      icon: Activity,
+      color: "bg-green-500",
+      textColor: "text-green-600",
+      bgColor: "bg-green-50",
+    },
+    {
+      title: "Taux de Réussite",
+      value: `${stats?.successRate || 0}%`,
+      icon: TrendingUp,
+      color: "bg-purple-500",
+      textColor: "text-purple-600",
+      bgColor: "bg-purple-50",
+    },
+    {
+      title: "Revenus Mensuels",
+      value: `${stats?.monthlyRevenue || 0}€`,
+      icon: DollarSign,
+      color: "bg-gold",
+      textColor: "text-gold",
+      bgColor: "bg-gold/10",
+    },
+  ];
+
+  return (
+    <div>
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-black mb-2">Tableau de Bord</h2>
+        <p className="text-gray-600">Vue d'ensemble des performances de votre plateforme de coaching</p>
+      </div>
+
+      {/* KPIs Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {kpis.map((kpi) => (
+          <Card key={kpi.title} className={`p-6 border-2 ${kpi.bgColor} border-${kpi.textColor.split('-')[1]}-200`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 mb-1">{kpi.title}</p>
+                <p className={`text-3xl font-bold ${kpi.textColor}`}>{kpi.value}</p>
+              </div>
+              <div className={`w-12 h-12 rounded-full ${kpi.bgColor} flex items-center justify-center`}>
+                <kpi.icon className={`w-6 h-6 ${kpi.textColor}`} />
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Alertes et Actions Rapides */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Alertes */}
+        <Card className="p-6 border-gold/30">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+              <AlertTriangle className="w-5 h-5 text-orange-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-black">Alertes</h3>
+          </div>
+          <div className="space-y-3">
+            {stats && stats.atRiskClients > 0 ? (
+              <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                <p className="text-sm text-orange-800">
+                  <strong>{stats.atRiskClients} clients</strong> n'ont pas enregistré de progression depuis 30 jours
+                </p>
+              </div>
+            ) : (
+              <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-sm text-green-800">
+                  Aucune alerte en cours. Tous les clients progressent bien !
+                </p>
+              </div>
+            )}
+          </div>
+        </Card>
+
+        {/* Actions Rapides */}
+        <Card className="p-6 border-gold/30">
+          <h3 className="text-lg font-semibold text-black mb-4">Actions Rapides</h3>
+          <div className="space-y-3">
+            <Button
+              onClick={() => {/* TODO: Implémenter */}}
+              className="w-full justify-start bg-gold text-black hover:bg-gold/90"
+              variant="outline"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Ajouter un nouveau client
+            </Button>
+            <Button
+              onClick={() => {/* TODO: Implémenter */}}
+              className="w-full justify-start"
+              variant="outline"
+            >
+              <TrendingUp className="w-4 h-4 mr-2" />
+              Voir le rapport mensuel
+            </Button>
+            <Button
+              onClick={() => {/* TODO: Implémenter */}}
+              className="w-full justify-start"
+              variant="outline"
+            >
+              <Users className="w-4 h-4 mr-2" />
+              Gérer les programmes
+            </Button>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }

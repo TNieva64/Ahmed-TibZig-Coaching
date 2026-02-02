@@ -136,7 +136,7 @@ export const recipeRouter = router({
         .select()
         .from(userFavoriteRecipes)
         .where(and(
-          eq(userFavoriteRecipes.userId, ctx.user.id),
+          eq(userFavoriteRecipes.userId, ctx.user!.id),
           eq(userFavoriteRecipes.recipeId, input.recipeId)
         ))
         .limit(1);
@@ -146,7 +146,7 @@ export const recipeRouter = router({
       }
 
       await db.insert(userFavoriteRecipes).values({
-        userId: ctx.user.id,
+        userId: ctx.user!.id,
         recipeId: input.recipeId,
       });
 
@@ -163,7 +163,7 @@ export const recipeRouter = router({
       await db
         .delete(userFavoriteRecipes)
         .where(and(
-          eq(userFavoriteRecipes.userId, ctx.user.id),
+          eq(userFavoriteRecipes.userId, ctx.user!.id),
           eq(userFavoriteRecipes.recipeId, input.recipeId)
         ));
 
@@ -178,7 +178,7 @@ export const recipeRouter = router({
     const favorites = await db
       .select()
       .from(userFavoriteRecipes)
-      .where(eq(userFavoriteRecipes.userId, ctx.user.id))
+      .where(eq(userFavoriteRecipes.userId, ctx.user!.id))
       .orderBy(desc(userFavoriteRecipes.addedAt));
 
     // Get recipe details

@@ -25,7 +25,7 @@ export const demoRouter = router({
         const [userResult] = await db.insert(users).values({
           email: 'demo@test.com',
           name: 'Marc Démo',
-          role: 'user',
+          role: 'CLIENT',
           openId: 'demo-test-' + Date.now(),
         });
         const userId = Number(userResult.insertId);

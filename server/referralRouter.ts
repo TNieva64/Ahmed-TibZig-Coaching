@@ -22,7 +22,7 @@ export const referralRouter = router({
     const existingReferrals = await db
       .select()
       .from(referrals)
-      .where(eq(referrals.referrerId, ctx.user.id))
+      .where(eq(referrals.referrerId, ctx.user?.id ?? 0))
       .limit(1);
 
     if (existingReferrals.length > 0) {
@@ -33,10 +33,10 @@ export const referralRouter = router({
     }
 
     // Créer un nouveau code de parrainage
-    const newCode = generateReferralCode(ctx.user.id, ctx.user.name || "USER");
+    const newCode = generateReferralCode(ctx.user?.id ?? 0, ctx.user?.name || "USER");
 
     await db.insert(referrals).values({
-      referrerId: ctx.user.id,
+      referrerId: ctx.user?.id ?? 0,
       referralCode: newCode,
       status: "pending",
       clickCount: 0,
@@ -57,7 +57,7 @@ export const referralRouter = router({
     const myReferrals = await db
       .select()
       .from(referrals)
-      .where(eq(referrals.referrerId, ctx.user.id))
+      .where(eq(referrals.referrerId, ctx.user?.id ?? 0))
       .orderBy(desc(referrals.createdAt));
 
     const totalReferrals = myReferrals.length;
@@ -158,7 +158,7 @@ export const referralRouter = router({
       const referral = referralResults[0];
 
       // Vérifier que l'utilisateur ne se parraine pas lui-même
-      if (referral.referrerId === ctx.user.id) {
+      if (referral.referrerId === ctx.user?.id) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "Vous ne pouvez pas utiliser votre propre code" });
       }
 
@@ -166,8 +166,8 @@ export const referralRouter = router({
       await db
         .update(referrals)
         .set({
-          referredId: ctx.user.id,
-          referredEmail: ctx.user.email,
+          referredId: ctx.user?.id ?? 0,
+          referredEmail: ctx.user?.email ?? null,
           status: "completed",
           completedAt: new Date(),
         })
@@ -190,7 +190,7 @@ export const referralRouter = router({
       if (!db) return { success: false };
 
       // Vérifier que c'est un admin
-      if (ctx.user.role !== "admin") {
+      if (ctx.user?.role !== "ADMIN") {
         throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
       }
 

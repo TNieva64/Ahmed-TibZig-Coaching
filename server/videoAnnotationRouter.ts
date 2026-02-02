@@ -22,7 +22,7 @@ export const videoAnnotationRouter = router({
 
       const [analysis] = await db.insert(videoAnalyses).values({
         clientId: input.clientId,
-        coachId: ctx.user.id,
+        coachId: ctx.user!.id,
         videoUrl: input.videoUrl,
         videoComparisonUrl: input.videoComparisonUrl,
         title: input.title,
@@ -47,7 +47,7 @@ export const videoAnnotationRouter = router({
         .where(
           input.clientId
             ? eq(videoAnalyses.clientId, input.clientId)
-            : eq(videoAnalyses.coachId, ctx.user.id)
+            : eq(videoAnalyses.coachId, ctx.user!.id)
         )
         .orderBy(desc(videoAnalyses.createdAt));
 
@@ -110,7 +110,7 @@ export const videoAnnotationRouter = router({
         .where(
           and(
             eq(videoAnalyses.id, input.id),
-            eq(videoAnalyses.coachId, ctx.user.id)
+            eq(videoAnalyses.coachId, ctx.user!.id)
           )
         );
 
@@ -142,7 +142,7 @@ export const videoAnnotationRouter = router({
 
       const [annotation] = await db.insert(videoAnnotations).values({
         videoAnalysisId: input.videoAnalysisId,
-        coachId: ctx.user.id,
+        coachId: ctx.user!.id,
         timestamp: input.timestamp,
         type: input.type,
         data: input.data,
@@ -164,7 +164,7 @@ export const videoAnnotationRouter = router({
         .where(
           and(
             eq(videoAnnotations.id, input.id),
-            eq(videoAnnotations.coachId, ctx.user.id)
+            eq(videoAnnotations.coachId, ctx.user!.id)
           )
         );
 
@@ -188,7 +188,7 @@ export const videoAnnotationRouter = router({
 
       const [marker] = await db.insert(videoMarkers).values({
         videoAnalysisId: input.videoAnalysisId,
-        coachId: ctx.user.id,
+        coachId: ctx.user!.id,
         timestamp: input.timestamp,
         title: input.title,
         description: input.description,
@@ -210,7 +210,7 @@ export const videoAnnotationRouter = router({
         .where(
           and(
             eq(videoMarkers.id, input.id),
-            eq(videoMarkers.coachId, ctx.user.id)
+            eq(videoMarkers.coachId, ctx.user!.id)
           )
         );
 
@@ -229,7 +229,7 @@ export const videoAnnotationRouter = router({
         .where(
           and(
             eq(videoAnalyses.id, input.id),
-            eq(videoAnalyses.coachId, ctx.user.id)
+            eq(videoAnalyses.coachId, ctx.user!.id)
           )
         );
 

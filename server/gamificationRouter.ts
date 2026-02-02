@@ -7,7 +7,7 @@ import { eq, desc } from "drizzle-orm";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.user.role !== 'admin') {
+  if (ctx.user?.role !== 'ADMIN') {
     throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
   }
   return next({ ctx });
@@ -30,10 +30,14 @@ export const gamificationRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
-      const userId = input.userId || ctx.user.id;
+      const userId = input.userId || ctx.user?.id;
+
+      if (!userId) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'User ID required' });
+      }
 
       // Only allow users to see their own achievements, unless admin
-      if (userId !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (userId !== ctx.user?.id && ctx.user?.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 
@@ -53,10 +57,14 @@ export const gamificationRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
-      const userId = input.userId || ctx.user.id;
+      const userId = input.userId || ctx.user?.id;
+
+      if (!userId) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'User ID required' });
+      }
 
       // Only allow users to see their own streak, unless admin
-      if (userId !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (userId !== ctx.user?.id && ctx.user?.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 
@@ -91,13 +99,13 @@ export const gamificationRouter = router({
     const streak = await db
       .select()
       .from(userStreaks)
-      .where(eq(userStreaks.userId, ctx.user.id))
+      .where(eq(userStreaks.userId, ctx.user?.id ?? 0))
       .limit(1);
 
     if (streak.length === 0) {
       // Create new streak
       const newStreak: InsertUserStreak = {
-        userId: ctx.user.id,
+        userId: ctx.user?.id ?? 0,
         currentStreak: 1,
         longestStreak: 1,
         lastActivityDate: new Date(),
@@ -134,7 +142,7 @@ export const gamificationRouter = router({
         longestStreak: newLongestStreak,
         lastActivityDate: new Date(),
       })
-      .where(eq(userStreaks.userId, ctx.user.id));
+      .where(eq(userStreaks.userId, ctx.user?.id ?? 0));
 
     return { currentStreak: newCurrentStreak, longestStreak: newLongestStreak };
   }),

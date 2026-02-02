@@ -7,7 +7,7 @@ import { eq, and, count, sum, desc } from "drizzle-orm";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.user.role !== 'admin') {
+  if (ctx.user?.role !== 'ADMIN') {
     throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
   }
   return next({ ctx });
@@ -180,10 +180,14 @@ export const badgeRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
-      const userId = input.userId || ctx.user.id;
+      const userId = input.userId || ctx.user?.id;
+
+      if (!userId) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'User ID required' });
+      }
 
       // Only allow users to see their own badges, unless admin
-      if (userId !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (userId !== ctx.user?.id && ctx.user?.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 
@@ -229,10 +233,14 @@ export const badgeRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
-      const userId = input.userId || ctx.user.id;
+      const userId = input.userId || ctx.user?.id;
+
+      if (!userId) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'User ID required' });
+      }
 
       // Only allow users to check their own badges, unless admin
-      if (userId !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (userId !== ctx.user?.id && ctx.user?.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 

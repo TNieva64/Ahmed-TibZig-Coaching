@@ -16,7 +16,7 @@ import Progress from "./pages/Progress";
 import Gamification from "./pages/Gamification";
 import ExerciseLibrary from "./pages/ExerciseLibrary";
 import FormAnalysis from "./pages/FormAnalysis";
-import Onboarding from "./pages/Onboarding";
+import SimplifiedOnboarding from "./components/SimplifiedOnboarding";
 import Nutrition from "./pages/Nutrition";
 import AIInsights from "./pages/AIInsights";
 import Reports from "./pages/Reports";
@@ -33,7 +33,12 @@ import NotificationSettings from "./pages/NotificationSettings";
 import Messages from "./pages/Messages";
 import Workouts from "./pages/Workouts";
 import MacroAdjustments from "./pages/admin/MacroAdjustments";
+import HelpCenter from "./pages/HelpCenter";
 import CookieConsent from "./components/CookieConsent";
+import { PositiveNotificationCenter } from "./components/PositiveNotifications";
+import { HelpButton } from "./components/HelpButton";
+import { ConfettiCelebration } from "./components/ConfettiCelebration";
+import { SocialProofPopup } from "./components/SocialProof";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -51,7 +56,7 @@ function Router() {
       <Route path={"/gamification"} component={Gamification} />
       <Route path={"/exercises"} component={ExerciseLibrary} />
        <Route path="/form-analysis" component={FormAnalysis} />
-      <Route path="/onboarding" component={Onboarding} />
+      <Route path="/onboarding" component={SimplifiedOnboarding} />
       <Route path="/nutrition" component={Nutrition} />
       <Route path="/ai-insights" component={AIInsights} />
       <Route path="/reports" component={Reports} />
@@ -65,6 +70,7 @@ function Router() {
           <Route path="/playlists" component={Playlists} />
           <Route path="/video-analysis" component={VideoAnalysis} />
       <Route path="/notifications" component={NotificationSettings} />
+      <Route path="/help" component={HelpCenter} />
       <Route path={"/messages"} component={Messages} />
       <Route path={'/workouts'} component={Workouts} />
       <Route path={'/admin/macro-adjustments'} component={MacroAdjustments} />
@@ -90,6 +96,10 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <CookieConsent />
+          <PositiveNotificationCenter />
+          <HelpButton />
+          <ConfettiCelebration trigger={false} />
+          <SocialProofPopup />
           <Router />
         </TooltipProvider>
       </ThemeProvider>

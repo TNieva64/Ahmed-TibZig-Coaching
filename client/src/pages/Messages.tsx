@@ -299,7 +299,7 @@ export default function Messages() {
               {conversations && conversations.length > 0 ? (
                 <div className="space-y-2">
                   {conversations.map((conv) => {
-                    const isCoach = user?.role === 'admin';
+                    const isCoach = user?.role === 'ADMIN' || user?.role === 'COACH';
                     const unread = isCoach ? conv.unreadCountCoach : conv.unreadCountClient;
                     
                     return (

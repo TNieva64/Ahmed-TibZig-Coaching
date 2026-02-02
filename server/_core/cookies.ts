@@ -18,9 +18,23 @@ function isSecureRequest(req: Request) {
     ? forwardedProto
     : forwardedProto.split(",");
 
-  return protoList.some(proto => proto.trim().toLowerCase() === "https");
+  return protoList.some((proto: string) => proto.trim().toLowerCase() === "https");
 }
 
+/**
+ * Retourne les options sécurisées pour les cookies de session
+ *
+ * SÉCURITÉ:
+ * - httpOnly: true - Empêche l'accès aux cookies via JavaScript (prévient les attaques XSS)
+ * - secure: true (en production) - Le cookie n'est transmis que sur HTTPS (prévint les interceptions)
+ * - sameSite: 'lax' - Protection CSRF: cookies envoyés uniquement sur les requêtes top-level navigation
+ *   'lax' est recommandé au lieu de 'none' pour équilibrer sécurité et UX
+ *
+ * Pourquoi 'lax' au lieu de 'none' ?
+ * - 'none' nécessite 'secure: true' et permet les cookies cross-site (vulnérable au CSRF)
+ * - 'lax' bloque les cookies cross-site sauf pour les navigations top-level (meilleure protection CSRF)
+ * - 'strict' serait trop restrictif pour l'UX (bloquerait les liens externes)
+ */
 export function getSessionCookieOptions(
   req: Request
 ): Pick<CookieOptions, "domain" | "httpOnly" | "path" | "sameSite" | "secure"> {
@@ -40,9 +54,10 @@ export function getSessionCookieOptions(
   //       : undefined;
 
   return {
+    domain: undefined,
     httpOnly: true,
     path: "/",
-    sameSite: "none",
+    sameSite: "lax",
     secure: isSecureRequest(req),
   };
 }

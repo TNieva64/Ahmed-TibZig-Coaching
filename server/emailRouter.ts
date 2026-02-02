@@ -16,7 +16,7 @@ export const emailRouter = router({
     const logs = await db
       .select()
       .from(emailLogs)
-      .where(eq(emailLogs.userId, ctx.user.id))
+      .where(eq(emailLogs.userId, ctx.user?.id ?? 0))
       .orderBy(desc(emailLogs.createdAt))
       .limit(50);
 
@@ -27,7 +27,7 @@ export const emailRouter = router({
   getAllEmailLogs: protectedProcedure
     .input(z.object({ limit: z.number().optional().default(100) }))
     .query(async ({ ctx, input }) => {
-      if (ctx.user.role !== "admin") {
+      if (ctx.user?.role !== "ADMIN") {
         throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
       }
 
@@ -45,7 +45,7 @@ export const emailRouter = router({
 
   // Get email templates
   getTemplates: protectedProcedure.query(async ({ ctx }) => {
-    if (ctx.user.role !== "admin") {
+    if (ctx.user?.role !== "ADMIN") {
       throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
     }
 
@@ -58,7 +58,7 @@ export const emailRouter = router({
 
   // Initialize email templates
   initializeTemplates: protectedProcedure.mutation(async ({ ctx }) => {
-    if (ctx.user.role !== "admin") {
+    if (ctx.user?.role !== "ADMIN") {
       throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
     }
 
@@ -70,7 +70,7 @@ export const emailRouter = router({
   sendWelcomeEmail: protectedProcedure
     .input(z.object({ userId: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      if (ctx.user.role !== "admin") {
+      if (ctx.user?.role !== "ADMIN") {
         throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
       }
 
@@ -84,7 +84,7 @@ export const emailRouter = router({
 
   // Run Day 3 tips scheduler manually (admin only)
   runDay3Scheduler: protectedProcedure.mutation(async ({ ctx }) => {
-    if (ctx.user.role !== "admin") {
+    if (ctx.user?.role !== "ADMIN") {
       throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
     }
 
@@ -94,7 +94,7 @@ export const emailRouter = router({
 
   // Run Day 7 check-in scheduler manually (admin only)
   runDay7Scheduler: protectedProcedure.mutation(async ({ ctx }) => {
-    if (ctx.user.role !== "admin") {
+    if (ctx.user?.role !== "ADMIN") {
       throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
     }
 
@@ -150,7 +150,7 @@ export const emailRouter = router({
       const unsubscribes = await db
         .select()
         .from(emailUnsubscribes)
-        .where(eq(emailUnsubscribes.userId, ctx.user.id));
+        .where(eq(emailUnsubscribes.userId, ctx.user?.id ?? 0));
 
       if (input.category) {
         return unsubscribes.some(

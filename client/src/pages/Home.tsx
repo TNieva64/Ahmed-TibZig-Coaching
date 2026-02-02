@@ -1,12 +1,30 @@
 import { Link } from 'wouter';
-import { ArrowRight, Award, Users, Zap } from 'lucide-react';
+import { ArrowRight, Award, Users, Zap, AlertTriangle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ScarcityBanner, scarcityConfigs } from '@/components/ScarcityBanner';
+import { SocialProofCard } from '@/components/SocialProof';
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
+
+      {/* Health Notice Banner */}
+      <Alert variant="default" className="border-gold/30 bg-gold/5">
+        <AlertTriangle className="h-4 w-4 text-gold" />
+        <AlertDescription className="text-gray-700 text-sm">
+          <strong>💚 Votre santé avant tout :</strong> Pour une pratique en toute sécurité, 
+          une visite médicale est recommandée si vous avez des conditions particulières. 
+          Le coaching complète, mais ne remplace pas, un suivi médical professionnel.
+        </AlertDescription>
+      </Alert>
+
+      {/* Scarcity Banner */}
+      <div className="container">
+        <ScarcityBanner config={scarcityConfigs.homepage} />
+      </div>
 
       {/* Hero Section */}
       <section className="relative bg-black text-white overflow-hidden">
@@ -141,6 +159,11 @@ export default function Home() {
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Découvrez les résultats concrets de mes clients qui ont atteint leurs objectifs
             </p>
+          </div>
+
+          {/* Social Proof Card */}
+          <div className="max-w-4xl mx-auto mb-12">
+            <SocialProofCard />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -375,6 +398,74 @@ export default function Home() {
             Réserver Maintenant
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
+        </div>
+      </section>
+
+      {/* Trust & Certifications Section */}
+      <section className="section-padding bg-zinc-50">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="heading-lg text-black mb-4">
+              Pourquoi faire confiance à Andaloussi Coaching ?
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Un accompagnement professionnel, éthique et sécurisé
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Certification 1 */}
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Award className="w-10 h-10 text-gold" />
+              </div>
+              <h3 className="heading-md text-black mb-2">Certifié & Professionnel</h3>
+              <p className="text-gray-600">
+                Coach sportif certifié, athlète paralympique (JO Tokyo 2020). 
+                Expertise reconnue au plus haut niveau.
+              </p>
+            </div>
+
+            {/* Certification 2 */}
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-10 h-10 text-gold" />
+              </div>
+              <h3 className="heading-md text-black mb-2">Satisfait ou Remboursé</h3>
+              <p className="text-gray-600">
+                14 jours pour essayer. Si vous n'êtes pas convaincu, 
+                remboursement intégral sans condition.
+              </p>
+            </div>
+
+            {/* Certification 3 */}
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Zap className="w-10 h-10 text-gold" />
+              </div>
+              <h3 className="heading-md text-black mb-2">Données Sécurisées</h3>
+              <p className="text-gray-600">
+                100% conforme au RGPD. Vos données restent confidentielles, 
+                hébergées en France, jamais revendues.
+              </p>
+            </div>
+          </div>
+
+          {/* Trust badges */}
+          <div className="mt-12 flex justify-center gap-8 flex-wrap">
+            <div className="flex items-center gap-2 text-gray-700">
+              <span className="text-2xl">🔒</span>
+              <span className="text-sm font-medium">Paiement sécurisé SSL</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-700">
+              <span className="text-2xl">🇫🇷</span>
+              <span className="text-sm font-medium">Hébergement France</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-700">
+              <span className="text-2xl">✅</span>
+              <span className="text-sm font-medium">RGPD conforme</span>
+            </div>
+          </div>
         </div>
       </section>
 

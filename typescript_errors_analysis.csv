@@ -1,0 +1,200 @@
+Fichier,Ligne,Code Erreur,Description,Catégorie
+client/src/components/Map.tsx,89,TS2339,Property 'env' does not exist on type 'ImportMeta',Configuration
+client/src/components/Map.tsx,91,TS2339,Property 'env' does not exist on type 'ImportMeta',Configuration
+client/src/const.ts,5,TS2339,Property 'env' does not exist on type 'ImportMeta',Configuration
+client/src/const.ts,6,TS2339,Property 'env' does not exist on type 'ImportMeta',Configuration
+client/src/lib/trpc.ts,132,TS2345,Argument of type '{ url: string; headers: () => Record<string, string>; }' is not assignable to parameter of type 'HTTPBatchLinkOptions',Configuration
+client/src/pages/Workouts.tsx,235,TS2345,Argument of type is not assignable to parameter of type 'WorkoutSession',Types de données
+server/_core/env.ts,42,TS2339,Property 'errors' does not exist on type 'ZodError<unknown>',Types Zod
+server/_core/errorHandler.ts,61,TS2339,Property 'errors' does not exist on type 'ZodError<unknown>',Types Zod
+server/_core/errorHandler.ts,62,TS2503,Cannot find namespace 'z',Diverses
+server/_core/errorHandler.ts,239,TS2352,Conversion of type 'object & Record<"errors", unknown>' to type 'ZodError<unknown>' may be a mistake,Types Zod
+server/_core/errorHandler.ts,239,TS2339,Property 'errors' does not exist on type 'ZodError<unknown>',Types Zod
+server/_core/examples/rbac-examples.ts,14,TS2305,Module '"../../db"' has no exported member 'db',Diverses
+server/_core/examples/rbac-examples.ts,15,TS2305,Module '"../../../drizzle/schema"' has no exported member 'sessions',Diverses
+server/_core/examples/rbac-examples.ts,52,TS7031,Binding element 'eq' implicitly has an 'any' type,Diverses
+server/_core/examples/rbac-examples.ts,76,TS18047,'ctx.user' is possibly 'null',Nullité
+server/_core/examples/rbac-examples.ts,100,TS18047,'ctx.user' is possibly 'null',Nullité
+server/_core/examples/rbac-examples.ts,110,TS18047,'ctx.user' is possibly 'null',Nullité
+server/_core/examples/rbac-examples.ts,114,TS2339,Property 'userId' does not exist on type 'MySqlTableWithColumns',Types de données
+server/_core/examples/rbac-examples.ts,147,TS2339,Property 'userId' does not exist on type 'MySqlTableWithColumns',Types de données
+server/_core/examples/rbac-examples.ts,147,TS18047,'ctx.user' is possibly 'null',Nullité
+server/_core/examples/rbac-examples.ts,171,TS18047,'ctx.user' is possibly 'null',Nullité
+server/_core/examples/rbac-examples.ts,202,TS18047,'ctx.user' is possibly 'null',Nullité
+server/_core/examples/rbac-examples.ts,238,TS7031,Binding element 'eq' implicitly has an 'any' type,Diverses
+server/_core/examples/rbac-examples.ts,256,TS2339,Property 'userId' does not exist on type 'MySqlTableWithColumns',Types de données
+server/_core/examples/rbac-examples.ts,325,TS2339,Property 'userId' does not exist on type 'MySqlTableWithColumns',Types de données
+server/_core/examples/rbac-examples.ts,413,TS2367,This comparison appears to be unintentional because the types have no overlap,Types de données
+server/_core/examples/rbac-examples.ts,414,TS2367,This comparison appears to be unintentional because the types have no overlap,Types de données
+server/_core/examples/rbac-examples.ts,415,TS2367,This comparison appears to be unintentional because the types have no overlap,Types de données
+server/_core/examples/rbac-examples.ts,441,TS2345,Argument of type is not assignable to parameter of type 'MiddlewareBuilder',Middleware tRPC
+server/_core/examples/rbac-examples.ts,483,TS2345,Argument of type is not assignable to parameter of type 'MiddlewareBuilder',Middleware tRPC
+server/_core/examples/rbac-examples.ts,513,TS2345,Argument of type is not assignable to parameter of type 'MiddlewareBuilder',Middleware tRPC
+server/_core/examples/rbac-examples.ts,546,TS2345,Argument of type is not assignable to parameter of type 'MiddlewareBuilder',Middleware tRPC
+server/_core/rbac.ts,102,TS2345,Argument of type '"user" | "admin"' is not assignable to parameter of type 'UserRole',Types de données
+server/_core/rbac.ts,174,TS2345,Argument of type '"user" | "admin"' is not assignable to parameter of type 'UserRole',Types de données
+server/_core/trpc.ts,35,TS2345,Argument of type is not assignable to parameter of type 'MiddlewareBuilder',Middleware tRPC
+server/_core/trpc.ts,56,TS2345,Argument of type is not assignable to parameter of type 'MiddlewareBuilder',Middleware tRPC
+server/_core/trpc.ts,79,TS2345,Argument of type is not assignable to parameter of type 'MiddlewareBuilder',Middleware tRPC
+server/_core/trpc.ts,98,TS2345,Argument of type is not assignable to parameter of type 'MiddlewareBuilder',Middleware tRPC
+server/_core/validation.ts,263,TS2554,Expected 2-3 arguments, but got 1,Diverses
+server/_core/validation.ts,478,TS2339,Property 'errors' does not exist on type 'ZodError<output<T>>',Types Zod
+server/aiInsightsRouter.ts,29,TS18047,'ctx.user' is possibly 'null',Nullité
+server/aiInsightsRouter.ts,58,TS18047,'ctx.user' is possibly 'null',Nullité
+server/aiInsightsRouter.ts,73,TS18047,'ctx.user' is possibly 'null',Nullité
+server/aiInsightsRouter.ts,85,TS18047,'ctx.user' is possibly 'null',Nullité
+server/aiInsightsRouter.ts,193,TS18047,'ctx.user' is possibly 'null',Nullité
+server/aiInsightsRouter.ts,205,TS18047,'ctx.user' is possibly 'null',Nullité
+server/aiInsightsRouter.ts,310,TS18047,'ctx.user' is possibly 'null',Nullité
+server/badgeRouter.ts,10,TS18047,'ctx.user' is possibly 'null',Nullité
+server/badgeRouter.ts,183,TS18047,'ctx.user' is possibly 'null',Nullité
+server/badgeRouter.ts,186,TS18047,'ctx.user' is possibly 'null',Nullité
+server/badgeRouter.ts,186,TS18047,'ctx.user' is possibly 'null',Nullité
+server/badgeRouter.ts,232,TS18047,'ctx.user' is possibly 'null',Nullité
+server/badgeRouter.ts,235,TS18047,'ctx.user' is possibly 'null',Nullité
+server/badgeRouter.ts,235,TS18047,'ctx.user' is possibly 'null',Nullité
+server/db.ts,53,TS2353,Object literal may only specify known properties, and 'acquireTimeout' does not exist in type 'PoolOptions',MySQL/Drizzle
+server/db.ts,308,TS2769,No overload matches this call,MySQL/Drizzle
+server/db.ts,329,TS2339,Property 'acquireTimeout' does not exist on type 'PoolOptions',MySQL/Drizzle
+server/db.ts,330,TS2339,Property 'timeout' does not exist on type 'PoolOptions',MySQL/Drizzle
+server/db.ts,376,TS2322,Type 'MySql2Database<Record<string, unknown>> & { $client: Pool; }' is not assignable to type '(MySql2Database<Record<string, unknown>> & { $client: Pool; }) | null',MySQL/Drizzle
+server/db.ts,402,TS2339,Property '_allConnections' does not exist on type 'Pool',MySQL/Drizzle
+server/db.ts,403,TS2339,Property '_freeConnections' does not exist on type 'Pool',MySQL/Drizzle
+server/db.ts,404,TS2339,Property '_connectionQueue' does not exist on type 'Pool',MySQL/Drizzle
+server/emailRouter.ts,19,TS18047,'ctx.user' is possibly 'null',Nullité
+server/emailRouter.ts,30,TS18047,'ctx.user' is possibly 'null',Nullité
+server/emailRouter.ts,48,TS18047,'ctx.user' is possibly 'null',Nullité
+server/emailRouter.ts,61,TS18047,'ctx.user' is possibly 'null',Nullité
+server/emailRouter.ts,73,TS18047,'ctx.user' is possibly 'null',Nullité
+server/emailRouter.ts,87,TS18047,'ctx.user' is possibly 'null',Nullité
+server/emailRouter.ts,97,TS18047,'ctx.user' is possibly 'null',Nullité
+server/emailRouter.ts,153,TS18047,'ctx.user' is possibly 'null',Nullité
+server/exerciseRouter.ts,10,TS18047,'ctx.user' is possibly 'null',Nullité
+server/exerciseRouter.ts,82,TS18047,'ctx.user' is possibly 'null',Nullité
+server/exerciseRouter.ts,98,TS18047,'ctx.user' is possibly 'null',Nullité
+server/exerciseRouter.ts,107,TS18047,'ctx.user' is possibly 'null',Nullité
+server/exerciseRouter.ts,112,TS18047,'ctx.user' is possibly 'null',Nullité
+server/formVideoRouter.ts,10,TS18047,'ctx.user' is possibly 'null',Nullité
+server/formVideoRouter.ts,25,TS18047,'ctx.user' is possibly 'null',Nullité
+server/formVideoRouter.ts,74,TS18047,'ctx.user' is possibly 'null',Nullité
+server/formVideoRouter.ts,74,TS18047,'ctx.user' is possibly 'null',Nullité
+server/formVideoRouter.ts,95,TS18047,'ctx.user' is possibly 'null',Nullité
+server/formVideoRouter.ts,165,TS18047,'ctx.user' is possibly 'null',Nullité
+server/formVideoRouter.ts,165,TS18047,'ctx.user' is possibly 'null',Nullité
+server/gamificationRouter.ts,10,TS18047,'ctx.user' is possibly 'null',Nullité
+server/gamificationRouter.ts,33,TS18047,'ctx.user' is possibly 'null',Nullité
+server/gamificationRouter.ts,36,TS18047,'ctx.user' is possibly 'null',Nullité
+server/gamificationRouter.ts,36,TS18047,'ctx.user' is possibly 'null',Nullité
+server/gamificationRouter.ts,56,TS18047,'ctx.user' is possibly 'null',Nullité
+server/gamificationRouter.ts,59,TS18047,'ctx.user' is possibly 'null',Nullité
+server/gamificationRouter.ts,59,TS18047,'ctx.user' is possibly 'null',Nullité
+server/gamificationRouter.ts,94,TS18047,'ctx.user' is possibly 'null',Nullité
+server/gamificationRouter.ts,100,TS18047,'ctx.user' is possibly 'null',Nullité
+server/gamificationRouter.ts,137,TS18047,'ctx.user' is possibly 'null',Nullité
+server/messagingRouter.ts,13,TS18047,'ctx.user' is possibly 'null',Nullité
+server/messagingRouter.ts,14,TS18047,'ctx.user' is possibly 'null',Nullité
+server/messagingRouter.ts,15,TS18047,'ctx.user' is possibly 'null',Nullité
+server/messagingRouter.ts,22,TS18047,'ctx.user' is possibly 'null',Nullité
+server/messagingRouter.ts,23,TS18047,'ctx.user' is possibly 'null',Nullité
+server/messagingRouter.ts,57,TS18047,'ctx.user' is possibly 'null',Nullité
+server/messagingRouter.ts,58,TS18047,'ctx.user' is possibly 'null',Nullité
+server/messagingRouter.ts,79,TS18047,'ctx.user' is possibly 'null',Nullité
+server/nutritionRouter.ts,25,TS18047,'ctx.user' is possibly 'null',Nullité
+server/nutritionRouter.ts,43,TS18047,'ctx.user' is possibly 'null',Nullité
+server/nutritionRouter.ts,73,TS18047,'ctx.user' is possibly 'null',Nullité
+server/nutritionRouter.ts,103,TS18047,'ctx.user' is possibly 'null',Nullité
+server/nutritionRouter.ts,128,TS18047,'ctx.user' is possibly 'null',Nullité
+server/nutritionRouter.ts,147,TS18047,'ctx.user' is possibly 'null',Nullité
+server/onboardingRouter.ts,26,TS18047,'ctx.user' is possibly 'null',Nullité
+server/onboardingRouter.ts,61,TS18047,'ctx.user' is possibly 'null',Nullité
+server/onboardingRouter.ts,72,TS18047,'ctx.user' is possibly 'null',Nullité
+server/onboardingRouter.ts,76,TS18047,'ctx.user' is possibly 'null',Nullité
+server/onboardingRouter.ts,92,TS18047,'ctx.user' is possibly 'null',Nullité
+server/onboardingRouter.ts,129,TS18047,'ctx.user' is possibly 'null',Nullité
+server/onboardingRouter.ts,141,TS18047,'ctx.user' is possibly 'null',Nullité
+server/playlistRouter.ts,21,TS18047,'ctx.user' is possibly 'null',Nullité
+server/playlistRouter.ts,36,TS18047,'ctx.user' is possibly 'null',Nullité
+server/playlistRouter.ts,115,TS18047,'ctx.user' is possibly 'null',Nullité
+server/playlistRouter.ts,163,TS18047,'ctx.user' is possibly 'null',Nullité
+server/playlistRouter.ts,195,TS18047,'ctx.user' is possibly 'null',Nullité
+server/playlistRouter.ts,225,TS18047,'ctx.user' is possibly 'null',Nullité
+server/playlistRouter.ts,255,TS18047,'ctx.user' is possibly 'null',Nullité
+server/progressRouter.ts,238,TS18047,'ctx.user' is possibly 'null',Nullité
+server/progressRouter.ts,252,TS18047,'ctx.user' is possibly 'null',Nullité
+server/recipeRouter.ts,139,TS18047,'ctx.user' is possibly 'null',Nullité
+server/recipeRouter.ts,149,TS18047,'ctx.user' is possibly 'null',Nullité
+server/recipeRouter.ts,166,TS18047,'ctx.user' is possibly 'null',Nullité
+server/recipeRouter.ts,181,TS18047,'ctx.user' is possibly 'null',Nullité
+server/referralRouter.ts,25,TS18047,'ctx.user' is possibly 'null',Nullité
+server/referralRouter.ts,36,TS18047,'ctx.user' is possibly 'null',Nullité
+server/referralRouter.ts,36,TS18047,'ctx.user' is possibly 'null',Nullité
+server/referralRouter.ts,39,TS18047,'ctx.user' is possibly 'null',Nullité
+server/referralRouter.ts,60,TS18047,'ctx.user' is possibly 'null',Nullité
+server/referralRouter.ts,161,TS18047,'ctx.user' is possibly 'null',Nullité
+server/referralRouter.ts,169,TS18047,'ctx.user' is possibly 'null',Nullité
+server/referralRouter.ts,170,TS18047,'ctx.user' is possibly 'null',Nullité
+server/referralRouter.ts,193,TS18047,'ctx.user' is possibly 'null',Nullité
+server/reportsRouter.ts,23,TS18047,'ctx.user' is possibly 'null',Nullité
+server/reportsRouter.ts,42,TS18047,'ctx.user' is possibly 'null',Nullité
+server/reportsRouter.ts,63,TS18047,'ctx.user' is possibly 'null',Nullité
+server/routers.ts,43,TS18047,'ctx.user' is possibly 'null',Nullité
+server/routers.ts,99,TS18047,'ctx.user' is possibly 'null',Nullité
+server/routers/macroAdjustmentRouter.ts,101,TS18047,'ctx.user' is possibly 'null',Nullité
+server/routers/macroAdjustmentRouter.ts,157,TS18047,'ctx.user' is possibly 'null',Nullité
+server/routers/macroAdjustmentRouter.ts,174,TS18047,'ctx.user' is possibly 'null',Nullité
+server/routers/macroAdjustmentRouter.ts,177,TS18047,'ctx.user' is possibly 'null',Nullité
+server/routers/macroAdjustmentRouter.ts,177,TS18047,'ctx.user' is possibly 'null',Nullité
+server/routers/rgpdRouter.ts,80,TS18047,'ctx.user' is possibly 'null',Nullité
+server/routers/rgpdRouter.ts,117,TS18047,'ctx.user' is possibly 'null',Nullité
+server/routers/rgpdRouter.ts,149,TS18047,'ctx.user' is possibly 'null',Nullité
+server/services/NutritionService.ts,186,TS2352,Conversion of type 'MySqlRawQueryResult' to type '{ insertId: number; }' may be a mistake,MySQL/Drizzle
+server/services/NutritionService.ts,372,TS2352,Conversion of type 'MySqlRawQueryResult' to type '{ insertId: number; }' may be a mistake,MySQL/Drizzle
+server/services/WorkoutService.ts,136,TS2322,Type is not assignable to type,Types de données
+server/services/WorkoutService.ts,244,TS2352,Conversion of type 'MySqlRawQueryResult' to type '{ insertId: number; }' may be a mistake,MySQL/Drizzle
+server/services/WorkoutService.ts,562,TS2352,Conversion of type 'MySqlRawQueryResult' to type '{ insertId: number; }' may be a mistake,MySQL/Drizzle
+server/services/WorkoutService.ts,723,TS2322,Type is not assignable to type,Types de données
+server/videoAnnotationRouter.ts,25,TS18047,'ctx.user' is possibly 'null',Nullité
+server/videoAnnotationRouter.ts,50,TS18047,'ctx.user' is possibly 'null',Nullité
+server/videoAnnotationRouter.ts,113,TS18047,'ctx.user' is possibly 'null',Nullité
+server/videoAnnotationRouter.ts,145,TS18047,'ctx.user' is possibly 'null',Nullité
+server/videoAnnotationRouter.ts,167,TS18047,'ctx.user' is possibly 'null',Nullité
+server/videoAnnotationRouter.ts,191,TS18047,'ctx.user' is possibly 'null',Nullité
+server/videoAnnotationRouter.ts,213,TS18047,'ctx.user' is possibly 'null',Nullité
+server/videoAnnotationRouter.ts,232,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,10,TS2345,Argument of type is not assignable to parameter of type 'MiddlewareBuilder',Middleware tRPC
+server/workoutRouter.ts,11,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,14,TS2554,Expected 0 arguments, but got 1,Diverses
+server/workoutRouter.ts,40,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,40,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,64,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,67,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,67,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,135,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,135,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,160,TS2322,Type is not assignable to type,Types de données
+server/workoutRouter.ts,204,TS2345,Argument of type is not assignable to parameter of type,Types de données
+server/workoutRouter.ts,249,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,260,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,279,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,282,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,282,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,301,TS2769,No overload matches this call,Méthodes Array
+server/workoutRouter.ts,302,TS2769,No overload matches this call,Méthodes Array
+server/workoutRouter.ts,303,TS2769,No overload matches this call,Méthodes Array
+server/workoutRouter.ts,305,TS2362,The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type,Diverses
+server/workoutRouter.ts,305,TS2769,No overload matches this call,Méthodes Array
+server/workoutRouter.ts,344,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,347,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,347,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,406,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,409,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,409,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,476,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,476,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,495,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,498,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,498,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,548,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,548,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,584,TS18047,'ctx.user' is possibly 'null',Nullité
+server/workoutRouter.ts,584,TS18047,'ctx.user' is possibly 'null',Nullité

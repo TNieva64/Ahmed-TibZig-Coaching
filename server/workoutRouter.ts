@@ -1,17 +1,17 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "./_core/trpc";
+import { router, protectedProcedure, middleware, type TrpcContext } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "./db";
 import { workoutSessions, workoutCompletions, workoutReminders, missedSessionReschedules, InsertWorkoutSession, InsertWorkoutCompletion, InsertWorkoutReminder } from "../drizzle/schema";
 import { eq, and, gte, lte, desc } from "drizzle-orm";
 
 // Admin-only procedure
-const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.user.role !== 'admin') {
+const adminProcedure = protectedProcedure.use(middleware(({ ctx, next }) => {
+  if (!ctx.user || ctx.user.role !== 'ADMIN') {
     throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
   }
-  return next({ ctx });
-});
+  return next();
+}));
 
 export const workoutRouter = router({
   // Update session date (for drag & drop)
@@ -20,17 +20,23 @@ export const workoutRouter = router({
       sessionId: z.number(),
       newDate: z.date(),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: { ctx: TrpcContext; input: { sessionId: number; newDate: Date } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
       // Check if session belongs to user or user is admin
-      const session = await db.select().from(workoutSessions).where(eq(workoutSessions.id, input.sessionId)).limit(1);
+      const session = await db.select({
+        id: workoutSessions.id,
+        userId: workoutSessions.userId,
+        title: workoutSessions.title,
+        scheduledDate: workoutSessions.scheduledDate,
+      }).from(workoutSessions).where(eq(workoutSessions.id, input.sessionId)).limit(1);
+      
       if (!session || session.length === 0) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Session not found' });
       }
-      
-      if (session[0].userId !== ctx.user.id && ctx.user.role !== 'admin') {
+
+      if (session[0].userId !== ctx.user!.id && ctx.user!.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 
@@ -40,21 +46,24 @@ export const workoutRouter = router({
 
       return { success: true };
     }),
+
   // Get workout sessions for a user (optionally filtered by date range)
   getUserSessions: protectedProcedure
     .input(z.object({
       userId: z.number().optional(),
       startDate: z.date().optional(),
       endDate: z.date().optional(),
+      limit: z.number().optional().default(20),
+      offset: z.number().optional().default(0),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: { ctx: TrpcContext; input: { userId?: number; startDate?: Date; endDate?: Date; limit: number; offset: number } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
-      const userId = input.userId || ctx.user.id;
-      
+      const userId = input.userId || ctx.user!.id;
+
       // Only allow users to see their own sessions, unless admin
-      if (userId !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (userId !== ctx.user!.id && ctx.user!.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 
@@ -68,22 +77,51 @@ export const workoutRouter = router({
       }
 
       const sessions = await db
-        .select()
+        .select({
+          id: workoutSessions.id,
+          userId: workoutSessions.userId,
+          programId: workoutSessions.programId,
+          title: workoutSessions.title,
+          type: workoutSessions.type,
+          scheduledDate: workoutSessions.scheduledDate,
+          duration: workoutSessions.duration,
+          difficulty: workoutSessions.difficulty,
+          isCompleted: workoutSessions.isCompleted,
+          videoUrl: workoutSessions.videoUrl,
+        })
         .from(workoutSessions)
         .where(and(...conditions))
-        .orderBy(workoutSessions.scheduledDate);
+        .orderBy(workoutSessions.scheduledDate)
+        .limit(input.limit)
+        .offset(input.offset);
+        
       return sessions;
     }),
 
   // Get single workout session
   getSession: protectedProcedure
     .input(z.object({ sessionId: z.number() }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: { ctx: TrpcContext; input: { sessionId: number } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
       const session = await db
-        .select()
+        .select({
+          id: workoutSessions.id,
+          userId: workoutSessions.userId,
+          programId: workoutSessions.programId,
+          title: workoutSessions.title,
+          description: workoutSessions.description,
+          type: workoutSessions.type,
+          scheduledDate: workoutSessions.scheduledDate,
+          duration: workoutSessions.duration,
+          difficulty: workoutSessions.difficulty,
+          instructions: workoutSessions.instructions,
+          videoUrl: workoutSessions.videoUrl,
+          isCompleted: workoutSessions.isCompleted,
+          createdAt: workoutSessions.createdAt,
+          updatedAt: workoutSessions.updatedAt,
+        })
         .from(workoutSessions)
         .where(eq(workoutSessions.id, input.sessionId))
         .limit(1);
@@ -93,7 +131,7 @@ export const workoutRouter = router({
       }
 
       // Check access
-      if (session[0].userId !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (session[0].userId !== ctx.user!.id && ctx.user!.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 
@@ -114,12 +152,21 @@ export const workoutRouter = router({
       instructions: z.string().optional(),
       videoUrl: z.string().optional(),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input }: { input: { userId: number; programId?: number; title: string; description?: string; type: string; scheduledDate: Date; duration?: number; difficulty?: string; instructions?: string; videoUrl?: string } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
       const newSession: InsertWorkoutSession = {
-        ...input,
+        userId: input.userId,
+        programId: input.programId,
+        title: input.title,
+        description: input.description,
+        type: input.type as "cardio" | "strength" | "flexibility" | "hiit" | "endurance" | "recovery",
+        scheduledDate: input.scheduledDate,
+        duration: input.duration,
+        difficulty: input.difficulty as "easy" | "medium" | "hard" | "extreme" | null | undefined,
+        instructions: input.instructions,
+        videoUrl: input.videoUrl,
         isCompleted: 0,
       };
 
@@ -157,19 +204,19 @@ export const workoutRouter = router({
       instructions: z.string().optional(),
       videoUrl: z.string().optional(),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input }: { input: { sessionId: number; title?: string; description?: string; type?: string; scheduledDate?: Date; duration?: number; difficulty?: string; instructions?: string; videoUrl?: string } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
       const { sessionId, ...updates } = input;
-      await db.update(workoutSessions).set(updates).where(eq(workoutSessions.id, sessionId));
+      await db.update(workoutSessions).set(updates as any).where(eq(workoutSessions.id, sessionId));
       return { success: true };
     }),
 
   // Delete workout session (admin only)
   deleteSession: adminProcedure
     .input(z.object({ sessionId: z.number() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input }: { input: { sessionId: number } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
@@ -188,13 +235,17 @@ export const workoutRouter = router({
       heartRateAvg: z.number().optional(),
       heartRateMax: z.number().optional(),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: { ctx: TrpcContext; input: { sessionId: number; duration?: number; notes?: string; rating?: number; caloriesBurned?: number; heartRateAvg?: number; heartRateMax?: number } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
       // Verify session belongs to user
       const session = await db
-        .select()
+        .select({
+          id: workoutSessions.id,
+          userId: workoutSessions.userId,
+          isCompleted: workoutSessions.isCompleted,
+        })
         .from(workoutSessions)
         .where(eq(workoutSessions.id, input.sessionId))
         .limit(1);
@@ -203,7 +254,7 @@ export const workoutRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Session not found' });
       }
 
-      if (session[0].userId !== ctx.user.id) {
+      if (session[0].userId !== ctx.user!.id) {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 
@@ -211,10 +262,10 @@ export const workoutRouter = router({
       await db.update(workoutSessions).set({ isCompleted: 1 }).where(eq(workoutSessions.id, input.sessionId));
 
       // Create completion record
-      const { sessionId, ...completionData } = input;
+      const { sessionId: sid, ...completionData } = input;
       const completion: InsertWorkoutCompletion = {
-        sessionId,
-        userId: ctx.user.id,
+        sessionId: sid,
+        userId: ctx.user!.id,
         ...completionData,
       };
 
@@ -229,34 +280,61 @@ export const workoutRouter = router({
       startDate: z.date().optional(),
       endDate: z.date().optional(),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: { ctx: TrpcContext; input: { userId?: number; startDate?: Date; endDate?: Date } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
-      const userId = input.userId || ctx.user.id;
+      const userId = input.userId || ctx.user!.id;
 
       // Only allow users to see their own stats, unless admin
-      if (userId !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (userId !== ctx.user!.id && ctx.user!.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 
+      // Get all completions for stats calculation
       const completions = await db
-        .select()
+        .select({
+          sessionId: workoutCompletions.sessionId,
+          userId: workoutCompletions.userId,
+          completedAt: workoutCompletions.completedAt,
+          duration: workoutCompletions.duration,
+          caloriesBurned: workoutCompletions.caloriesBurned,
+          rating: workoutCompletions.rating,
+        })
         .from(workoutCompletions)
         .where(eq(workoutCompletions.userId, userId))
         .orderBy(desc(workoutCompletions.completedAt));
 
       const totalCompletions = completions.length;
-      const totalCalories = completions.reduce((sum, c) => sum + (c.caloriesBurned || 0), 0);
-      const totalDuration = completions.reduce((sum, c) => sum + (c.duration || 0), 0);
-      const avgRating = completions.filter(c => c.rating).reduce((sum, c) => sum + (c.rating || 0), 0) / completions.filter(c => c.rating).length || 0;
+      const totalCalories = completions.reduce((sum: number, c) => sum + (c.caloriesBurned || 0), 0);
+      const totalDuration = completions.reduce((sum: number, c) => sum + (c.duration || 0), 0);
+      const ratedCompletions = completions.filter((c) => c.rating != null);
+      const avgRating = ratedCompletions.length > 0
+        ? ratedCompletions.reduce((sum: number, c) => sum + (c.rating || 0), 0) / ratedCompletions.length
+        : 0;
+
+      // Get recent completions with limit directly from DB (fix N+1 issue)
+      const recentCompletions = await db
+        .select({
+          id: workoutCompletions.id,
+          sessionId: workoutCompletions.sessionId,
+          userId: workoutCompletions.userId,
+          completedAt: workoutCompletions.completedAt,
+          duration: workoutCompletions.duration,
+          caloriesBurned: workoutCompletions.caloriesBurned,
+          rating: workoutCompletions.rating,
+        })
+        .from(workoutCompletions)
+        .where(eq(workoutCompletions.userId, userId))
+        .orderBy(desc(workoutCompletions.completedAt))
+        .limit(10);
 
       return {
         totalCompletions,
         totalCalories,
         totalDuration,
         avgRating: Math.round(avgRating * 10) / 10,
-        recentCompletions: completions.slice(0, 10),
+        recentCompletions,
       };
     }),
 
@@ -264,25 +342,38 @@ export const workoutRouter = router({
   getCompletionHistory: protectedProcedure
     .input(z.object({
       userId: z.number().optional(),
-      limit: z.number().optional(),
+      limit: z.number().optional().default(50),
+      offset: z.number().optional().default(0),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: { ctx: TrpcContext; input: { userId?: number; limit: number; offset: number } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
-      const userId = input.userId || ctx.user.id;
+      const userId = input.userId || ctx.user!.id;
 
       // Only allow users to see their own history, unless admin
-      if (userId !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (userId !== ctx.user!.id && ctx.user!.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 
       const completions = await db
-        .select()
+        .select({
+          id: workoutCompletions.id,
+          sessionId: workoutCompletions.sessionId,
+          userId: workoutCompletions.userId,
+          completedAt: workoutCompletions.completedAt,
+          duration: workoutCompletions.duration,
+          notes: workoutCompletions.notes,
+          rating: workoutCompletions.rating,
+          caloriesBurned: workoutCompletions.caloriesBurned,
+          heartRateAvg: workoutCompletions.heartRateAvg,
+          heartRateMax: workoutCompletions.heartRateMax,
+        })
         .from(workoutCompletions)
         .where(eq(workoutCompletions.userId, userId))
         .orderBy(desc(workoutCompletions.completedAt))
-        .limit(input.limit || 50);
+        .limit(input.limit)
+        .offset(input.offset);
 
       return completions;
     }),
@@ -294,7 +385,7 @@ export const workoutRouter = router({
       sessionId: z.number(),
       reminderTime: z.date(),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input }: { input: { userId: number; sessionId: number; reminderTime: Date } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
@@ -313,20 +404,29 @@ export const workoutRouter = router({
   getUserReminders: protectedProcedure
     .input(z.object({
       userId: z.number().optional(),
+      limit: z.number().optional().default(20),
+      offset: z.number().optional().default(0),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: { ctx: TrpcContext; input: { userId?: number; limit: number; offset: number } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
-      const userId = input.userId || ctx.user.id;
+      const userId = input.userId || ctx.user!.id;
 
       // Only allow users to see their own reminders, unless admin
-      if (userId !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (userId !== ctx.user!.id && ctx.user!.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 
       const reminders = await db
-        .select()
+        .select({
+          id: workoutReminders.id,
+          userId: workoutReminders.userId,
+          sessionId: workoutReminders.sessionId,
+          reminderTime: workoutReminders.reminderTime,
+          isSent: workoutReminders.isSent,
+          createdAt: workoutReminders.createdAt,
+        })
         .from(workoutReminders)
         .where(
           and(
@@ -335,7 +435,9 @@ export const workoutRouter = router({
             gte(workoutReminders.reminderTime, new Date())
           )
         )
-        .orderBy(workoutReminders.reminderTime);
+        .orderBy(workoutReminders.reminderTime)
+        .limit(input.limit)
+        .offset(input.offset);
 
       return reminders;
     }),
@@ -343,7 +445,7 @@ export const workoutRouter = router({
   // Mark reminder as sent (called by notification system)
   markReminderSent: protectedProcedure
     .input(z.object({ reminderId: z.number() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input }: { input: { reminderId: number } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
@@ -358,13 +460,18 @@ export const workoutRouter = router({
   // Delete reminder
   deleteReminder: protectedProcedure
     .input(z.object({ reminderId: z.number() }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: { ctx: TrpcContext; input: { reminderId: number } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
       // Get reminder to check ownership
       const reminder = await db
-        .select()
+        .select({
+          id: workoutReminders.id,
+          userId: workoutReminders.userId,
+          sessionId: workoutReminders.sessionId,
+          reminderTime: workoutReminders.reminderTime,
+        })
         .from(workoutReminders)
         .where(eq(workoutReminders.id, input.reminderId))
         .limit(1);
@@ -374,7 +481,7 @@ export const workoutRouter = router({
       }
 
       // Check access
-      if (reminder[0].userId !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (reminder[0].userId !== ctx.user!.id && ctx.user!.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 
@@ -386,25 +493,38 @@ export const workoutRouter = router({
   getRescheduleHistory: protectedProcedure
     .input(z.object({
       userId: z.number().optional(),
-      limit: z.number().optional(),
+      limit: z.number().optional().default(20),
+      offset: z.number().optional().default(0),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }: { ctx: TrpcContext; input: { userId?: number; limit: number; offset: number } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
-      const userId = input.userId || ctx.user.id;
+      const userId = input.userId || ctx.user!.id;
 
       // Only allow users to see their own history, unless admin
-      if (userId !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (userId !== ctx.user!.id && ctx.user!.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 
       const reschedules = await db
-        .select()
+        .select({
+          id: missedSessionReschedules.id,
+          originalSessionId: missedSessionReschedules.originalSessionId,
+          newSessionId: missedSessionReschedules.newSessionId,
+          userId: missedSessionReschedules.userId,
+          originalDate: missedSessionReschedules.originalDate,
+          proposedDate: missedSessionReschedules.proposedDate,
+          status: missedSessionReschedules.status,
+          notificationSent: missedSessionReschedules.notificationSent,
+          createdAt: missedSessionReschedules.createdAt,
+          respondedAt: missedSessionReschedules.respondedAt,
+        })
         .from(missedSessionReschedules)
         .where(eq(missedSessionReschedules.userId, userId))
         .orderBy(desc(missedSessionReschedules.createdAt))
-        .limit(input.limit || 20);
+        .limit(input.limit)
+        .offset(input.offset);
 
       return reschedules;
     }),
@@ -412,13 +532,18 @@ export const workoutRouter = router({
   // Accept a reschedule proposal
   acceptReschedule: protectedProcedure
     .input(z.object({ rescheduleId: z.number() }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: { ctx: TrpcContext; input: { rescheduleId: number } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
       // Get reschedule to check ownership
       const reschedule = await db
-        .select()
+        .select({
+          id: missedSessionReschedules.id,
+          userId: missedSessionReschedules.userId,
+          newSessionId: missedSessionReschedules.newSessionId,
+          status: missedSessionReschedules.status,
+        })
         .from(missedSessionReschedules)
         .where(eq(missedSessionReschedules.id, input.rescheduleId))
         .limit(1);
@@ -428,7 +553,7 @@ export const workoutRouter = router({
       }
 
       // Check access
-      if (reschedule[0].userId !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (reschedule[0].userId !== ctx.user!.id && ctx.user!.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 
@@ -443,13 +568,18 @@ export const workoutRouter = router({
   // Reject a reschedule proposal
   rejectReschedule: protectedProcedure
     .input(z.object({ rescheduleId: z.number() }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }: { ctx: TrpcContext; input: { rescheduleId: number } }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
 
       // Get reschedule to check ownership
       const reschedule = await db
-        .select()
+        .select({
+          id: missedSessionReschedules.id,
+          userId: missedSessionReschedules.userId,
+          newSessionId: missedSessionReschedules.newSessionId,
+          status: missedSessionReschedules.status,
+        })
         .from(missedSessionReschedules)
         .where(eq(missedSessionReschedules.id, input.rescheduleId))
         .limit(1);
@@ -459,7 +589,7 @@ export const workoutRouter = router({
       }
 
       // Check access
-      if (reschedule[0].userId !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (reschedule[0].userId !== ctx.user!.id && ctx.user!.role !== 'ADMIN') {
         throw new TRPCError({ code: 'FORBIDDEN' });
       }
 

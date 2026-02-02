@@ -14,12 +14,12 @@ export default function EmailAdmin() {
 
   // Fetch email logs
   const { data: logs, isLoading, refetch } = trpc.email.getAllEmailLogs.useQuery({ limit: 100 }, {
-    enabled: isAuthenticated && user?.role === "admin",
+    enabled: isAuthenticated && user?.role === "ADMIN",
   });
 
   // Fetch templates
   const { data: templates } = trpc.email.getTemplates.useQuery(undefined, {
-    enabled: isAuthenticated && user?.role === "admin",
+    enabled: isAuthenticated && user?.role === "ADMIN",
   });
 
   // Initialize templates
@@ -54,7 +54,7 @@ export default function EmailAdmin() {
     );
   }
 
-  if (!isAuthenticated || user?.role !== "admin") {
+  if (!isAuthenticated || user?.role !== "ADMIN") {
     setLocation("/");
     return null;
   }

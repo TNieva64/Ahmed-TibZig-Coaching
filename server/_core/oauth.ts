@@ -1,4 +1,4 @@
-import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+import { COOKIE_NAME, SEVEN_DAYS_MS } from "@shared/const";
 import type { Express, Request, Response } from "express";
 import * as db from "../db";
 import { getSessionCookieOptions } from "./cookies";
@@ -8,6 +8,15 @@ import { sendNewUserNotification } from "../emailService";
 function getQueryParam(req: Request, key: string): string | undefined {
   const value = req.query[key];
   return typeof value === "string" ? value : undefined;
+}
+
+/**
+ * Extrait l'origin de la requête pour validation OAuth
+ */
+function getExpectedOrigin(req: Request): string {
+  const protocol = req.protocol;
+  const host = req.get("host");
+  return `${protocol}://${host}`;
 }
 
 export function registerOAuthRoutes(app: Express) {
@@ -21,7 +30,8 @@ export function registerOAuthRoutes(app: Express) {
     }
 
     try {
-      const tokenResponse = await sdk.exchangeCodeForToken(code, state);
+      const expectedOrigin = getExpectedOrigin(req);
+      const tokenResponse = await sdk.exchangeCodeForToken(code, state, expectedOrigin);
       const userInfo = await sdk.getUserInfo(tokenResponse.accessToken);
 
       if (!userInfo.openId) {
@@ -52,13 +62,14 @@ export function registerOAuthRoutes(app: Express) {
         }
       }
 
+      // Utiliser SEVEN_DAYS_MS au lieu de ONE_YEAR_MS pour réduire la fenêtre d'attaque
       const sessionToken = await sdk.createSessionToken(userInfo.openId, {
         name: userInfo.name || "",
-        expiresInMs: ONE_YEAR_MS,
+        expiresInMs: SEVEN_DAYS_MS,
       });
 
       const cookieOptions = getSessionCookieOptions(req);
-      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: SEVEN_DAYS_MS });
 
       // Redirection intelligente selon le statut d'onboarding
       const onboardingStatus = await db.getOnboardingStatus(result.userId);

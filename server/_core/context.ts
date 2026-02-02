@@ -8,6 +8,9 @@ export type TrpcContext = {
   user: User | null;
 };
 
+// Type pour les procédures protégées où user est garanti non-null
+export type ProtectedContext = Omit<TrpcContext, 'user'> & { user: User };
+
 export async function createContext(
   opts: CreateExpressContextOptions
 ): Promise<TrpcContext> {

@@ -10,17 +10,17 @@ export const messagingRouter = router({
   getOrCreateConversation: protectedProcedure
     .input(z.object({ coachId: z.number() }))
     .query(async ({ ctx, input }) => {
-      const isCoach = ctx.user.role === 'admin';
-      const clientId = isCoach ? input.coachId : ctx.user.id; // If coach, the "coachId" is actually clientId
-      const coachId = isCoach ? ctx.user.id : input.coachId;
-      
+      const isCoach = ctx.user?.role === 'ADMIN' || ctx.user?.role === 'COACH';
+      const clientId = isCoach ? input.coachId : ctx.user?.id ?? 0; // If coach, the "coachId" is actually clientId
+      const coachId = isCoach ? ctx.user?.id ?? 0 : input.coachId;
+
       return await getOrCreateConversation(clientId, coachId);
     }),
 
   // Get all conversations for current user
   getConversations: protectedProcedure.query(async ({ ctx }) => {
-    const isCoach = ctx.user.role === 'admin';
-    const conversations = await getUserConversations(ctx.user.id, isCoach);
+    const isCoach = ctx.user?.role === 'ADMIN' || ctx.user?.role === 'COACH';
+    const conversations = await getUserConversations(ctx.user?.id ?? 0, isCoach);
     
     // Enrich with user details
     const db = await getDb();
@@ -54,8 +54,8 @@ export const messagingRouter = router({
 
   // Get total unread count
   getUnreadCount: protectedProcedure.query(async ({ ctx }) => {
-    const isCoach = ctx.user.role === 'admin';
-    return await getTotalUnreadCount(ctx.user.id, isCoach);
+    const isCoach = ctx.user?.role === 'ADMIN' || ctx.user?.role === 'COACH';
+    return await getTotalUnreadCount(ctx.user?.id ?? 0, isCoach);
   }),
 
   // Upload media (photo/video) for messaging
@@ -76,7 +76,7 @@ export const messagingRouter = router({
         const timestamp = Date.now();
         const randomSuffix = Math.random().toString(36).substring(2, 8);
         const extension = input.fileName.split(".").pop() || "bin";
-        const fileKey = `messages/${ctx.user.id}/${timestamp}-${randomSuffix}.${extension}`;
+        const fileKey = `messages/${ctx.user?.id ?? 0}/${timestamp}-${randomSuffix}.${extension}`;
 
         // Upload to S3
         const { url } = await storagePut(fileKey, buffer, input.fileType);
