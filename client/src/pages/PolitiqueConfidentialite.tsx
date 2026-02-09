@@ -107,7 +107,7 @@ export default function PolitiqueConfidentialite() {
             <p className="text-gray-300 mb-4">Vos données personnelles sont accessibles uniquement par :</p>
             <ul className="text-gray-300 space-y-2 ml-4">
               <li>• <strong>Ahmed Andaloussi</strong> (coach personnel) : Accès complet pour assurer le coaching</li>
-              <li>• <strong>Hébergeur (Manus)</strong> : Stockage sécurisé des données sur serveurs européens</li>
+              <li>• <strong>Hébergeur (RackNerd)</strong> : Stockage sécurisé des données sur serveurs européens</li>
               <li>• <strong>Processeur de paiement (Stripe)</strong> : Uniquement pour les transactions financières (si applicable)</li>
             </ul>
             <p className="text-gray-300 mt-4">
