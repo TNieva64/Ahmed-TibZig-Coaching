@@ -1006,3 +1006,24 @@ export const userConsents = mysqlTable('user_consents', {
 
 export type UserConsent = typeof userConsents.$inferSelect;
 export type InsertUserConsent = typeof userConsents.$inferInsert;
+
+/**
+ * Leads - Potential clients from reservation form
+ */
+export const leads = mysqlTable("leads", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  coachingType: varchar("coachingType", { length: 50 }).notNull(), // discovery, session, consultation
+  message: text("message"),
+  status: varchar("status", { length: 50 }).notNull().default("new"), // new, contacted, converted, lost
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table: any) => ({
+  idxLeadsEmail: index("idx_leads_email").on(table.email),
+  idxLeadsStatus: index("idx_leads_status").on(table.status),
+  idxLeadsCreatedAt: index("idx_leads_createdAt").on(table.createdAt),
+}));
+
+export type Lead = typeof leads.$inferSelect;
+export type InsertLead = typeof leads.$inferInsert;

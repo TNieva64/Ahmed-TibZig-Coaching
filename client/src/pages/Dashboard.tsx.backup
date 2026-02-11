@@ -245,22 +245,14 @@ export default function Dashboard() {
 }
 
 function ProgramCard({ program }: { program: any }) {
-  const [, navigate] = useLocation();
-  const { data: programData, isLoading: programLoading } = trpc.programs.getById.useQuery(
-    { id: program.programId },
-    { enabled: !!program.programId }
-  );
-
-  const handleAccessResources = () => {
-    navigate(`/program/${program.programId}`);
-  };
+  const { data: resources, isLoading } = trpc.programs.list.useQuery(undefined, {
+    enabled: false,
+  });
 
   return (
     <Card className="p-6 border-gold/30 hover:border-gold/60 transition-colors bg-zinc-900">
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-white mb-2">
-          {programLoading ? "Chargement..." : programData?.name || `Programme #${program.programId}`}
-        </h3>
+        <h3 className="text-lg font-semibold text-white mb-2">{program.programId}</h3>
         <p className="text-sm text-gray-400">
           Statut: <span className="font-medium text-gold capitalize">{program.status}</span>
         </p>
@@ -289,7 +281,7 @@ function ProgramCard({ program }: { program: any }) {
         </div>
       </div>
 
-      <Button onClick={handleAccessResources} className="w-full bg-gold text-black hover:bg-gold/90">
+      <Button className="w-full bg-gold text-black hover:bg-gold/90">
         Accéder aux ressources
       </Button>
     </Card>

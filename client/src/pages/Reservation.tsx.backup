@@ -1,37 +1,19 @@
 import { useState } from 'react';
 import { Link } from 'wouter';
-import { ArrowRight, Calendar, Clock, User, Mail, Phone, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ArrowRight, Calendar, Clock, User, Mail, Phone } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { trpc } from '@/lib/trpc';
-import { toast } from 'sonner';
 
 export default function Reservation() {
-  const [step, setStep] = useState<'type' | 'calendar' | 'form' | 'success'>('type');
+  const [step, setStep] = useState<'type' | 'calendar' | 'form'>('type');
   const [selectedType, setSelectedType] = useState<string>('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     message: '',
-  });
-
-  const createLeadMutation = trpc.createLead.useMutation({
-    onSuccess: () => {
-      toast.success('Merci ! Votre demande a été enregistrée.', {
-        description: 'Nous vous recontacterons sous 24h.',
-        icon: <CheckCircle2 className="w-5 h-5 text-green-500" />,
-      });
-      setStep('success');
-    },
-    onError: (error) => {
-      toast.error('Erreur lors de l\'envoi', {
-        description: error.message || 'Veuillez réessayer ou nous contacter directement.',
-        icon: <AlertCircle className="w-5 h-5 text-red-500" />,
-      });
-    },
   });
 
   const coachingTypes = [
@@ -71,13 +53,8 @@ export default function Reservation() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    createLeadMutation.mutate({
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      coachingType: selectedType as 'discovery' | 'session' | 'consultation',
-      message: formData.message,
-    });
+    // TODO: Implement form submission
+    alert('Merci ! Nous vous recontacterons sous peu.');
   };
 
   return (
@@ -292,14 +269,9 @@ export default function Reservation() {
                   </button>
                   <Button
                     type="submit"
-                    disabled={createLeadMutation.isLoading}
                     className="premium-button"
                   >
-                    {createLeadMutation.isLoading ? (
-                      <>Envoi en cours...</>
-                    ) : (
-                      <>Confirmer la Réservation <ArrowRight className="w-4 h-4 ml-2" /></>
-                    )}
+                    Confirmer la Réservation <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </div>
               </form>
@@ -309,47 +281,6 @@ export default function Reservation() {
                   <span className="font-semibold text-black">Note :</span> Vous recevrez une confirmation par email avec les détails de votre séance et le lien Zoom.
                 </p>
               </div>
-            </div>
-          )}
-
-          {/* Success Step */}
-          {step === 'success' && (
-            <div className="text-center py-12">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="w-10 h-10 text-green-600" />
-              </div>
-              <h2 className="heading-display text-black mb-4">Merci !</h2>
-              <p className="text-xl text-gray-700 mb-6">
-                Votre demande de réservation a été enregistrée avec succès.
-              </p>
-              <p className="text-gray-600 mb-8">
-                Nous vous recontacterons sous 24h pour confirmer votre créneau.
-              </p>
-              <div className="bg-gold/10 border-2 border-gold rounded-xl p-6 max-w-md mx-auto mb-8">
-                <p className="text-sm text-gray-700">
-                  <span className="font-semibold text-black">Récapitulatif :</span>
-                </p>
-                <p className="text-gray-700 mt-2">
-                  <span className="font-medium">Nom :</span> {formData.name}
-                </p>
-                <p className="text-gray-700">
-                  <span className="font-medium">Email :</span> {formData.email}
-                </p>
-                <p className="text-gray-700">
-                  <span className="font-medium">Type de séance :</span> {coachingTypes.find(t => t.id === selectedType)?.title}
-                </p>
-              </div>
-              <Button
-                onClick={() => {
-                  setStep('type');
-                  setSelectedType('');
-                  setFormData({ name: '', email: '', phone: '', message: '' });
-                }}
-                variant="outline"
-                className="border-gold text-gold hover:bg-gold/10"
-              >
-                Nouvelle réservation
-              </Button>
             </div>
           )}
         </div>
