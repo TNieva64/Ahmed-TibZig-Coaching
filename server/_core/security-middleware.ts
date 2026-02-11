@@ -78,21 +78,24 @@ export const corsConfig = cors({
 
 /**
  * Headers de sécurité - Protection XSS, clickjacking, etc.
+ * CSP RÉACTIVÉ avec configuration sécurisée
  */
 export const securityHeaders = helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https:", "blob:"],
-      scriptSrc: ["'self'"],
-      connectSrc: ["'self'", ""],
-      frameSrc: ["'none'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", 'data:', 'https:'],
+      fontSrc: ["'self'"],
+      connectSrc: ["'self'", process.env.FRONTEND_URL || 'http://localhost:5173'],
+      mediaSrc: ["'self'"],
       objectSrc: ["'none'"],
+      frameSrc: ["'none'"],
       baseUri: ["'self'"],
       formAction: ["'self'"],
       frameAncestors: ["'none'"],
+      upgradeInsecureRequests: [],
     },
   },
   hsts: {

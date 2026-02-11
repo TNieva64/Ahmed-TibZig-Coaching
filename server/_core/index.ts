@@ -66,6 +66,10 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 
 async function startServer() {
   const app = express();
+
+  // === SÉCURITÉ: Trust proxy pour rate limiting derrière reverse proxy ===
+  // Permet de récupérer l'IP réelle du client derrière Nginx/Cloudflare
+  app.set('trust proxy', 1);
   const server = createServer(app);
 
   // Middleware de monitoring pour les payloads volumineux (avant le body parser)
