@@ -28,7 +28,7 @@ export const referralRouter = router({
     if (existingReferrals.length > 0) {
       return {
         code: existingReferrals[0].referralCode,
-        link: `${process.env.VITE_OAUTH_PORTAL_URL || "https://app.manus.im"}/signup?ref=${existingReferrals[0].referralCode}`,
+        link: `${process.env.VITE_OAUTH_PORTAL_URL || "http://104.223.120.101"}/signup?ref=${existingReferrals[0].referralCode}`,
       };
     }
 
@@ -44,7 +44,7 @@ export const referralRouter = router({
 
     return {
       code: newCode,
-      link: `${process.env.VITE_OAUTH_PORTAL_URL || "https://app.manus.im"}/signup?ref=${newCode}`,
+      link: `${process.env.VITE_OAUTH_PORTAL_URL || "http://104.223.120.101"}/signup?ref=${newCode}`,
     };
   }),
 

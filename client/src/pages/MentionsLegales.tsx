@@ -22,7 +22,7 @@ export default function MentionsLegales() {
             <h2 className="text-2xl font-bold text-gold mb-4">2. HÉBERGEUR DU SITE</h2>
             <div className="text-gray-300 space-y-2">
               <p><strong>Nom :</strong> Manus</p>
-              <p><strong>Site web :</strong> <a href="https://manus.im" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">https://manus.im</a></p>
+              <p><strong>Site web :</strong> <a href="https://www.racknerd.com" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">https://www.racknerd.com</a></p>
             </div>
           </section>
 

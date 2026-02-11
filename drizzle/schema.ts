@@ -765,7 +765,7 @@ export const emailLogs = mysqlTable("email_logs", {
   templateName: text("template_name").notNull(), // For tracking even if template is deleted
   recipientEmail: text("recipient_email").notNull(),
   subject: text("subject").notNull(),
-  status: text("status").notNull(), // "pending", "sent", "failed", "bounced"
+  status: varchar("status", { length: 50 }).notNull(), // "pending", "sent", "failed", "bounced"
   sentAt: timestamp("sent_at"),
   failedReason: text("failed_reason"),
   openedAt: timestamp("opened_at"),
