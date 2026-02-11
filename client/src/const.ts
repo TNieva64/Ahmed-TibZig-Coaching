@@ -7,6 +7,12 @@ export const getLoginUrl = () => {
   const redirectUri = `${window.location.origin}/api/oauth/callback`;
   const state = btoa(redirectUri);
 
+  // Si pas de OAuth externe configuré, utiliser le callback direct
+  if (!oauthPortalUrl || oauthPortalUrl.includes(window.location.hostname)) {
+    // Mode self-hosted : rediriger vers le callback avec un code factice
+    return `/api/oauth/callback?state=${encodeURIComponent(state)}&type=signIn`;
+  }
+
   const url = new URL(`${oauthPortalUrl}/app-auth`);
   url.searchParams.set("appId", appId);
   url.searchParams.set("redirectUri", redirectUri);
