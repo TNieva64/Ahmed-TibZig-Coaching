@@ -1007,42 +1007,22 @@ export const userConsents = mysqlTable('user_consents', {
 export type UserConsent = typeof userConsents.$inferSelect;
 export type InsertUserConsent = typeof userConsents.$inferInsert;
 
-// ============================================
-// LEADS - Prospects et demandes de contact
-// ============================================
-
-export const leads = mysqlTable('leads', {
-  id: int('id').primaryKey().autoincrement(),
-  
-  // Informations de contact
-  name: varchar('name', { length: 255 }).notNull(),
-  email: varchar('email', { length: 320 }).notNull(),
-  phone: varchar('phone', { length: 50 }),
-  message: text('message'),
-  
-  // Type de coaching souhaité
-  coachingType: mysqlEnum('coaching_type', ['discovery', 'session', 'consultation']).notNull(),
-  
-  // Préférences de rendez-vous
-  preferredDate: varchar('preferred_date', { length: 100 }),
-  preferredTime: varchar('preferred_time', { length: 50 }),
-  
-  // Source du lead
-  source: varchar('source', { length: 100 }).default('reservation'), // reservation, landing, etc.
-  status: mysqlEnum('status', ['new', 'contacted', 'converted', 'lost']).default('new').notNull(),
-  
-  // Notes admin
-  adminNotes: text('admin_notes'),
-  
-  // Timestamps
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
+/**
+ * Leads - Potential clients from reservation form
+ */
+export const leads = mysqlTable("leads", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  coachingType: varchar("coachingType", { length: 50 }).notNull(), // discovery, session, consultation
+  message: text("message"),
+  status: varchar("status", { length: 50 }).notNull().default("new"), // new, contacted, converted, lost
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table: any) => ({
   idxLeadsEmail: index("idx_leads_email").on(table.email),
   idxLeadsStatus: index("idx_leads_status").on(table.status),
-  idxLeadsCoachingType: index("idx_leads_coachingType").on(table.coachingType),
   idxLeadsCreatedAt: index("idx_leads_createdAt").on(table.createdAt),
-  idxLeadsStatusCreatedAt: index("idx_leads_status_createdAt").on(table.status, table.createdAt),
 }));
 
 export type Lead = typeof leads.$inferSelect;

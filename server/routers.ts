@@ -3,10 +3,10 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
-import { 
-  getClientPrograms, 
-  getProgramById, 
-  getProgramResources, 
+import {
+  getClientPrograms,
+  getProgramById,
+  getProgramResources,
   getAllPrograms,
   getProgressMetrics,
   getProgressGoals,
@@ -17,7 +17,7 @@ import {
 import { notifyProgramAssigned, notifyResourceAdded } from "./notifications";
 import { z } from "zod";
 import { eq, and } from "drizzle-orm";
-import { users, programs, clientPrograms, programResources, progressMetrics, progressGoals, InsertProgram, InsertClientProgram, InsertProgramResource } from "../drizzle/schema";
+import { users, programs, clientPrograms, programResources, progressMetrics, progressGoals, InsertProgram, InsertClientProgram, InsertProgramResource, leads, InsertLead } from "../drizzle/schema";
 import { messagingRouter } from "./messagingRouter";
 import { workoutRouter } from "./workoutRouter";
 import { formVideoRouter } from "./formVideoRouter";
@@ -83,6 +83,44 @@ export const appRouter = router({
       } as const;
     }),
   }),
+
+  // Public lead creation for reservation form
+  createLead: publicProcedure
+    .input(z.object({
+      name: z.string().min(2),
+      email: z.string().email(),
+      phone: z.string().optional(),
+      coachingType: z.enum(["discovery", "session", "consultation"]),
+      message: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      }
+
+      const leadData: InsertLead = {
+        name: input.name,
+        email: input.email,
+        phone: input.phone || null,
+        coachingType: input.coachingType,
+        message: input.message || null,
+        status: "new",
+      };
+
+      const result = await db.insert(leads).values(leadData);
+
+      // TODO: Send notification email to Ahmed
+      // await notifyOwner({
+      //   title: "Nouveau lead de réservation",
+      //   content: `${input.name} (${input.email}) a demandé un ${input.coachingType}.`,
+      // });
+
+      return {
+        success: true,
+        id: result[0].insertId,
+      };
+    }),
 
   programs: router({
     list: publicProcedure.query(async () => {
