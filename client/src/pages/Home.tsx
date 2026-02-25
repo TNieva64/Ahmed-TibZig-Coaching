@@ -51,7 +51,7 @@ export default function Home() {
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Link href="/reservation" className="premium-button inline-flex items-center justify-center gap-2 group">
-                  Réserver mon Bilan Gratuit
+                  Réserver mon Appel Découverte
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link href="/coaching" className="premium-button-outline inline-flex items-center justify-center gap-2">
@@ -392,7 +392,7 @@ export default function Home() {
             Prêt à Commencer Votre Transformation ?
           </h2>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Réservez votre appel découverte gratuit pour discuter de vos objectifs et trouver le programme idéal.
+            Réservez votre Appel Découverte pour discuter de vos objectifs et trouver le programme idéal.
           </p>
           <Link href="/reservation" className="premium-button inline-flex items-center justify-center gap-2 group">
             Réserver Maintenant

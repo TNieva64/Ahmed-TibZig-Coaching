@@ -34,6 +34,8 @@ import Messages from "./pages/Messages";
 import Workouts from "./pages/Workouts";
 import MacroAdjustments from "./pages/admin/MacroAdjustments";
 import HelpCenter from "./pages/HelpCenter";
+import Challenge21Jours from "./pages/Challenge21Jours";
+import Challenge21JoursSuccess from "./pages/Challenge21JoursSuccess";
 import CookieConsent from "./components/CookieConsent";
 import { PositiveNotificationCenter } from "./components/PositiveNotifications";
 import { HelpButton } from "./components/HelpButton";
@@ -45,8 +47,10 @@ function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-      <Route path={"/parcours"} component={Parcours} />
+      <Route path={"/a-propos"} component={Parcours} />
       <Route path={"/coaching"} component={Coaching} />
+      <Route path={"/challenge-21-jours"} component={Challenge21Jours} />
+      <Route path={"/challenge-21-jours/success"} component={Challenge21JoursSuccess} />
       <Route path={"/reservation"} component={Reservation} />
       <Route path={"/contact"} component={Contact} />
       <Route path={"/dashboard"} component={Dashboard} />

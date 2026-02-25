@@ -90,28 +90,28 @@ export function LoyaltyProgram({ currentMonths = 1 }: { currentMonths?: number }
     : 100;
 
   return (
-    <Card className="bg-zinc-900 border-gold/30 p-6">
+    <Card className="bg-white border-gold/30 p-6 shadow-sm">
       {/* Header */}
       <div className="text-center mb-6">
         <div className="inline-flex items-center gap-2 mb-3">
           <currentTier.icon className={`w-8 h-8 ${currentTier.color}`} />
-          <h2 className="text-2xl font-bold text-white">
+          <h2 className="text-2xl font-bold text-black">
             Statut {currentTier.name}
           </h2>
         </div>
-        <p className="text-gray-400">
+        <p className="text-gray-600">
           {currentMonths} mois d'engagement • Merci pour votre fidélité ! 💚
         </p>
       </div>
 
       {/* Progression vers niveau supérieur */}
       {nextTier && (
-        <div className="mb-6 p-4 bg-zinc-800 rounded-lg">
+        <div className="mb-6 p-4 bg-gray-50 rounded-lg">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-white font-medium">Prochain niveau : {nextTier.name}</span>
+            <span className="text-black font-medium">Prochain niveau : {nextTier.name}</span>
             <span className="text-gold font-semibold">{monthsUntilNext} mois</span>
           </div>
-          <div className="w-full bg-zinc-700 rounded-full h-3">
+          <div className="w-full bg-gray-200 rounded-full h-3">
             <div
               className="bg-gradient-to-r from-gold to-orange-500 h-3 rounded-full transition-all"
               style={{ width: `${Math.min(progressToNext, 100)}%` }}
@@ -125,12 +125,12 @@ export function LoyaltyProgram({ currentMonths = 1 }: { currentMonths?: number }
 
       {/* Bénéfices actuels */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-white mb-3">
+        <h3 className="text-lg font-semibold text-black mb-3">
           Vos avantages actuels
         </h3>
         <ul className="space-y-2">
           {currentTier.benefits.map((benefit, index) => (
-            <li key={index} className="flex items-start gap-2 text-gray-300 text-sm">
+            <li key={index} className="flex items-start gap-2 text-gray-700 text-sm">
               <span className="text-gold mt-1">✓</span>
               <span>{benefit}</span>
             </li>
@@ -140,7 +140,7 @@ export function LoyaltyProgram({ currentMonths = 1 }: { currentMonths?: number }
 
       {/* Tous les niveaux */}
       <div>
-        <h3 className="text-lg font-semibold text-white mb-3">
+        <h3 className="text-lg font-semibold text-black mb-3">
           Tous les niveaux de fidélité
         </h3>
         <div className="space-y-2">
@@ -158,19 +158,19 @@ export function LoyaltyProgram({ currentMonths = 1 }: { currentMonths?: number }
                   isActive
                     ? 'bg-gold/20 border-gold/50'
                     : isLocked
-                    ? 'bg-zinc-800 border-zinc-700 opacity-50'
-                    : 'bg-zinc-800 border-zinc-700 hover:border-gold/30'
+                    ? 'bg-gray-50 border-gray-200 opacity-50'
+                    : 'bg-gray-50 border-gray-200 hover:border-gold/30'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <Icon className={`w-5 h-5 ${tier.color}`} />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <span className={`font-medium ${isActive ? 'text-gold' : 'text-white'}`}>
+                      <span className={`font-medium ${isActive ? 'text-gold' : 'text-black'}`}>
                         {tier.name}
                       </span>
                       {!isActive && !isLocked && (
-                        <span className="text-xs text-gray-400">Débloqué</span>
+                        <span className="text-xs text-gray-600">Débloqué</span>
                       )}
                       {isLocked && (
                         <span className="text-xs text-gray-500">
@@ -197,10 +197,10 @@ export function LoyaltyProgram({ currentMonths = 1 }: { currentMonths?: number }
           <div className="flex items-center gap-3 mb-3">
             <Gift className="w-6 h-6 text-gold" />
             <div>
-              <p className="text-white font-semibold">
+              <p className="text-black font-semibold">
                 Bientôt niveau {nextTier.name} ! 🎉
               </p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-600">
                 Plus que {monthsUntilNext} mois pour débloquer vos nouveaux avantages
               </p>
             </div>
@@ -215,16 +215,38 @@ export function LoyaltyProgram({ currentMonths = 1 }: { currentMonths?: number }
 }
 
 // Petit widget pour le dashboard
-export function LoyaltyWidget({ currentMonths = 1 }: { currentMonths?: number }) {
+export function LoyaltyWidget({ currentMonths }: { currentMonths?: number }) {
+  // Récupérer les données réelles du programme si disponibles
+  // Si currentMonths n'est pas fourni, on affichera un widget vide ou un message
+  const months = currentMonths ?? 0;
+
   const currentTier = loyaltyTiers
     .slice()
     .reverse()
-    .find(tier => currentMonths >= tier.monthsRequired) || loyaltyTiers[0];
+    .find(tier => months >= tier.monthsRequired) || loyaltyTiers[0];
 
   const Icon = currentTier.icon;
 
+  if (months === 0) {
+    return (
+      <Card className="bg-white border-gold/30 p-4 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center text-gold">
+            <Gift className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 mb-1">Votre statut</p>
+            <p className="font-semibold text-gold">
+              Programme en attente
+            </p>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="bg-zinc-900 border-gold/30 p-4">
+    <Card className="bg-white border-gold/30 p-4 shadow-sm">
       <div className="flex items-center gap-3">
         <div className={`w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center ${currentTier.color}`}>
           <Icon className="w-6 h-6" />

@@ -13,7 +13,7 @@ export default function Coaching() {
       icon: Zap,
       color: 'from-gold/20 to-transparent',
       features: [
-        'Bilan corporel complet',
+        'Appel Découverte inclus',
         'Planification nutritionnelle',
         'Programme d\'entraînement adapté',
         'Suivi hebdomadaire',
@@ -59,7 +59,7 @@ export default function Coaching() {
       price: '199',
       popular: false,
       features: [
-        'Appel découverte gratuit',
+        'Appel Découverte inclus',
         '4 séances de coaching',
         'Plan d\'entraînement personnalisé',
         'Support par email',
@@ -72,13 +72,13 @@ export default function Coaching() {
       price: '499',
       popular: true,
       features: [
-        'Appel découverte gratuit',
+        'Appel Découverte inclus',
         '12 séances de coaching',
         'Plan d\'entraînement évolutif',
         'Support prioritaire',
         'Accès aux ressources',
         'Ajustements progressifs',
-        'Bilan intermédiaire',
+        'Suivi intermédiaire',
       ],
     },
     {
@@ -87,13 +87,13 @@ export default function Coaching() {
       price: '899',
       popular: false,
       features: [
-        'Appel découverte gratuit',
+        'Appel Découverte inclus',
         '24 séances de coaching',
         'Suivi complet et détaillé',
         'Support prioritaire 24/7',
         'Accès aux ressources',
         'Ajustements continus',
-        'Bilans mensuels',
+        'Suivis mensuels',
         'Garantie de résultats',
       ],
     },
@@ -188,7 +188,7 @@ export default function Coaching() {
               Nos Packs de Coaching
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Choisissez la durée qui correspond à vos objectifs. Tous les packs incluent un appel découverte gratuit.
+              Choisissez la durée qui correspond à vos objectifs. Tous les packs incluent un Appel Découverte.
             </p>
           </div>
 
@@ -297,10 +297,10 @@ export default function Coaching() {
             Prêt à Transformer Votre Vie ?
           </h2>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Réservez votre appel découverte gratuit. Pas d'engagement, juste une conversation pour trouver la meilleure solution pour vous.
+            Réservez votre Appel Découverte. Pas d'engagement, juste une conversation pour trouver la meilleure solution pour vous.
           </p>
           <Link href="/reservation" className="premium-button inline-flex items-center justify-center gap-2 group">
-            Réserver mon Appel Gratuit
+            Réserver mon Appel Découverte
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>

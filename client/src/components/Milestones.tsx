@@ -99,8 +99,8 @@ export function MilestonesTracker() {
 
   return (
     <>
-      <Card className="bg-zinc-900 border-gold/30 p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">
+      <Card className="bg-white border-gold/30 p-6 shadow-sm">
+        <h3 className="text-lg font-semibold text-black mb-4">
           🏆 Vos Réussites
         </h3>
 
@@ -114,13 +114,13 @@ export function MilestonesTracker() {
                 className={`p-4 rounded-lg border transition-all ${
                   milestone.unlocked
                     ? 'bg-gold/10 border-gold/30'
-                    : 'bg-zinc-800 border-zinc-700'
+                    : 'bg-gray-50 border-gray-200'
                 }`}
               >
                 <div className="flex items-start gap-3">
                   <div
                     className={`flex-shrink-0 ${
-                      milestone.unlocked ? 'text-gold' : 'text-gray-600'
+                      milestone.unlocked ? 'text-gold' : 'text-gray-400'
                     }`}
                   >
                     <Icon className="w-6 h-6" />
@@ -129,7 +129,7 @@ export function MilestonesTracker() {
                   <div className="flex-1">
                     <h4
                       className={`font-medium mb-1 ${
-                        milestone.unlocked ? 'text-gold' : 'text-gray-400'
+                        milestone.unlocked ? 'text-gold' : 'text-gray-600'
                       }`}
                     >
                       {milestone.title}
@@ -140,7 +140,7 @@ export function MilestonesTracker() {
                     </p>
 
                     {milestone.progress !== undefined && milestone.target && (
-                      <div className="w-full bg-zinc-700 rounded-full h-2">
+                      <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
                           className="bg-gold h-2 rounded-full transition-all"
                           style={{ width: `${(milestone.progress / milestone.target) * 100}%` }}
@@ -166,8 +166,8 @@ export function MilestonesTracker() {
           })}
         </div>
 
-        <div className="mt-6 pt-6 border-t border-zinc-800">
-          <p className="text-sm text-gray-400">
+        <div className="mt-6 pt-6 border-t border-gray-200">
+          <p className="text-sm text-gray-600">
             <span className="text-gold font-semibold">
               {milestones.filter(m => m.unlocked).length}
             </span>{' '}
@@ -179,7 +179,7 @@ export function MilestonesTracker() {
       {/* Modal de célébration */}
       {showCelebration && celebrationMilestone && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/80">
-          <Card className="bg-zinc-900 border-gold p-8 max-w-md mx-4 text-center animate-bounce-in">
+          <Card className="bg-white border-gold p-8 max-w-md mx-4 text-center animate-bounce-in">
             <div className="w-20 h-20 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <celebrationMilestone.icon className="w-12 h-12 text-gold" />
             </div>
@@ -188,11 +188,11 @@ export function MilestonesTracker() {
               Félicitations ! 🎉
             </h2>
 
-            <h3 className="text-xl font-semibold text-white mb-2">
+            <h3 className="text-xl font-semibold text-black mb-2">
               {celebrationMilestone.title} débloqué
             </h3>
 
-            <p className="text-gray-400 mb-6">
+            <p className="text-gray-600 mb-6">
               {celebrationMilestone.description}
             </p>
 
@@ -212,21 +212,21 @@ export function MilestonesTracker() {
 // Petit widget pour le dashboard
 export function MilestonesWidget() {
   return (
-    <Card className="bg-gradient-to-br from-gold/20 to-orange-500/20 border-gold/40 p-6">
+    <Card className="bg-gradient-to-br from-gold/20 to-orange-500/20 border-gold/40 p-6 shadow-sm">
       <div className="flex items-center gap-3 mb-4">
         <Trophy className="w-8 h-8 text-gold" />
         <div>
-          <h3 className="font-semibold text-white">Prochaine Réussite</h3>
-          <p className="text-sm text-gray-400">Semaine Parfaite</p>
+          <h3 className="font-semibold text-black">Prochaine Réussite</h3>
+          <p className="text-sm text-gray-600">Semaine Parfaite</p>
         </div>
       </div>
 
       <div className="mb-4">
         <div className="flex justify-between text-sm mb-2">
-          <span className="text-gray-400">Progression</span>
+          <span className="text-gray-600">Progression</span>
           <span className="text-gold font-medium">5/7 jours</span>
         </div>
-        <div className="w-full bg-zinc-700 rounded-full h-2">
+        <div className="w-full bg-gray-200 rounded-full h-2">
           <div className="bg-gold h-2 rounded-full" style={{ width: '71%' }} />
         </div>
       </div>

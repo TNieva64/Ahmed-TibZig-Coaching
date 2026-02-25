@@ -26,8 +26,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/parcours" className="text-gray-300 hover:text-gold transition-colors text-sm block">
-                  Mon Parcours
+                <Link href="/a-propos" className="text-gray-300 hover:text-gold transition-colors text-sm block">
+                  À Propos
                 </Link>
               </li>
               <li>

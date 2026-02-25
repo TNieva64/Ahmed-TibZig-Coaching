@@ -80,21 +80,7 @@ export const corsConfig = cors({
  * Headers de sécurité - Protection XSS, clickjacking, etc.
  */
 export const securityHeaders = helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https:", "blob:"],
-      scriptSrc: ["'self'"],
-      connectSrc: ["'self'", ""],
-      frameSrc: ["'none'"],
-      objectSrc: ["'none'"],
-      baseUri: ["'self'"],
-      formAction: ["'self'"],
-      frameAncestors: ["'none'"],
-    },
-  },
+  contentSecurityPolicy: false,  // CSP désactivé pour debug
   hsts: {
     maxAge: 31536000, // 1 an
     includeSubDomains: true,

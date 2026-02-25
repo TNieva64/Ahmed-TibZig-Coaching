@@ -134,6 +134,13 @@
       "when": 1769090974035,
       "tag": "0018_cheerful_pestilence",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "5",
+      "when": 1770672627904,
+      "tag": "0019_curious_nighthawk",
+      "breakpoints": true
     }
   ]
 }

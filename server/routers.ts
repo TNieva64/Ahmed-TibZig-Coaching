@@ -37,6 +37,9 @@ import { emailRouter } from "./emailRouter";
 import { progressRouter } from "./progressRouter";
 import { macroAdjustmentRouter } from './routers/macroAdjustmentRouter';
 import { demoRouter } from './routers/demoRouter';
+import { calendarRouter } from "./calendarRouter";
+import { leadsRouter } from "./leadsRouter";
+import { stripeRouter } from "./stripeRouter";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -67,6 +70,9 @@ export const appRouter = router({
   progress: progressRouter,
   macroAdjustment: macroAdjustmentRouter,
   demo: demoRouter,
+  calendar: calendarRouter,
+  leads: leadsRouter,
+  stripe: stripeRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

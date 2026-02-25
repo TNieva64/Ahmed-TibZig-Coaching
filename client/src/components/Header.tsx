@@ -24,7 +24,7 @@ export default function Header() {
   // Liens publics (toujours visibles)
   const publicLinks = [
     { label: 'Accueil', href: '/' },
-    { label: 'Mon Parcours', href: '/parcours' },
+    { label: 'À Propos', href: '/a-propos' },
     { label: 'Coaching', href: '/coaching' },
     { label: 'Contact', href: '/contact' },
   ];
